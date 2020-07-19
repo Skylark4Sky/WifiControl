@@ -451,6 +451,12 @@ void app_main(void) {
 	gisunlink_updatefirmware_register_hook(&update_hook);
 
 	while(1) {
+
+		//参试获取设备串号
+		if(waitHWSn == false) {
+			waitHWSn = gisunlink_wait_hw_sn();
+		}
+
 		//如果已经连接上了ap
 		if(gisunlink_system->isConnectAp()) {
 			//检查系统时间有没有更新
