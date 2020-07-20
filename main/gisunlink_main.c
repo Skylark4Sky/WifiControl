@@ -20,12 +20,14 @@
 
 #include "gisunlink.h"
 #include "gisunlink_mqtt.h"
+#include "gisunlink_mqtt_task.h"
 #include "gisunlink_atomic.h"
 #include "gisunlink_config.h"
 #include "gisunlink_system.h"
 #include "gisunlink_message.h"
 #include "gisunlink_peripheral.h"
 #include "gisunlink_updatefirmware.h"
+#include "gisunlink_update_task.h"
 
 static gisunlink_system_ctrl *gisunlink_system = NULL;
 
