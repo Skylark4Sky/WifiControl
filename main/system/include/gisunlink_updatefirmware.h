@@ -20,15 +20,6 @@ extern "C"
 {
 #endif
 
-enum {
-	GISUNLINK_TRANSFER_FAILED = 0x00,
-	GISUNLINK_NEED_UPGRADE = 0x63,
-	GISUNLINK_NO_NEED_UPGRADE = 0x64,
-	GISUNLINK_FIRMWARE_CHK_OK = 0x89,							//固件检查OK
-	GISUNLINK_FIRMWARE_CHK_NO_OK = 0x90,						//固件检查不OK		
-	GISUNLINK_DEVICE_TIMEOUT = 0xff,
-};
-
 typedef uint8 GISUNLINK_FIRMWARE_QUERY(gisunlink_firmware_update *firmware);
 typedef bool GISUNLINK_FIRMWARE_TRANSFER(uint16 offset,uint8 *data,uint16 len);
 typedef uint8 GISUNLINK_FIRMWARE_CHK(void);

@@ -31,6 +31,8 @@ typedef uint8 GISUNLINK_MESSAGE_CB(void *message);
 typedef struct _gisunlink_system_ctrl {
 	bool time_sync;
 	uint8 state;
+	char deviceHWSn[DEVICEINFOSIZE];
+	char deviceFWVersion[DEVICEINFOSIZE];
 	GISUNLINK_HEAP_SIZE *heapSize;
 	GISUNLINK_WIFI_RSSI *apRssi;
 	GISUNLINK_IS_CONNECT_AP *isConnectAp;
@@ -44,7 +46,7 @@ typedef struct _gisunlink_system_ctrl {
  * @param void 
  * @return void
  */
-gisunlink_system_ctrl *gisunlink_system_init(char *DeviceHWSn_addr,GISUNLINK_MESSAGE_CB *messageCb);
+gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb);
 
 /*! @brief 检查网络时间是否同步
  * @param gisunlink_system_ctrl 

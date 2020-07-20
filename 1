@@ -166,7 +166,8 @@ static void gisunlink_mqtt_message_publish(const char *act,void *message) {
 				int ret = 0;
 				if((ret = mbedtls_base64_encode(base64Str, base64_len, &base64_len, data, data_len)) == 0) { 
 					asprintf(&publish_data,PUBLISH_FORMAT,id,act,behavior,base64Str,sec);
-					asprintf(&publish_topic,"/power_run/%s",gisunlink_system->deviceHWSn); 
+//					asprintf(&publish_topic,"/power_run/%s",gisunlink_mqtt_clientid());
+					asprintf(&publish_topic,"/power_run/%s",DeviceHWSn); //采用设备sn号做客户端ID
 					gisunlink_print(GISUNLINK_PRINT_ERROR,"%s ->data:%s",publish_topic,publish_data);
 					if(publish_ack == MQTT_PUBLISH_NEEDACK) {
 						gisunlink_mqtt_publish(publish_topic,publish_data,2,id,publish_ack);
@@ -201,8 +202,8 @@ static void gisunlink_mqtt_connectCb(MQTT_CONNECT_STATUS status) {
 		char upgrade_topic[32] = {0};
 		gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_CONNECTED_SER);
 		gisunlink_print(GISUNLINK_PRINT_INFO,"MQTT connect succeed");
-		sprintf(task_topic, "%s/%s","/point_switch",gisunlink_system->deviceHWSn);
-		sprintf(prv_upgrade_topic, "%s/%s","/point_common",gisunlink_system->deviceHWSn);
+		sprintf(task_topic, "%s/%s","/point_switch",DeviceHWSn);
+		sprintf(prv_upgrade_topic, "%s/%s","/point_common",DeviceHWSn);
 		sprintf(upgrade_topic, "%s","/point_common");
 		gisunlink_mqtt_subscribe(task_topic,0);
 		gisunlink_mqtt_subscribe(upgrade_topic,0);
@@ -409,11 +410,6 @@ uint8 gisunlink_firmware_chk(void) {
 
 static bool gisunlink_getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter) {
 	bool getHWInfo = false;
-
-	if(buffter == NULL) {
-		return getHWInfo;
-	}
-
 	gisunlink_peripheral_message uart_message = {
 		.cmd = cmd,
 		.respond = UART_RESPOND,
@@ -431,7 +427,7 @@ static bool gisunlink_getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter) {
 					snprintf(buffter,DEVICEINFOSIZE,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
 							respond->data[0],respond->data[1],respond->data[2],respond->data[3],respond->data[4],respond->data[5],
 							respond->data[6],respond->data[7],respond->data[8],respond->data[9],respond->data[10],respond->data[11]);
-					gisunlink_print(GISUNLINK_PRINT_ERROR,"device sn:%s",buffter);
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"device sn:%s",buffer);
 					getHWInfo = true;
 				}
 				gisunlink_free_uart_respond_message(respond);
@@ -443,7 +439,7 @@ static bool gisunlink_getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter) {
 			gisunlink_free_uart_respond_message(respond);
 		}
 	}
-	return getHWInfo;
+	return getHWSn;
 }
 
 void app_main(void) {
@@ -456,18 +452,20 @@ void app_main(void) {
 	while(1) {
 		if(gisunlink_system->isConnectAp()) {
 			if(waitHWSn == false) {
-				waitHWSn = gisunlink_getDeviceHWSnOrFirmwareVersion(GISUNLINK_HW_SN,gisunlink_system->deviceHWSn);
+				waitHWSn = gisunlink_getDeviceHWSnOrFirmwareVersion(GISUNLINK_HW_SN);
 			}
 
 			if(waitFirmwareVersion == false) {
-				waitFirmwareVersion = gisunlink_getDeviceHWSnOrFirmwareVersion(GISUNLINK_FIRMWARE_VERSION,gisunlink_system->deviceFWVersion);
+				waitFirmwareVersion = gisunlink_getDeviceHWSnOrFirmwareVersion(GISUNLINK_FIRMWARE_VERSION);
 			}
 
 			if(waitHWSn && waitFirmwareVersion) {
 				gisunlink_mqtt_connect(gisunlink_mqtt_connectCb,gisunlink_mqtt_messageCb);
+				//触发了升级重试
 				if(update_retry) {
 					if(++update_retry_tick >= 60) {
 						update_retry_tick = 0;
+						//触发一个升级信号
 						gisunlink_updatefirmware_start_signal();
 					}
 				}

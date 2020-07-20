@@ -159,9 +159,10 @@ static void gisunlink_system_setparm(gisunlink_system_ctrl *gisunlink_system) {
 	gisunlink_system->getUsec = gisunlink_system_get_usec;
 }
 
-gisunlink_system_ctrl *gisunlink_system_init(char *DeviceHWSn_addr,GISUNLINK_MESSAGE_CB *messageCb) {
+gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 	gisunlink_system_ctrl *gisunlink_system = (gisunlink_system_ctrl *)gisunlink_malloc(sizeof(gisunlink_system_ctrl)); 
 	if(gisunlink_system) {
+		memset(gisunlink_system,0x0,sizeof(gisunlink_system_ctrl));
 		gisunlink_system->state = gisunlink_netmanager_get_state();
 		//设置系统参数
 		gisunlink_system_setparm(gisunlink_system);
@@ -179,7 +180,7 @@ gisunlink_system_ctrl *gisunlink_system_init(char *DeviceHWSn_addr,GISUNLINK_MES
 		//初始化外围模块
 		gisunlink_peripheral_init();
 		//初始化MQTT
-		gisunlink_mqtt_init(DeviceHWSn_addr);
+		gisunlink_mqtt_init(gisunlink_system->deviceHWSn);
 		//初始化固件下载
 		gisunlink_updatefirmware_init();
 	}

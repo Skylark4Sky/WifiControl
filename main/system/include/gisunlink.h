@@ -25,6 +25,7 @@
 #define SSIDMAXLEN          32
 #define PSWDMAXLEN          64
 #define TOKENMAXLEN			32
+#define DEVICEINFOSIZE		25
 
 #ifdef __cplusplus
 extern "C"
