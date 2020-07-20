@@ -29,8 +29,12 @@ typedef void GISUNLINK_TIME_SYNC(bool);
 typedef uint8 GISUNLINK_MESSAGE_CB(void *message);
 
 typedef struct _gisunlink_system_ctrl {
+	bool waitHWSn;
+	bool waitFirmwareVersion;
 	bool time_sync;
+	bool update_retry;
 	uint8 state;
+	uint16 update_retry_tick;
 	char deviceHWSn[DEVICEINFOSIZE];
 	char deviceFWVersion[DEVICEINFOSIZE];
 	GISUNLINK_HEAP_SIZE *heapSize;

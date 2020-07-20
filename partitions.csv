@@ -1,7 +1,10 @@
 # Name,   Type, SubType, Offset,  Size, Flags ota_data0 = 0x100000 data1 offset 0x110000 0x100000
 # Note: if you change the phy_init or app partition offset, make sure to change the offset in Kconfig.projbuild
+#ota_data0 start address in chipflash offset 64K	
 nvs,      data, nvs,     0x9000,	0x4000,
-otadata,  data, ota,     0xd000,	0x2000
+otadata,  data, ota,     0xd000,	0x2000,
 phy_init, data, phy,     0xf000,	0x1000,
+#ota_data0, app, factory,	0x10000,	0x100000,
+#ota_data1, app, factory,	0x110000,	0x100000,	
 factory,  app,  factory, 0x10000,	0x200000,
-storage,  data, spiffs,  0x210000,	0x1EC000, 
+storage,  data, spiffs,  0x210000,	0x1F0000, 

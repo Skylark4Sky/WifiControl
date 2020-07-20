@@ -27,9 +27,6 @@
 #include "gisunlink_peripheral.h"
 #include "gisunlink_updatefirmware.h"
 
-#define FIRMWARE_SEND_RETRY 5
-#define STM32_UNIQUE_ID_SIZE 12
-
 static gisunlink_system_ctrl *gisunlink_system = NULL;
 
 static gisunlink_firmware_update_hook update_hook = {
@@ -40,11 +37,6 @@ static gisunlink_firmware_update_hook update_hook = {
 };
 
 //等待获取设备号
-static bool waitHWSn = false;
-static bool waitFirmwareVersion = false;
-
-static bool update_retry = false;
-static uint16_t update_retry_tick = 0;
 
 #define RESPOND_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"behavior\":%d,\"data\":{\"req_id\":%ld,\"success\":%s,\"msg\":\"%s\"}}"
 #define PUBLISH_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"behavior\":%d,\"data\":\"%s\",\"ctime\":%ld}"
@@ -303,14 +295,14 @@ uint8 gisunlink_firmware_query(gisunlink_firmware_update *firmware) {
 	}
 
 	if(ret == GISUNLINK_DEVICE_TIMEOUT) {
-		update_retry = true;
+		gisunlink_system->update_retry = true;
 	} else {
-		update_retry = false;
+		gisunlink_system->update_retry = false;
 	}
 
-	update_retry_tick = 0;
+	gisunlink_system->update_retry_tick = 0;
 
-	gisunlink_print(GISUNLINK_PRINT_WARN,"firmware_query update_retry:%s",update_retry ? "true" : "false");
+	gisunlink_print(GISUNLINK_PRINT_WARN,"firmware_query update_retry:%s",gisunlink_system->update_retry ? "true" : "false");
 
 	return ret;
 } 
@@ -448,26 +440,30 @@ static bool gisunlink_getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter) {
 
 void app_main(void) {
 	gisunlink_system = gisunlink_system_init(gisunlink_message_callback);
-	update_hook.query = gisunlink_firmware_query; 
-	update_hook.transfer = gisunlink_firmware_transfer; 
-	update_hook.check = gisunlink_firmware_chk; 
-	gisunlink_updatefirmware_register_hook(&update_hook);
+
+	if(gisunlink_system) {
+		update_hook.query = gisunlink_firmware_query; 
+		update_hook.transfer = gisunlink_firmware_transfer; 
+		update_hook.check = gisunlink_firmware_chk; 
+		gisunlink_updatefirmware_register_hook(&update_hook);
+	}
+
 
 	while(1) {
 		if(gisunlink_system->isConnectAp()) {
-			if(waitHWSn == false) {
-				waitHWSn = gisunlink_getDeviceHWSnOrFirmwareVersion(GISUNLINK_HW_SN,gisunlink_system->deviceHWSn);
+			if(gisunlink_system->waitHWSn == false) {
+				gisunlink_system->waitHWSn = gisunlink_getDeviceHWSnOrFirmwareVersion(GISUNLINK_HW_SN,gisunlink_system->deviceHWSn);
 			}
 
-			if(waitFirmwareVersion == false) {
-				waitFirmwareVersion = gisunlink_getDeviceHWSnOrFirmwareVersion(GISUNLINK_FIRMWARE_VERSION,gisunlink_system->deviceFWVersion);
+			if(gisunlink_system->waitFirmwareVersion == false) {
+				gisunlink_system->waitFirmwareVersion = gisunlink_getDeviceHWSnOrFirmwareVersion(GISUNLINK_FIRMWARE_VERSION,gisunlink_system->deviceFWVersion);
 			}
 
-			if(waitHWSn && waitFirmwareVersion) {
+			if(gisunlink_system->waitHWSn && gisunlink_system->waitFirmwareVersion) {
 				gisunlink_mqtt_connect(gisunlink_mqtt_connectCb,gisunlink_mqtt_messageCb);
-				if(update_retry) {
-					if(++update_retry_tick >= 60) {
-						update_retry_tick = 0;
+				if(gisunlink_system->update_retry) {
+					if(++gisunlink_system->update_retry_tick >= 60) {
+						gisunlink_system->update_retry_tick = 0;
 						gisunlink_updatefirmware_start_signal();
 					}
 				}
