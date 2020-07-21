@@ -21,6 +21,12 @@
 #include "gisunlink_type.h"
 #include "gisunlink_print.h"
 
+#define GETDEVICEINFO		"/device"
+#define TRANSFER_RESPOND	"/point_switch_resp"
+#define STATUS_POST			"/power_run/"
+#define FIRMWARE_UPDATE		"/point_common"
+#define	TASK_TRANSFER		"/point_switch"
+
 #define MACMAXLEN           6
 #define SSIDMAXLEN          32
 #define PSWDMAXLEN          64

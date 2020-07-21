@@ -63,9 +63,9 @@ static void gisunlink_mqtt_connectCb(MQTT_CONNECT_STATUS status) {
 		char upgrade_topic[32] = {0};
 		gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_CONNECTED_SER);
 		gisunlink_print(GISUNLINK_PRINT_INFO,"MQ connect succeed");
-		sprintf(task_topic, "%s/%s","/point_switch",gisunlink_system->deviceHWSn);
-		sprintf(prv_upgrade_topic, "%s/%s","/point_common",gisunlink_system->deviceHWSn);
-		sprintf(upgrade_topic, "%s","/point_common");
+		sprintf(task_topic, "%s/%s",TASK_TRANSFER,gisunlink_system->deviceHWSn);
+		sprintf(prv_upgrade_topic, "%s/%s",FIRMWARE_UPDATE,gisunlink_system->deviceHWSn);
+		sprintf(upgrade_topic, "%s",FIRMWARE_UPDATE);
 		gisunlink_mqtt_subscribe(task_topic,0);
 		gisunlink_mqtt_subscribe(upgrade_topic,0);
 		gisunlink_mqtt_subscribe(prv_upgrade_topic,0);

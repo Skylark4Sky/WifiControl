@@ -78,7 +78,7 @@ void mqttMessagePublish(gisunlink_system_ctrl *gisunlink_system, const char *act
 				int ret = 0;
 				if((ret = mbedtls_base64_encode(base64Str, base64_len, &base64_len, data, data_len)) == 0) { 
 					asprintf(&publish_data,PUBLISH_FORMAT,requestID,act,behavior,base64Str,getNowTimeBySec());
-					asprintf(&publish_topic,"/power_run/%s",gisunlink_system->deviceHWSn); 
+					asprintf(&publish_topic,"%s%s",STATUS_POST,gisunlink_system->deviceHWSn); 
 					gisunlink_print(GISUNLINK_PRINT_ERROR,"%s ->data:%s",publish_topic,publish_data);
 					if(publish_ack == MQTT_PUBLISH_NEEDACK) {
 						gisunlink_mqtt_publish(publish_topic,publish_data,2,requestID,publish_ack);
@@ -110,7 +110,7 @@ void mqttMessageRespond(const char *act,uint8 behavior,uint32 req_id,bool result
 	uint32 requestID = getRequestID();
 	char *result_str = result ? "true" : "false";
 	asprintf(&resp_buf,RESPOND_FORMAT,requestID,act,behavior,req_id,result_str,msg);
-	gisunlink_mqtt_publish("/point_switch_resp",resp_buf,0,requestID,MQTT_PUBLISH_NOACK);
+	gisunlink_mqtt_publish(TRANSFER_RESPOND,resp_buf,0,requestID,MQTT_PUBLISH_NOACK);
 	gisunlink_print(GISUNLINK_PRINT_WARN,"%s id:%d msg:%s",act,req_id,msg);
 	if(resp_buf) {
 		gisunlink_free(resp_buf);
@@ -150,7 +150,7 @@ static void deviceInfoHandle(gisunlink_system_ctrl *gisunlink_system,gisunlink_m
 	char *resp_buf = NULL;
 	uint32 requestID = getRequestID();
 	asprintf(&resp_buf,DEVICE_INFO_FORMAT,requestID,message->act,gisunlink_system->deviceFWVersion,gisunlink_system->deviceHWSn);
-	gisunlink_mqtt_publish("/device",resp_buf,0,requestID,MQTT_PUBLISH_NOACK);
+	gisunlink_mqtt_publish(GETDEVICEINFO,resp_buf,0,requestID,MQTT_PUBLISH_NOACK);
 
 	if(resp_buf) {
 		gisunlink_free(resp_buf);
