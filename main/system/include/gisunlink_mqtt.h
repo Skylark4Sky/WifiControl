@@ -76,7 +76,7 @@ bool gisunlink_mqtt_subscribe(const char *topic,uint8 qos);
  * @param 是否需要确认服务器ack反馈 
  * @return bool
  */
-bool gisunlink_mqtt_publish(char *topic,const char *payload,uint8 qos, uint32_t publish_id, bool ackstatus); 
+bool gisunlink_mqtt_publish(char *topic,const char *payload,uint8 qos, uint32 publish_id, bool ackstatus); 
 
 /*! @brief 返回客户端ID
  * @return void

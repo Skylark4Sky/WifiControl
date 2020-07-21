@@ -16,7 +16,6 @@
 #include "freertos/semphr.h"
 #include "esp_system.h"
 
-#include <sys/time.h>
 
 #include "gisunlink_mqtt.h"
 #include "gisunlink_sntp.h"
@@ -28,29 +27,6 @@
 #include "gisunlink_peripheral.h"
 //#include "gisunlink_authorization.h"
 #include "gisunlink_updatefirmware.h"
-
-static struct timeval systime; 
-
-static char gisunlink_system_chk_ap_rssi(void) {
-	static int rssi = 0xFF;
-	static uint32 send_wait = 0;
-	int ap_rssi = gisunlink_netmanager_get_ap_rssi();
-	if((send_wait%5) == 0) {
-		gisunlink_peripheral_message uart_message = {
-			.cmd = GISUNLINK_NETWORK_RSSI,
-			.data = (uint8 *)&ap_rssi,
-			.data_len = 1,
-			.respond = UART_NO_RESPOND,
-			.respondCb = NULL,
-		};
-		if(rssi != ap_rssi) {
-			rssi = ap_rssi;
-			gisunlink_peripheral_send_message(&uart_message);
-		}
-	} 
-	send_wait++;
-	return ap_rssi;
-}
 
 static void gisunlink_sntp_respond(SNTP_RESPOND repsond,void *param) {
 	if(param) {
@@ -138,25 +114,15 @@ static void gisunlink_system_uart_event(void *message, void *param) {
 	}
 }
 
-static uint32 gisunlink_system_get_sec(void) {
-	gettimeofday(&systime,NULL);
-	return systime.tv_sec;
-}
-
-static uint32 gisunlink_system_get_usec(void) {
-	gettimeofday(&systime,NULL);
-	return systime.tv_usec;// 1000;
-}
-
 static void gisunlink_system_setparm(gisunlink_system_ctrl *gisunlink_system) {
 	gisunlink_system->time_sync = false;
-	gisunlink_system->heapSize = esp_get_free_heap_size; 
-	gisunlink_system->apRssi = gisunlink_system_chk_ap_rssi;
+	//gisunlink_system->heapSize = esp_get_free_heap_size; 
+	//gisunlink_system->apRssi = gisunlink_system_chk_ap_rssi;
 	gisunlink_system->isConnectAp = gisunlink_netmanager_is_connected_ap; 
 	gisunlink_system->uartHandle = gisunlink_system_uart_event;
 	gisunlink_system->routeHandle = gisunlink_system_netmanager_event;
-	gisunlink_system->getSec = gisunlink_system_get_sec;
-	gisunlink_system->getUsec = gisunlink_system_get_usec;
+//	gisunlink_system->getSec = gisunlink_system_get_sec;
+//	gisunlink_system->getUsec = gisunlink_system_get_usec;
 }
 
 gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {

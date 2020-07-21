@@ -94,8 +94,8 @@ static int gisunlink_matching_package(void *src, void *item) {
 	return 1;
 }
 
-static uint32_t gisunlink_mqtt_get_resp_message_id(char *data,int data_len) {
-	uint32_t id = 0;
+static uint32 gisunlink_mqtt_get_resp_message_id(char *data,int data_len) {
+	uint32 id = 0;
 
 	if(data && data_len) {
 		struct cJSON_Hooks js_hook = {gisunlink_malloc, &gisunlink_free};
@@ -176,7 +176,7 @@ static void gisunlink_mqtt_message_arrived(gisunlink_mqtt_ctrl *mqtt,char *topic
 
 		if(message) {
 			if(memcmp(message->act,resp_act,message->act_len) == 0) {
-				uint32_t id = gisunlink_mqtt_get_resp_message_id(message->data,message->data_len);
+				uint32 id = gisunlink_mqtt_get_resp_message_id(message->data,message->data_len);
 				if(id) {
 					gisunlink_mqtt_packet *packet = gisunlink_queue_pop_cmp(mqtt->wait_ack_queue, (void *)&id, gisunlink_matching_package);
 					if(packet) {
@@ -279,7 +279,7 @@ static esp_err_t _http_event_handler(esp_http_client_event_t *evt) {
 	return ESP_OK;
 }
 
-static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, uint32_t timeout_ms) {
+static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, uint32 timeout_ms) {
 	char *post_data = NULL;
 	char *Version = NULL;
 
@@ -437,7 +437,7 @@ static void gisunlink_mqtt_thread(void *param) {
 			if(mqtt->is_connected == false) {
 				//进入了网络配对模式
 				if(gisunlink_netmanager_is_enter_pairing()) {
-					gisunlink_print(GISUNLINK_PRINT_ERROR,"netmanager is pairing exit MQTT thread");
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"netmanager is pairing exit MQ thread");
 					esp_mqtt_client_destroy(mqtt->client);
 					mqtt->client = NULL;
 					mqtt->is_connecting = false;
@@ -601,7 +601,7 @@ bool gisunlink_mqtt_subscribe(const char *topic,uint8 qos) {
 	return false;
 } 
 
-bool gisunlink_mqtt_publish(char *topic,const char *payload,uint8 qos, uint32_t publish_id, bool ackstatus) {
+bool gisunlink_mqtt_publish(char *topic,const char *payload,uint8 qos, uint32 publish_id, bool ackstatus) {
 	if(gisunlink_mqtt && gisunlink_mqtt->is_connected) {
 		gisunlink_mqtt_packet *packet = (gisunlink_mqtt_packet *)gisunlink_malloc(sizeof(gisunlink_mqtt_packet));
 		packet->type = GISUNLINK_TOPIC_PUB;

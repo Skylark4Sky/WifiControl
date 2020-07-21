@@ -26,6 +26,8 @@ typedef uint8 GISUNLINK_FIRMWARE_CHK(void);
 
 typedef struct _gisunlink_firmware_update_hook {
 	bool update;
+	bool update_retry;
+	uint16 update_retry_tick;
 	uint32 version;
 	uint32 file_size;
 	uint32 send_size;

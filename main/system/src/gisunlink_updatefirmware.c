@@ -433,9 +433,10 @@ static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *upda
 
 	if(firmware->transfer_over == false && firmware->download->size > 0 && firmware->download->ver > 0) {
 		gisunlink_print(GISUNLINK_PRINT_WARN,"firmware:%s md5:%s size:%d",firmware->download->path,firmware->download->md5,firmware->download->size);
-		//查询下位机是否可以升级
 		bool transfer_over = false;
 		bool clean_version = false;
+		update_hook->update_retry = false;
+		update_hook->update_retry_tick = 0;
 		switch(update_hook->query(firmware)) {
 			case GISUNLINK_NEED_UPGRADE:
 				{
@@ -448,12 +449,15 @@ static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *upda
 				}
 				break;
 			case GISUNLINK_NO_NEED_UPGRADE:
-				gisunlink_print(GISUNLINK_PRINT_ERROR,"device no need to update firmware");
 				clean_version = true;
+				gisunlink_print(GISUNLINK_PRINT_ERROR,"device no need to update firmware");
 				break;
-			case GISUNLINK_DEVICE_TIMEOUT:
-				gisunlink_print(GISUNLINK_PRINT_ERROR,"device is off-line");
-				break;
+			case GISUNLINK_DEVICE_TIMEOUT: 
+				{
+					update_hook->update_retry = true;
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"device is off-line");
+					break;
+				}
 		}
 
 		if(transfer_over) {
