@@ -15,11 +15,6 @@
 #include <sys/unistd.h>
 #include <sys/stat.h>
 
-//#include "crypto/includes.h"
-//#include "crypto/common.h"
-//#include "crypto/md5.h"
-//#include "crypto/md5_i.h"
-//#include "crypto/crypto.h"
 #include "rom/md5_hash.h"
 #include "mbedtls/base64.h"
 
