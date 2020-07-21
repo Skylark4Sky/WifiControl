@@ -1,4 +1,4 @@
-cscope 15 $HOME/gisunlink -q 0000005627 0000607513
+cscope 15 $HOME/gisunlink -q 0000005629 0000608915
 	@build/include/sdkconfig.h
 
 5 #¥agm®
@@ -2483,27 +2483,51 @@ __GISUNLINK_MQTT_TASK_H__
 __˝lu•lus
 
 
-25 
-uöt8
- 
-gisu∆ök_mesßge_ˇŒback
+31 
+mqâMesßgePublish
 (
 gisu∆ök_sy°em_˘æ
  *
 gisu∆ök_sy°em
-, *
-mesßge_d©a
+, c⁄° *
+a˘
+,*
+mesßge
 );
 
-27 
-gisu∆ök_mqâ_mesßgeCb
+41 
+mqâMesßgeRe•⁄d
+(c⁄° *
+a˘
+,
+uöt8
+ 
+behavi‹
+,
+uöt32
+ 
+ªq_id
+,
+boﬁ
+ 
+ªsu…
+,c⁄° *
+msg
+);
+
+47 
+mqâRecvMesßgeH™dÀ
 (
+gisu∆ök_sy°em_˘æ
+ *
+gisu∆ök_sy°em
+, 
 gisu∆ök_mqâ_mesßge
  *
 mesßge
 );
 
-29 #ifde‡
+49 #ifde‡
 __˝lu•lus
 
 
@@ -2519,11 +2543,15 @@ __GISUNLINK_UPDATE_TASK_H__
 
 	)
 
-16 #ifde‡
+16 
+	~"gisu∆ök.h
+"
+
+18 #ifde‡
 __˝lu•lus
 
 
-21 
+23 
 uöt8
  
 fúmw¨eQuîy
@@ -2533,13 +2561,13 @@ gisu∆ök_fúmw¨e_upd©e
 fúmw¨e
 );
 
-23 
+25 
 uöt8
  
 fúmw¨eChk
 ();
 
-25 
+27 
 boﬁ
  
 fúmw¨eTøns„r
@@ -2555,7 +2583,7 @@ d©a
 Àn
 );
 
-27 #ifde‡
+29 #ifde‡
 __˝lu•lus
 
 
@@ -2601,20 +2629,430 @@ __˝lu•lus
 	~"gisu∆ök_≥rùhîÆ.h
 "
 
-26 
+25 
+	~"gisu∆ök_upd©efúmw¨e.h
+"
+
+27 
 	#PUBLISH_FORMAT
  "{\"id\":%lu,\"a˘\":\"%s\",\"behavi‹\":%d,\"d©a\":\"%s\",\"˘ime\":%ld}"
 
 	)
 
-27 
+28 
 	#RESPOND_FORMAT
  "{\"id\":%lu,\"a˘\":\"%s\",\"behavi‹\":%d,\"d©a\":{\"ªq_id\":%ld,\"suc˚ss\":%s,\"msg\":\"%s\"}}"
 
 	)
 
-29 
-	$gisu∆ök_mqâ_mesßge_ª•⁄d
+30 
+	#DEVICE_INFO_FORMAT
+ "{\"id\":%lu,\"a˘\":\"%s\",\"behavi‹\":%d,\"d©a\":{\"ªq_id\":%ld,\"suc˚ss\":%s,\"msg\":\"%s\"}}"
+
+	)
+
+32 
+	$m©tTøns„rTaskRe•⁄d
+(
+gisu∆ök_ª•⁄d_mesßge
+ *
+mesßge
+) {
+
+33 *
+msg
+ = 
+NULL
+;
+
+34 
+boﬁ
+ 
+£nd_°©us
+ = 
+Ál£
+;
+
+35 
+mesßge
+->
+ªas⁄
+) {
+
+36 
+GISUNLINK_SEM_ERROR
+:
+
+37 
+msg
+ = "systemÉrror";
+
+39 
+GISUNLINK_SEND_SUCCEED
+:
+
+40 
+msg
+ = "send data succeed";
+
+41 
+£nd_°©us
+ = 
+åue
+;
+
+43 
+GISUNLINK_SEND_TIMEOUT
+:
+
+44 
+msg
+ = "send dataÅimeout";
+
+46 
+GISUNLINK_SEND_BUSY
+:
+
+47 
+msg
+ = "system busy";
+
+50 
+msg
+ = "unknownÉrror";
+
+52 
+	`mqâMesßgeRe•⁄d
+("å™s„r",
+mesßge
+->
+behavi‹
+,mesßge->
+hódög
+,
+£nd_°©us
+,
+msg
+);
+
+53 
+	}
+}
+
+55 
+	$mqâMesßgePublish
+(
+gisu∆ök_sy°em_˘æ
+ *
+gisu∆ök_sy°em
+, c⁄° *
+a˘
+,*
+mesßge
+) {
+
+56 
+gisu∆ök_u¨t_evít
+ *
+u¨t
+ = (gisu∆ök_u¨t_evíà*)
+mesßge
+;
+
+58 if(
+u¨t
+ =
+NULL
+) {
+
+62 if(
+u¨t
+->
+cmd
+ =
+GISUNLINK_TASK_CONTROL
+ && 
+	`gisu∆ök_mqâ_isc⁄√˘ed
+()) {
+
+63 
+	`gisu∆ök_¥öt
+(
+GISUNLINK_PRINT_ERROR
+,"gisu∆ök_mqâ_mesßge_publish cmd:0x%02x d©a_Àn:%d",
+u¨t
+->
+cmd
+,u¨t->
+d©a_Àn
+);
+
+64 *
+publish_t›ic
+ = 
+NULL
+;
+
+65 *
+publish_d©a
+ = 
+NULL
+;
+
+66 
+uöt8
+ *
+ba£64Så
+ = (uint8 *)" ";
+
+67 
+uöt8
+ 
+behavi‹
+ = (uöt8)(*
+u¨t
+->
+d©a
+);
+
+68 
+uöt8
+ 
+publish_ack
+ = (uöt8)(*(
+u¨t
+->
+d©a
+ + 1));
+
+69 
+uöt32
+ 
+£c
+ = 
+	`gëNowTimeBySec
+();
+
+70 
+uöt32
+ 
+u£c
+ = 
+	`gëNowTimeByUSec
+();
+
+71 
+uöt32
+ 
+id
+ = ((
+£c
+%100000)*10000Ë+ 
+u£c
+;
+
+72 if(
+u¨t
+->
+d©a_Àn
+ > 2) {
+
+73 
+uöt8
+ *
+d©a
+ = 
+u¨t
+->data + 2;
+
+74 
+uöt16
+ 
+d©a_Àn
+ = 
+u¨t
+->data_len - 2;
+
+75 
+uöt16
+ 
+íc_Àn
+ = 
+d©a_Àn
+/3;
+
+76 
+size_t
+ 
+ba£64_Àn
+ = (
+d©a_Àn
+%3Ë? ((
+íc_Àn
+ + 1)*4) : (enc_len*4);
+
+78 
+ba£64_Àn
+ += 3;
+
+79 
+ba£64Så
+ = (
+uöt8
+ *)
+	`gisu∆ök_mÆloc
+(
+ba£64_Àn
+);
+
+80 if(
+ba£64Så
+) {
+
+81 
+ªt
+ = 0;
+
+82 if((
+ªt
+ = 
+	`mbedés_ba£64_ícode
+(
+ba£64Så
+, 
+ba£64_Àn
+, &ba£64_Àn, 
+d©a
+, 
+d©a_Àn
+)) == 0) {
+
+83 
+	`a•rötf
+(&
+publish_d©a
+,
+PUBLISH_FORMAT
+,
+id
+,
+a˘
+,
+behavi‹
+,
+ba£64Så
+,
+£c
+);
+
+84 
+	`a•rötf
+(&
+publish_t›ic
+,"/powî_run/%s",
+gisu∆ök_sy°em
+->
+devi˚HWSn
+);
+
+85 
+	`gisu∆ök_¥öt
+(
+GISUNLINK_PRINT_ERROR
+,"%†->d©a:%s",
+publish_t›ic
+,
+publish_d©a
+);
+
+86 if(
+publish_ack
+ =
+MQTT_PUBLISH_NEEDACK
+) {
+
+87 
+	`gisu∆ök_mqâ_publish
+(
+publish_t›ic
+,
+publish_d©a
+,2,
+id
+,
+publish_ack
+);
+
+89 
+	`gisu∆ök_mqâ_publish
+(
+publish_t›ic
+,
+publish_d©a
+,0,
+id
+,
+publish_ack
+);
+
+92 
+	`gisu∆ök_¥öt
+(
+GISUNLINK_PRINT_ERROR
+,"mbedés_ba£64_ícodêÁûed %d",
+ªt
+);
+
+94 
+	`gisu∆ök_‰ì
+(
+ba£64Så
+);
+
+95 
+ba£64Så
+ = 
+NULL
+;
+
+99 if(
+publish_t›ic
+) {
+
+100 
+	`gisu∆ök_‰ì
+(
+publish_t›ic
+);
+
+101 
+publish_t›ic
+ = 
+NULL
+;
+
+104 if(
+publish_d©a
+) {
+
+105 
+	`gisu∆ök_‰ì
+(
+publish_d©a
+);
+
+106 
+publish_d©a
+ = 
+NULL
+;
+
+109 
+	}
+}
+
+111 
+	$mqâMesßgeRe•⁄d
 (c⁄° *
 a˘
 ,
@@ -2633,13 +3071,13 @@ boﬁ
 msg
 ) {
 
-30 *
+112 *
 ª•_buf
  = 
 NULL
 ;
 
-31 
+113 
 uöt32
  
 id
@@ -2649,13 +3087,13 @@ id
 	`gëNowTimeByUSec
 ();
 
-32 *
+114 *
 ªsu…_°r
  = 
 ªsu…
  ? "true" : "false";
 
-33 
+115 
 	`a•rötf
 (&
 ª•_buf
@@ -2675,7 +3113,7 @@ behavi‹
 msg
 );
 
-34 
+116 
 	`gisu∆ök_mqâ_publish
 ("/poöt_swôch_ª•",
 ª•_buf
@@ -2685,7 +3123,7 @@ id
 MQTT_PUBLISH_NOACK
 );
 
-36 
+118 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
@@ -2697,615 +3135,35 @@ a˘
 msg
 );
 
-37 if(
+119 if(
 ª•_buf
 ) {
-
-38 
-	`gisu∆ök_‰ì
-(
-ª•_buf
-);
-
-39 
-ª•_buf
- = 
-NULL
-;
-
-41 
-	}
-}
-
-43 
-	$gisu∆ök_mqâ_èsk_£nd_ª•⁄d
-(
-gisu∆ök_ª•⁄d_mesßge
- *
-mesßge
-) {
-
-44 *
-msg
- = 
-NULL
-;
-
-45 
-boﬁ
- 
-£nd_°©us
- = 
-Ál£
-;
-
-46 
-mesßge
-->
-ªas⁄
-) {
-
-47 
-GISUNLINK_SEM_ERROR
-:
-
-48 
-msg
- = "systemÉrror";
-
-50 
-GISUNLINK_SEND_SUCCEED
-:
-
-51 
-msg
- = "send data succeed";
-
-52 
-£nd_°©us
- = 
-åue
-;
-
-54 
-GISUNLINK_SEND_TIMEOUT
-:
-
-55 
-msg
- = "send dataÅimeout";
-
-57 
-GISUNLINK_SEND_BUSY
-:
-
-58 
-msg
- = "system busy";
-
-61 
-msg
- = "unknownÉrror";
-
-63 
-	`gisu∆ök_mqâ_mesßge_ª•⁄d
-("å™s„r",
-mesßge
-->
-behavi‹
-,mesßge->
-hódög
-,
-£nd_°©us
-,
-msg
-);
-
-64 
-	}
-}
-
-66 
-	$gisu∆ök_mqâ_mesßge_publish
-(
-gisu∆ök_sy°em_˘æ
- *
-gisu∆ök_sy°em
-, c⁄° *
-a˘
-,*
-mesßge
-) {
-
-67 
-gisu∆ök_u¨t_evít
- *
-u¨t
- = (gisu∆ök_u¨t_evíà*)
-mesßge
-;
-
-69 if(
-u¨t
- =
-NULL
-) {
-
-73 if(
-u¨t
-->
-cmd
- =
-GISUNLINK_TASK_CONTROL
- && 
-	`gisu∆ök_mqâ_isc⁄√˘ed
-()) {
-
-74 
-	`gisu∆ök_¥öt
-(
-GISUNLINK_PRINT_ERROR
-,"gisu∆ök_mqâ_mesßge_publish cmd:0x%02x d©a_Àn:%d",
-u¨t
-->
-cmd
-,u¨t->
-d©a_Àn
-);
-
-75 *
-publish_t›ic
- = 
-NULL
-;
-
-76 *
-publish_d©a
- = 
-NULL
-;
-
-77 
-uöt8
- *
-ba£64Så
- = (uint8 *)" ";
-
-78 
-uöt8
- 
-behavi‹
- = (uöt8)(*
-u¨t
-->
-d©a
-);
-
-79 
-uöt8
- 
-publish_ack
- = (uöt8)(*(
-u¨t
-->
-d©a
- + 1));
-
-80 
-uöt32
- 
-£c
- = 
-	`gëNowTimeBySec
-();
-
-81 
-uöt32
- 
-u£c
- = 
-	`gëNowTimeByUSec
-();
-
-82 
-uöt32
- 
-id
- = ((
-£c
-%100000)*10000Ë+ 
-u£c
-;
-
-83 if(
-u¨t
-->
-d©a_Àn
- > 2) {
-
-84 
-uöt8
- *
-d©a
- = 
-u¨t
-->data + 2;
-
-85 
-uöt16
- 
-d©a_Àn
- = 
-u¨t
-->data_len - 2;
-
-86 
-uöt16
- 
-íc_Àn
- = 
-d©a_Àn
-/3;
-
-87 
-size_t
- 
-ba£64_Àn
- = (
-d©a_Àn
-%3Ë? ((
-íc_Àn
- + 1)*4) : (enc_len*4);
-
-89 
-ba£64_Àn
- += 3;
-
-90 
-ba£64Så
- = (
-uöt8
- *)
-	`gisu∆ök_mÆloc
-(
-ba£64_Àn
-);
-
-91 if(
-ba£64Så
-) {
-
-92 
-ªt
- = 0;
-
-93 if((
-ªt
- = 
-	`mbedés_ba£64_ícode
-(
-ba£64Så
-, 
-ba£64_Àn
-, &ba£64_Àn, 
-d©a
-, 
-d©a_Àn
-)) == 0) {
-
-94 
-	`a•rötf
-(&
-publish_d©a
-,
-PUBLISH_FORMAT
-,
-id
-,
-a˘
-,
-behavi‹
-,
-ba£64Så
-,
-£c
-);
-
-95 
-	`a•rötf
-(&
-publish_t›ic
-,"/powî_run/%s",
-gisu∆ök_sy°em
-->
-devi˚HWSn
-);
-
-96 
-	`gisu∆ök_¥öt
-(
-GISUNLINK_PRINT_ERROR
-,"%†->d©a:%s",
-publish_t›ic
-,
-publish_d©a
-);
-
-97 if(
-publish_ack
- =
-MQTT_PUBLISH_NEEDACK
-) {
-
-98 
-	`gisu∆ök_mqâ_publish
-(
-publish_t›ic
-,
-publish_d©a
-,2,
-id
-,
-publish_ack
-);
-
-100 
-	`gisu∆ök_mqâ_publish
-(
-publish_t›ic
-,
-publish_d©a
-,0,
-id
-,
-publish_ack
-);
-
-103 
-	`gisu∆ök_¥öt
-(
-GISUNLINK_PRINT_ERROR
-,"mbedés_ba£64_ícodêÁûed %d",
-ªt
-);
-
-105 
-	`gisu∆ök_‰ì
-(
-ba£64Så
-);
-
-106 
-ba£64Så
- = 
-NULL
-;
-
-110 if(
-publish_t›ic
-) {
-
-111 
-	`gisu∆ök_‰ì
-(
-publish_t›ic
-);
-
-112 
-publish_t›ic
- = 
-NULL
-;
-
-115 if(
-publish_d©a
-) {
-
-116 
-	`gisu∆ök_‰ì
-(
-publish_d©a
-);
-
-117 
-publish_d©a
- = 
-NULL
-;
 
 120 
-	}
-}
-
-122 
-uöt8
- 
-	$gisu∆ök_mesßge_ˇŒback
+	`gisu∆ök_‰ì
 (
-gisu∆ök_sy°em_˘æ
- *
-gisu∆ök_sy°em
-, *
-mesßge_d©a
-) {
-
-123 if(
-mesßge_d©a
- && 
-gisu∆ök_sy°em
-) {
-
-124 
-gisu∆ök_mesßge
- *
-mesßge
- = (gisu∆ök_mesßgê*)
-mesßge_d©a
-;
-
-125 
-mesßge
-->
-§c_id
-) {
-
-126 
-GISUNLINK_NETMANAGER_MODULE
-:
-
-127 if(
-mesßge
-->
-d©a
- && mesßge->
-d©a_Àn
-) {
-
-128 
-gisu∆ök_sy°em
-->
-	`rouãH™dÀ
-(
-mesßge
-->
-d©a
-,gisunlink_system);
-
-131 
-GISUNLINK_PERIPHERAL_MODULE
-:
-
-132 if(
-mesßge
-->
-d©a
- && mesßge->
-d©a_Àn
-) {
-
-133 
-	`gisu∆ök_mqâ_mesßge_publish
-(
-gisu∆ök_sy°em
-,"å™s„r",
-mesßge
-->
-d©a
+ª•_buf
 );
 
-134 
-gisu∆ök_sy°em
-->
-	`u¨tH™dÀ
-(
-mesßge
-->
-d©a
-,gisunlink_system);
-
-138  
-åue
+121 
+ª•_buf
+ = 
+NULL
 ;
 
-139 
+123 
 	}
 }
 
-141 
-	$gisu∆ök_mqâ_mesßgeCb
+125 
+	$å™s„rH™dÀ
 (
 gisu∆ök_mqâ_mesßge
  *
 mesßge
 ) {
 
-142 c⁄° *
-upd©e_vî_a˘
- = "update_ver";
-
-143 c⁄° *
-å™s„r_a˘
- = "transfer";
-
-144 if(
-mesßge
- && mesßge->
-d©a
- && mesßge->
-d©a_Àn
-) {
-
-145 if(
-	`memcmp
-(
-mesßge
-->
-a˘
-,
-å™s„r_a˘
-,mesßge->
-a˘_Àn
-) == 0) {
-
-146 if(
-upd©e_hook
-.
-upd©e
- =
-åue
-) {
-
-147 *
-msg
- = 
-NULL
-;
-
-148 
-	`a•rötf
-(&
-msg
-,"sy°em upgøde! vî:%ld fûe_size:%ldÖrogªss_size: %ld",
-upd©e_hook
-.
-vîsi⁄
-,upd©e_hook.
-fûe_size
-,upd©e_hook.
-£nd_size
-);
-
-149 
-	`gisu∆ök_mqâ_mesßge_ª•⁄d
-("å™s„r",
-mesßge
-->
-behavi‹
-,mesßge->
-id
-,
-Ál£
-,
-msg
-);
-
-150 if(
-msg
-) {
-
-151 
-	`gisu∆ök_‰ì
-(
-msg
-);
-
-152 
-msg
- = 
-NULL
-;
-
-158 
+126 
 uöt16
  
 d©a_Àn
@@ -3313,7 +3171,7 @@ d©a_Àn
 mesßge
 ->data_len + 4 - ((message->data_len%4));
 
-159 
+127 
 uöt8
  *
 u¨t_buf
@@ -3323,21 +3181,21 @@ u¨t_buf
 d©a_Àn
  + 1);
 
-161 if(
+129 if(
 u¨t_buf
 ) {
 
-162 
+130 
 ªt
  = 0;
 
-163 
+131 
 size_t
  
 dec_Àn
  = 0;
 
-164 
+132 
 uöt8
  *
 dec_buf
@@ -3345,7 +3203,7 @@ dec_buf
 u¨t_buf
  + 1;
 
-165 if((
+133 if((
 ªt
  = 
 	`mbedés_ba£64_decode
@@ -3363,7 +3221,7 @@ mesßge
 d©a
 , data_len)) == 0) {
 
-166 
+134 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
@@ -3375,7 +3233,7 @@ d©a_Àn
 d©a
 );
 
-167 
+135 
 u¨t_buf
 [0] = 
 mesßge
@@ -3383,19 +3241,19 @@ mesßge
 behavi‹
 ;
 
-168 
+136 
 gisu∆ök_≥rùhîÆ_mesßge
  
 u¨t_mesßge
  = {
 
-169 .
+137 .
 behavi‹
  = 
 mesßge
 ->behavior,
 
-170 .
+138 .
 hódög
  = 
 mesßge
@@ -3403,43 +3261,43 @@ mesßge
 id
 ,
 
-171 .
+139 .
 cmd
  = 
 GISUNLINK_TASK_CONTROL
 ,
 
-172 .
+140 .
 d©a
  = 
 u¨t_buf
 ,
 
-173 .
+141 .
 d©a_Àn
  = 
 dec_Àn
  + 1,
 
-174 .
+142 .
 ª•⁄d
  = 
 UART_RESPOND
 ,
 
-175 .
+143 .
 ª•⁄dCb
  = 
-gisu∆ök_mqâ_èsk_£nd_ª•⁄d
+m©tTøns„rTaskRe•⁄d
 ,
 
-177 
+145 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
 (&
 u¨t_mesßge
 );
 
-179 
+147 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -3447,7 +3305,7 @@ GISUNLINK_PRINT_ERROR
 ªt
 );
 
-181 
+149 
 	`gisu∆ök_‰ì
 (
 u¨t_buf
@@ -3455,19 +3313,43 @@ u¨t_buf
 NULL
 ;
 
-184 if(
-	`memcmp
+151 
+	}
+}
+
+153 
+	$mqâRecvMesßgeH™dÀ
 (
+gisu∆ök_sy°em_˘æ
+ *
+gisu∆ök_sy°em
+, 
+gisu∆ök_mqâ_mesßge
+ *
+mesßge
+) {
+
+154 
 mesßge
 ->
-a˘
-,
-upd©e_vî_a˘
-,mesßge->
-a˘_Àn
-) == 0) {
+a˘_ty≥
+) {
 
-185 
+155 
+TRANSFER_ACT
+:
+
+156 
+	`å™s„rH™dÀ
+(
+mesßge
+);
+
+158 
+UPDATE_VER_ACT
+:
+
+159 
 	`gisu∆ök_upd©efúmw¨e_dow∆ﬂd_√w_fúmw¨e
 (
 mesßge
@@ -3477,17 +3359,99 @@ d©a
 d©a_Àn
 );
 
-188 
+161 
+DEVICE_INFO_ACT
+:
+
+165 *
+msg
+ = 
+NULL
+;
+
+166 
+	`a•rötf
+(&
+msg
+,"unknow¿a˘:%s",
+mesßge
+.
+a˘
+);
+
+167 
+	`mqâMesßgeRe•⁄d
+("å™s„r",
+mesßge
+->
+behavi‹
+,mesßge->
+id
+,
+Ál£
+,
+msg
+);
+
+168 if(
+msg
+) {
+
+169 
+	`gisu∆ök_‰ì
+(
+msg
+);
+
+170 
+msg
+ = 
+NULL
+;
+
+175 
 	}
 }
 
 	@main/app/src/gisunlink_update_task.c
 
 13 
+	~"‰ìπos/FªeRTOS.h
+"
+
+15 
+	~<°dio.h
+>
+
+16 
+	~"e•_libc.h
+"
+
+17 
+	~"e•_sy°em.h
+"
+
+18 
+	~"e•_log.h
+"
+
+20 
+	~"gisu∆ök_©omic.h
+"
+
+21 
+	~"gisu∆ök_≥rùhîÆ.h
+"
+
+22 
 	~"gisu∆ök_upd©e_èsk.h
 "
 
-15 
+23 
+	~"gisu∆ök_upd©efúmw¨e.h
+"
+
+25 
 	$‰ìU¨tRe•⁄dMesßge
 (
 gisu∆ök_ª•⁄d_mesßge
@@ -3495,17 +3459,17 @@ gisu∆ök_ª•⁄d_mesßge
 ª•⁄d
 ) {
 
-16 if(
+26 if(
 ª•⁄d
 ) {
 
-17 if(
+27 if(
 ª•⁄d
 ->
 d©a
 ) {
 
-18 
+28 
 	`gisu∆ök_‰ì
 (
 ª•⁄d
@@ -3513,7 +3477,7 @@ d©a
 d©a
 );
 
-19 
+29 
 ª•⁄d
 ->
 d©a
@@ -3521,23 +3485,23 @@ d©a
 NULL
 ;
 
-21 
+31 
 	`gisu∆ök_‰ì
 (
 ª•⁄d
 );
 
-22 
+32 
 ª•⁄d
  = 
 NULL
 ;
 
-24 
+34 
 	}
 }
 
-26 
+36 
 uöt8
  
 	$fúmw¨eQuîy
@@ -3547,7 +3511,7 @@ gisu∆ök_fúmw¨e_upd©e
 fúmw¨e
 ) {
 
-27 
+37 
 uöt8
  
 ªt
@@ -3555,17 +3519,17 @@ uöt8
 GISUNLINK_DEVICE_TIMEOUT
 ;
 
-28 if(
+38 if(
 fúmw¨e
  =
 NULL
 ) {
 
-29  
+39  
 ªt
 ;
 
-31 
+42 
 uöt16
  
 d©a_Àn
@@ -3581,7 +3545,7 @@ size
 md5_Àn
 ;
 
-32 
+43 
 uöt8
  *
 u¨t_d©a
@@ -3591,11 +3555,11 @@ u¨t_d©a
 d©a_Àn
 );
 
-33 if(
+44 if(
 u¨t_d©a
 ) {
 
-34 
+45 
 uöt8
  *
 d©a_off£t
@@ -3603,7 +3567,7 @@ d©a_off£t
 u¨t_d©a
 ;
 
-35 *(
+46 *(
 d©a_off£t
 ++Ë(
 fúmw¨e
@@ -3613,7 +3577,7 @@ dow∆ﬂd
 vî
  & 0xFF);
 
-36 *(
+47 *(
 d©a_off£t
 ++Ë((
 fúmw¨e
@@ -3623,7 +3587,7 @@ dow∆ﬂd
 vî
  >> 8) & 0xFF);
 
-37 *(
+48 *(
 d©a_off£t
 ++Ë((
 fúmw¨e
@@ -3633,7 +3597,7 @@ dow∆ﬂd
 vî
  >> 16) & 0xFF);
 
-38 *(
+49 *(
 d©a_off£t
 ++Ë((
 fúmw¨e
@@ -3643,7 +3607,7 @@ dow∆ﬂd
 vî
  >> 24) & 0xFF);
 
-39 *(
+50 *(
 d©a_off£t
 ++Ë(
 fúmw¨e
@@ -3653,7 +3617,7 @@ dow∆ﬂd
 size
  & 0xFF);
 
-40 *(
+51 *(
 d©a_off£t
 ++Ë((
 fúmw¨e
@@ -3663,7 +3627,7 @@ dow∆ﬂd
 size
  >> 8) & 0xFF);
 
-41 *(
+52 *(
 d©a_off£t
 ++Ë((
 fúmw¨e
@@ -3673,7 +3637,7 @@ dow∆ﬂd
 size
  >> 16) & 0xFF);
 
-42 *(
+53 *(
 d©a_off£t
 ++Ë((
 fúmw¨e
@@ -3683,7 +3647,7 @@ dow∆ﬂd
 size
  >> 24) & 0xFF);
 
-43 
+54 
 	`mem˝y
 (
 d©a_off£t
@@ -3697,41 +3661,41 @@ md5
 md5_Àn
 );
 
-44 
+55 
 gisu∆ök_≥rùhîÆ_mesßge
  
 u¨t_mesßge
  = {
 
-45 .
+56 .
 cmd
  = 
 GISUNLINK_DEV_FW_INFO
 ,
 
-46 .
+57 .
 ª•⁄d
  = 
 UART_RESPOND
 ,
 
-47 .
+58 .
 d©a
  = 
 u¨t_d©a
 ,
 
-48 .
+59 .
 d©a_Àn
  = data_len,
 
-49 .
+60 .
 ª•⁄dCb
  = 
 NULL
 ,
 
-52 
+63 
 uöt8
  
 ªåy
@@ -3739,7 +3703,7 @@ uöt8
 FIRMWARE_SEND_RETRY
 ;
 
-53 
+64 
 gisu∆ök_ª•⁄d_mesßge
  *
 ª•⁄d
@@ -3747,11 +3711,11 @@ gisu∆ök_ª•⁄d_mesßge
 NULL
 ;
 
-55 
+66 
 ªåy
 --) {
 
-56 
+67 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -3767,7 +3731,7 @@ md5
 size
 );
 
-57 if((
+68 if((
 ª•⁄d
  = 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
@@ -3775,7 +3739,7 @@ size
 u¨t_mesßge
 ))) {
 
-58 if(
+69 if(
 ª•⁄d
 ->
 ªas⁄
@@ -3783,13 +3747,13 @@ u¨t_mesßge
 GISUNLINK_SEND_SUCCEED
 ) {
 
-59 if(
+70 if(
 ª•⁄d
 ->
 d©a_Àn
 ) {
 
-60 
+71 
 uöt8
  
 °©us
@@ -3799,13 +3763,13 @@ uöt8
 d©a
 [0];
 
-61 if(
+72 if(
 °©us
  =
 GISUNLINK_NEED_UPGRADE
 ) {
 
-62 
+73 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
@@ -3813,13 +3777,13 @@ GISUNLINK_PRINT_WARN
 °©us
 );
 
-63 
+74 
 ªt
  = 
 GISUNLINK_NEED_UPGRADE
 ;
 
-65 
+76 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
@@ -3827,23 +3791,23 @@ GISUNLINK_PRINT_WARN
 °©us
 );
 
-66 
+77 
 ªt
  = 
 GISUNLINK_NO_NEED_UPGRADE
 ;
 
-69 
+80 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"unknownÉrror!");
 
-73 if(!
+84 if(!
 ªåy
 ) {
 
-74 
+85 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -3853,77 +3817,39 @@ GISUNLINK_PRINT_ERROR
 id
 );
 
-76 
+87 
 	`gisu∆ök_èsk_dñay
 (50 / 
 p‹tTICK_PERIOD_MS
 );
 
-78 
+89 
 	`‰ìU¨tRe•⁄dMesßge
 (
 ª•⁄d
 );
 
-81 
+92 
 	`gisu∆ök_‰ì
 (
 u¨t_d©a
 );
 
-82 
+93 
 u¨t_d©a
  = 
 NULL
 ;
 
-85 if(
-ªt
- =
-GISUNLINK_DEVICE_TIMEOUT
-) {
-
-86 
-gisu∆ök_sy°em
-->
-upd©e_ªåy
- = 
-åue
-;
-
-88 
-gisu∆ök_sy°em
-->
-upd©e_ªåy
- = 
-Ál£
-;
-
-91 
-gisu∆ök_sy°em
-->
-upd©e_ªåy_tick
- = 0;
-
-93 
-	`gisu∆ök_¥öt
-(
-GISUNLINK_PRINT_WARN
-,"fúmw¨e_quîy upd©e_ªåy:%s",
-gisu∆ök_sy°em
-->
-upd©e_ªåy
- ? "true" : "false");
-
-95  
+96  
 ªt
 ;
 
-96 
+97 
 	}
 }
 
-98 
+99 
 boﬁ
  
 	$fúmw¨eTøns„r
@@ -3939,7 +3865,7 @@ d©a
 Àn
 ) {
 
-99 
+100 
 boﬁ
  
 £nd_suc˚ed
@@ -3947,7 +3873,7 @@ boﬁ
 Ál£
 ;
 
-101 if(
+102 if(
 d©a
  =
 NULL
@@ -3955,11 +3881,11 @@ NULL
 Àn
  == 0) {
 
-102  
+103  
 £nd_suc˚ed
 ;
 
-105 
+106 
 uöt16
  
 d©a_Àn
@@ -3967,7 +3893,7 @@ d©a_Àn
 Àn
 ;
 
-106 
+107 
 uöt8
  *
 u¨t_d©a
@@ -3977,11 +3903,11 @@ u¨t_d©a
 d©a_Àn
 );
 
-108 if(
+109 if(
 u¨t_d©a
 ) {
 
-109 
+110 
 uöt8
  *
 d©a_off£t
@@ -3989,31 +3915,31 @@ d©a_off£t
 u¨t_d©a
 ;
 
-110 *(
+111 *(
 d©a_off£t
 ++Ë(
 off£t
  & 0xFF);
-
-111 *(
-d©a_off£t
-++Ë((
-off£t
- >> 8) & 0xFF);
 
 112 *(
 d©a_off£t
+++Ë((
+off£t
+ >> 8) & 0xFF);
+
+113 *(
+d©a_off£t
 ++Ë(
 Àn
  & 0xFF);
 
-113 *(
+114 *(
 d©a_off£t
 ++Ë((
 Àn
  >> 8) & 0xFF);
 
-115 
+116 
 	`mem˝y
 (
 d©a_off£t
@@ -4023,41 +3949,41 @@ d©a
 Àn
 );
 
-117 
+118 
 gisu∆ök_≥rùhîÆ_mesßge
  
 u¨t_mesßge
  = {
 
-118 .
+119 .
 cmd
  = 
 GISUNLINK_DEV_FW_TRANS
 ,
 
-119 .
+120 .
 ª•⁄d
  = 
 UART_RESPOND
 ,
 
-120 .
+121 .
 d©a
  = 
 u¨t_d©a
 ,
 
-121 .
+122 .
 d©a_Àn
  = data_len,
 
-122 .
+123 .
 ª•⁄dCb
  = 
 NULL
 ,
 
-125 
+126 
 uöt8
  
 ªåy
@@ -4065,7 +3991,7 @@ uöt8
 FIRMWARE_SEND_RETRY
 ;
 
-126 
+127 
 gisu∆ök_ª•⁄d_mesßge
  *
 ª•⁄d
@@ -4073,11 +3999,11 @@ gisu∆ök_ª•⁄d_mesßge
 NULL
 ;
 
-127 
+128 
 ªåy
 --) {
 
-128 
+129 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -4087,7 +4013,7 @@ off£t
 Àn
 );
 
-129 if((
+130 if((
 ª•⁄d
  = 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
@@ -4095,7 +4021,7 @@ off£t
 u¨t_mesßge
 ))) {
 
-130 if(
+131 if(
 ª•⁄d
 ->
 ªas⁄
@@ -4103,13 +4029,13 @@ u¨t_mesßge
 GISUNLINK_SEND_SUCCEED
 ) {
 
-131 if(
+132 if(
 ª•⁄d
 ->
 d©a_Àn
 ) {
 
-132 
+133 
 uöt16_t
  
 ª•⁄d_off£t
@@ -4119,29 +4045,29 @@ uöt16_t
 d©a
 [0] + (respond->data[1] << 8);
 
-133 if(
+134 if(
 ª•⁄d_off£t
  =
 off£t
 ) {
 
-134 
+135 
 £nd_suc˚ed
  = 
 åue
 ;
 
-137 
+138 
 	`‰ìU¨tRe•⁄dMesßge
 (
 ª•⁄d
 );
 
-140 if(!
+141 if(!
 ªåy
 ) {
 
-141 
+142 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -4155,45 +4081,45 @@ off£t
 Àn
 );
 
-143 
+144 
 	`gisu∆ök_èsk_dñay
 (50 / 
 p‹tTICK_PERIOD_MS
 );
 
-145 
+146 
 	`‰ìU¨tRe•⁄dMesßge
 (
 ª•⁄d
 );
 
-148 
+149 
 	`gisu∆ök_‰ì
 (
 u¨t_d©a
 );
 
-149 
+150 
 u¨t_d©a
  = 
 NULL
 ;
 
-151  
+152  
 £nd_suc˚ed
 ;
 
-152 
+153 
 	}
 }
 
-154 
+155 
 uöt8
  
 	$fúmw¨eChk
 () {
 
-155 
+156 
 uöt8
  
 ªt
@@ -4201,41 +4127,41 @@ uöt8
 GISUNLINK_DEVICE_TIMEOUT
 ;
 
-156 
+157 
 gisu∆ök_≥rùhîÆ_mesßge
  
 u¨t_mesßge
  = {
 
-157 .
+158 .
 cmd
  = 
 GISUNLINK_DEV_FW_READY
 ,
 
-158 .
+159 .
 ª•⁄d
  = 
 UART_RESPOND
 ,
 
-159 .
+160 .
 d©a
  = 
 NULL
 ,
 
-160 .
+161 .
 d©a_Àn
  = 0,
 
-161 .
+162 .
 ª•⁄dCb
  = 
 NULL
 ,
 
-164 
+165 
 uöt8
  
 ªåy
@@ -4243,7 +4169,7 @@ uöt8
 FIRMWARE_SEND_RETRY
 ;
 
-165 
+166 
 gisu∆ök_ª•⁄d_mesßge
  *
 ª•⁄d
@@ -4251,17 +4177,17 @@ gisu∆ök_ª•⁄d_mesßge
 NULL
 ;
 
-166 
+167 
 ªåy
 --) {
 
-167 
+168 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
 ,"waitingÅhe device checkÅhe firmware");
 
-168 if((
+169 if((
 ª•⁄d
  = 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
@@ -4269,7 +4195,7 @@ GISUNLINK_PRINT_WARN
 u¨t_mesßge
 ))) {
 
-169 if(
+170 if(
 ª•⁄d
 ->
 ªas⁄
@@ -4277,19 +4203,19 @@ u¨t_mesßge
 GISUNLINK_SEND_SUCCEED
 ) {
 
-170 
+171 
 ªt
  = 
 GISUNLINK_FIRMWARE_CHK_NO_OK
 ;
 
-171 if(
+172 if(
 ª•⁄d
 ->
 d©a_Àn
 ) {
 
-172 if(
+173 if(
 ª•⁄d
 ->
 d©a
@@ -4297,23 +4223,23 @@ d©a
 GISUNLINK_FIRMWARE_CHK_OK
 ) {
 
-173 
+174 
 ªt
  = 
 GISUNLINK_FIRMWARE_CHK_OK
 ;
 
-176 
+177 
 	`‰ìU¨tRe•⁄dMesßge
 (
 ª•⁄d
 );
 
-179 if(!
+180 if(!
 ªåy
 ) {
 
-180 
+181 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -4323,23 +4249,23 @@ GISUNLINK_PRINT_ERROR
 id
 );
 
-182 
+183 
 	`gisu∆ök_èsk_dñay
 (100 / 
 p‹tTICK_PERIOD_MS
 );
 
-184 
+185 
 	`‰ìU¨tRe•⁄dMesßge
 (
 ª•⁄d
 );
 
-187  
+188  
 ªt
 ;
 
-188 
+189 
 	}
 }
 
@@ -4531,33 +4457,45 @@ __GISUNLINK_SYSTEM_UTILS_H__
 	~"gisu∆ök.h
 "
 
-18 #ifde‡
+17 
+	~"gisu∆ök_≥rùhîÆ.h
+"
+
+19 #ifde‡
 __˝lu•lus
 
 
-23 
+24 
 uöt32
  
 gëNowTimeBySec
 ();
 
-25 
+26 
 uöt32
  
 gëNowTimeByUSec
 ();
 
-27 
+28 
 gëApRssi
 ();
 
-29 
+30 
 uöt32
  
 gëHópSize
 ();
 
-31 
+32 
+‰ìU¨tRe•⁄dMesßge
+(
+gisu∆ök_ª•⁄d_mesßge
+ *
+ª•⁄d
+);
+
+34 
 boﬁ
  
 gëDevi˚HWSnOrFúmw¨eVîsi⁄
@@ -4569,7 +4507,7 @@ cmd
 buf·î
 );
 
-33 #ifde‡
+36 #ifde‡
 __˝lu•lus
 
 
@@ -6090,28 +6028,66 @@ p‹tTICK_RATE_MS
 	@main/extension/src/gisunlink_utils.c
 
 13 
-	~<sys/time.h
+	~<°dio.h
 >
 
 14 
-	~"gisu∆ök_utûs.h
-"
+	~<sys/time.h
+>
 
 15 
-	~"gisu∆ök_√tm™agî.h
+	~"‰ìπos/FªeRTOS.h
 "
 
 16 
+	~"e•_libc.h
+"
+
+17 
+	~"e•_sy°em.h
+"
+
+18 
+	~"e•_log.h
+"
+
+20 
+	~"gisu∆ök_utûs.h
+"
+
+21 
+	~"gisu∆ök_©omic.h
+"
+
+22 
+	~"gisu∆ök_√tm™agî.h
+"
+
+23 
 	~"gisu∆ök_≥rùhîÆ.h
 "
 
-18 
+25 
+timevÆ
+ 
+	gsy°ime
+;
+
+27 
 uöt32
  
 	$gëNowTimeBySec
 () {
 
-19 
+28 
+	`mem£t
+(&
+sy°ime
+,0x0,(
+timevÆ
+));
+
+29 
 	`gëtimeofday
 (&
 sy°ime
@@ -6119,23 +6095,31 @@ sy°ime
 NULL
 );
 
-20  
+30  
 sy°ime
 .
 tv_£c
 ;
 
-21 
+31 
 	}
 }
 
-23 
+33 
 uöt32
  
 	$gëNowTimeByUSec
 () {
 
-24 
+34 
+	`mem£t
+(&
+sy°ime
+,0x0,(
+timevÆ
+));
+
+35 
 	`gëtimeofday
 (&
 sy°ime
@@ -6143,53 +6127,53 @@ sy°ime
 NULL
 );
 
-25  
+36  
 sy°ime
 .
 tv_u£c
 ;
 
-26 
+37 
 	}
 }
 
-28 
+39 
 	$gëApRssi
 () {
 
-29 
+40 
 rssi
  = 0xFF;
 
-30 
+41 
 uöt32
  
 £nd_waô
  = 0;
 
-31 
+42 
 ≠_rssi
  = 
 	`gisu∆ök_√tm™agî_gë_≠_rssi
 ();
 
-32 if((
+43 if((
 £nd_waô
 %5) == 0) {
 
-33 
+44 
 gisu∆ök_≥rùhîÆ_mesßge
  
 u¨t_mesßge
  = {
 
-34 .
+45 .
 cmd
  = 
 GISUNLINK_NETWORK_RSSI
 ,
 
-35 .
+46 .
 d©a
  = (
 uöt8
@@ -6197,67 +6181,117 @@ uöt8
 ≠_rssi
 ,
 
-36 .
+47 .
 d©a_Àn
  = 1,
 
-37 .
+48 .
 ª•⁄d
  = 
 UART_NO_RESPOND
 ,
 
-38 .
+49 .
 ª•⁄dCb
  = 
 NULL
 ,
 
-40 if(
+51 if(
 rssi
  !
 ≠_rssi
 ) {
 
-41 
+52 
 rssi
  = 
 ≠_rssi
 ;
 
-42 
+53 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
 (&
 u¨t_mesßge
 );
 
-45 
+56 
 £nd_waô
 ++;
 
-46  
+57  
 ≠_rssi
 ;
 
-47 
+58 
 	}
 }
 
-49 
+60 
 uöt32
  
 	$gëHópSize
 () {
 
-50  
+61  
 	`e•_gë_‰ì_hóp_size
 ();
 
-51 
+62 
 	}
 }
 
-53 
+64 
+	$‰ìU¨tRe•⁄dMesßge
+(
+gisu∆ök_ª•⁄d_mesßge
+ *
+ª•⁄d
+) {
+
+65 if(
+ª•⁄d
+) {
+
+66 if(
+ª•⁄d
+->
+d©a
+) {
+
+67 
+	`gisu∆ök_‰ì
+(
+ª•⁄d
+->
+d©a
+);
+
+68 
+ª•⁄d
+->
+d©a
+ = 
+NULL
+;
+
+70 
+	`gisu∆ök_‰ì
+(
+ª•⁄d
+);
+
+71 
+ª•⁄d
+ = 
+NULL
+;
+
+73 
+	}
+}
+
+75 
 boﬁ
  
 	$gëDevi˚HWSnOrFúmw¨eVîsi⁄
@@ -6269,7 +6303,7 @@ cmd
 buf·î
 ) {
 
-54 
+76 
 boﬁ
  
 gëHWInfo
@@ -6277,49 +6311,49 @@ gëHWInfo
 Ál£
 ;
 
-56 if(
+78 if(
 buf·î
  =
 NULL
 ) {
 
-57  
+79  
 gëHWInfo
 ;
 
-60 
+82 
 gisu∆ök_≥rùhîÆ_mesßge
  
 u¨t_mesßge
  = {
 
-61 .
+83 .
 cmd
  = cmd,
 
-62 .
+84 .
 ª•⁄d
  = 
 UART_RESPOND
 ,
 
-63 .
+85 .
 d©a
  = 
 NULL
 ,
 
-64 .
+86 .
 d©a_Àn
  = 0,
 
-65 .
+87 .
 ª•⁄dCb
  = 
 NULL
 ,
 
-68 
+90 
 gisu∆ök_ª•⁄d_mesßge
  *
 ª•⁄d
@@ -6327,13 +6361,13 @@ gisu∆ök_ª•⁄d_mesßge
 NULL
 ;
 
-70 
+92 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
 ,"waitingÅhe device sn");
 
-71 if((
+93 if((
 ª•⁄d
  = 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
@@ -6341,7 +6375,7 @@ GISUNLINK_PRINT_WARN
 u¨t_mesßge
 ))) {
 
-72 if(
+94 if(
 ª•⁄d
 ->
 ªas⁄
@@ -6349,7 +6383,7 @@ u¨t_mesßge
 GISUNLINK_SEND_SUCCEED
 ) {
 
-73 if(
+95 if(
 ª•⁄d
 ->
 d©a_Àn
@@ -6357,7 +6391,7 @@ d©a_Àn
 STM32_UNIQUE_ID_SIZE
 ) {
 
-74 
+96 
 	`¢¥ötf
 (
 buf·î
@@ -6365,19 +6399,19 @@ buf·î
 DEVICEINFOSIZE
 ,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
 
-75 
+97 
 ª•⁄d
 ->
 d©a
 [0],respond->data[1],respond->data[2],respond->data[3],respond->data[4],respond->data[5],
 
-76 
+98 
 ª•⁄d
 ->
 d©a
 [6],respond->data[7],respond->data[8],respond->data[9],respond->data[10],respond->data[11]);
 
-77 
+99 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -6385,19 +6419,19 @@ GISUNLINK_PRINT_ERROR
 buf·î
 );
 
-78 
+100 
 gëHWInfo
  = 
 åue
 ;
 
-80 
-	`gisu∆ök_‰ì_u¨t_ª•⁄d_mesßge
+102 
+	`‰ìU¨tRe•⁄dMesßge
 (
 ª•⁄d
 );
 
-83 
+105 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -6407,23 +6441,23 @@ GISUNLINK_PRINT_ERROR
 id
 );
 
-84 
+106 
 	`gisu∆ök_èsk_dñay
 (100 / 
 p‹tTICK_PERIOD_MS
 );
 
-86 
-	`gisu∆ök_‰ì_u¨t_ª•⁄d_mesßge
+108 
+	`‰ìU¨tRe•⁄dMesßge
 (
 ª•⁄d
 );
 
-89  
+111  
 gëHWInfo
 ;
 
-90 
+112 
 	}
 }
 
@@ -6501,31 +6535,125 @@ gisu∆ök_sy°em_˘æ
 NULL
 ;
 
-34 
+33 
 gisu∆ök_fúmw¨e_upd©e_hook
  
 	gupd©e_hook
  = {
 
-35 .
+34 .
 upd©e
  = 
 Ál£
 ,
 
-36 .
+35 .
 	gvîsi⁄
  = 0,
 
-37 .
+36 .
 	gfûe_size
  = 0,
 
-38 .
+37 .
 	g£nd_size
  = 0,
 
-41 
+40 
+uöt8
+ 
+	$gisu∆ök_mesßge_ˇŒback
+(
+gisu∆ök_sy°em_˘æ
+ *
+gisu∆ök_sy°em
+, *
+mesßge_d©a
+) {
+
+41 if(
+mesßge_d©a
+ && 
+gisu∆ök_sy°em
+) {
+
+42 
+gisu∆ök_mesßge
+ *
+mesßge
+ = (gisu∆ök_mesßgê*)
+mesßge_d©a
+;
+
+43 
+mesßge
+->
+§c_id
+) {
+
+44 
+GISUNLINK_NETMANAGER_MODULE
+:
+
+45 if(
+mesßge
+->
+d©a
+ && mesßge->
+d©a_Àn
+) {
+
+46 
+gisu∆ök_sy°em
+->
+	`rouãH™dÀ
+(
+mesßge
+->
+d©a
+,gisunlink_system);
+
+49 
+GISUNLINK_PERIPHERAL_MODULE
+:
+
+50 if(
+mesßge
+->
+d©a
+ && mesßge->
+d©a_Àn
+) {
+
+51 
+	`mqâMesßgePublish
+(
+gisu∆ök_sy°em
+,"å™s„r",
+mesßge
+->
+d©a
+);
+
+52 
+gisu∆ök_sy°em
+->
+	`u¨tH™dÀ
+(
+mesßge
+->
+d©a
+,gisunlink_system);
+
+56  
+åue
+;
+
+57 
+	}
+}
+
+59 
 	$gisu∆ök_mqâ_c⁄√˘Cb
 (
 MQTT_CONNECT_STATUS
@@ -6533,25 +6661,25 @@ MQTT_CONNECT_STATUS
 °©us
 ) {
 
-42 if(
+60 if(
 °©us
  =
 MQTT_CONNECT_SUCCEED
 ) {
 
-44 
+61 
 èsk_t›ic
 [64] = {0};
 
-45 
+62 
 ¥v_upgøde_t›ic
 [64] = {0};
 
-46 
+63 
 upgøde_t›ic
 [32] = {0};
 
-47 
+64 
 	`gisu∆ök_sy°em_£t_°©e
 (
 gisu∆ök_sy°em
@@ -6559,13 +6687,13 @@ gisu∆ök_sy°em
 GISUNLINK_NETMANAGER_CONNECTED_SER
 );
 
-48 
+65 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_INFO
-,"MQTT connect succeed");
+,"MQ connect succeed");
 
-49 
+66 
 	`•rötf
 (
 èsk_t›ic
@@ -6575,7 +6703,7 @@ gisu∆ök_sy°em
 devi˚HWSn
 );
 
-50 
+67 
 	`•rötf
 (
 ¥v_upgøde_t›ic
@@ -6585,31 +6713,31 @@ gisu∆ök_sy°em
 devi˚HWSn
 );
 
-51 
+68 
 	`•rötf
 (
 upgøde_t›ic
 , "%s","/point_common");
 
-52 
+69 
 	`gisu∆ök_mqâ_subs¸ibe
 (
 èsk_t›ic
 ,0);
 
-53 
+70 
 	`gisu∆ök_mqâ_subs¸ibe
 (
 upgøde_t›ic
 ,0);
 
-54 
+71 
 	`gisu∆ök_mqâ_subs¸ibe
 (
 ¥v_upgøde_t›ic
 ,0);
 
-56 
+73 
 	`gisu∆ök_sy°em_£t_°©e
 (
 gisu∆ök_sy°em
@@ -6617,21 +6745,107 @@ gisu∆ök_sy°em
 GISUNLINK_NETMANAGER_DISCONNECTED_SER
 );
 
-57 
+74 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"MQTT connect failed");
 
-59 
+76 
 	}
 }
 
-61 
+78 
+	$gisu∆ök_mqâ_mesßgeCb
+(
+gisu∆ök_mqâ_mesßge
+ *
+mesßge
+) {
+
+79 if(
+upd©e_hook
+.
+upd©e
+ =
+åue
+) {
+
+80 *
+msg
+ = 
+NULL
+;
+
+81 
+	`a•rötf
+(&
+msg
+,"sy°em upgøde! vî:%ld fûe_size:%ldÖrogªss_size: %ld",
+upd©e_hook
+.
+vîsi⁄
+,upd©e_hook.
+fûe_size
+,upd©e_hook.
+£nd_size
+);
+
+82 
+	`mqâMesßgeRe•⁄d
+("å™s„r",
+mesßge
+->
+behavi‹
+,mesßge->
+id
+,
+Ál£
+,
+msg
+);
+
+83 if(
+msg
+) {
+
+84 
+	`gisu∆ök_‰ì
+(
+msg
+);
+
+85 
+msg
+ = 
+NULL
+;
+
+89 if(
+mesßge
+ && mesßge->
+d©a
+ && mesßge->
+d©a_Àn
+) {
+
+90 
+	`mqâRecvMesßgeH™dÀ
+(
+gisu∆ök_sy°em
+, 
+mesßge
+);
+
+92 
+	}
+}
+
+94 
 	$≠p_maö
 () {
 
-62 
+95 
 gisu∆ök_sy°em
  = 
 	`gisu∆ök_sy°em_öô
@@ -6639,47 +6853,47 @@ gisu∆ök_sy°em
 gisu∆ök_mesßge_ˇŒback
 );
 
-64 if(
+97 if(
 gisu∆ök_sy°em
 ) {
 
-65 
+98 
 upd©e_hook
 .
 quîy
  = 
-gisu∆ök_fúmw¨e_quîy
+fúmw¨eQuîy
 ;
 
-66 
+99 
 upd©e_hook
 .
 å™s„r
  = 
-gisu∆ök_fúmw¨e_å™s„r
+fúmw¨eTøns„r
 ;
 
-67 
+100 
 upd©e_hook
 .
 check
  = 
-gisu∆ök_fúmw¨e_chk
+fúmw¨eChk
 ;
 
-68 
+101 
 	`gisu∆ök_upd©efúmw¨e_ªgi°î_hook
 (&
 upd©e_hook
 );
 
-72 if(
+105 if(
 gisu∆ök_sy°em
 ->
 	`isC⁄√˘Ap
 ()) {
 
-73 if(
+106 if(
 gisu∆ök_sy°em
 ->
 waôHWSn
@@ -6687,7 +6901,7 @@ waôHWSn
 Ál£
 ) {
 
-74 
+107 
 gisu∆ök_sy°em
 ->
 waôHWSn
@@ -6699,7 +6913,7 @@ GISUNLINK_HW_SN
 devi˚HWSn
 );
 
-77 if(
+110 if(
 gisu∆ök_sy°em
 ->
 waôFúmw¨eVîsi⁄
@@ -6707,7 +6921,7 @@ waôFúmw¨eVîsi⁄
 Ál£
 ) {
 
-78 
+111 
 gisu∆ök_sy°em
 ->
 waôFúmw¨eVîsi⁄
@@ -6719,7 +6933,7 @@ GISUNLINK_FIRMWARE_VERSION
 devi˚FWVîsi⁄
 );
 
-81 if(
+114 if(
 gisu∆ök_sy°em
 ->
 waôHWSn
@@ -6727,7 +6941,7 @@ waôHWSn
 waôFúmw¨eVîsi⁄
 ) {
 
-82 
+115 
 	`gisu∆ök_mqâ_c⁄√˘
 (
 gisu∆ök_mqâ_c⁄√˘Cb
@@ -6735,29 +6949,29 @@ gisu∆ök_mqâ_c⁄√˘Cb
 gisu∆ök_mqâ_mesßgeCb
 );
 
-83 if(
-gisu∆ök_sy°em
-->
+116 if(
+upd©e_hook
+.
 upd©e_ªåy
 ) {
 
-84 if(++
-gisu∆ök_sy°em
-->
+117 if(++
+upd©e_hook
+.
 upd©e_ªåy_tick
  >= 60) {
 
-85 
-gisu∆ök_sy°em
-->
+118 
+upd©e_hook
+.
 upd©e_ªåy_tick
  = 0;
 
-86 
+119 
 	`gisu∆ök_upd©efúmw¨e_°¨t_sig«l
 ();
 
-91 
+124 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_INFO
@@ -6771,13 +6985,13 @@ GISUNLINK_PRINT_INFO
 	`gëNowTimeByUSec
 ());
 
-92 
+125 
 	`gisu∆ök_èsk_dñay
 (1000 / 
 p‹tTICK_PERIOD_MS
 );
 
-94 
+127 
 	}
 }
 
@@ -7785,33 +7999,29 @@ uöt8
 d©a
 ;
 
-56 *
-moduÀ_d©a
-;
-
-57 
+56 
 GISUNLINK_MESSAGE_MALLOC
  *
 mÆloc
 ;
 
-58 
+57 
 GISUNLINK_MESSAGE_FREE
  *
 ‰ì
 ;
 
-59 
+58 
 GISUNLINK_MESSAGE_FINISH_CALLBACK
  *
 ˇŒback
 ;
 
-60 } 
+59 } 
 	tgisu∆ök_mesßge
 ;
 
-62 
+61 
 uöt8
  
 	tGISUNLINK_MESSAGE_CALLBACK
@@ -7821,11 +8031,11 @@ uöt8
 	tmsg
 );
 
-68 
+67 
 gisu∆ök_mesßge_öô
 ();
 
-75 
+74 
 gisu∆ök_mesßge_ªgi°î
 (
 uöt8
@@ -7835,11 +8045,9 @@ modñ_id
 GISUNLINK_MESSAGE_CALLBACK
  *
 pModñCÆl
-, *
-modñD©a
 );
 
-81 
+80 
 gisu∆ök_mesßge_uƒegi°î
 (
 uöt8
@@ -7847,7 +8055,7 @@ uöt8
 modñ_id
 );
 
-87 
+86 
 uöt8
  
 gisu∆ök_mesßge_push
@@ -7857,7 +8065,7 @@ gisu∆ök_mesßge
 msg
 );
 
-89 #ifde‡
+88 #ifde‡
 __˝lu•lus
 
 
@@ -7915,81 +8123,107 @@ __GISUNLINK_MQTT_H__
 __˝lu•lus
 
 
-23 
+24 
+UNKNOWN_ACT
+,
+
+25 
+TRANSFER_ACT
+,
+
+26 
+UPDATE_VER_ACT
+,
+
+27 
+DEVICE_INFO_ACT
+,
+
+28 } 
+	tTOPIC_TYPE_ACT
+;
+
+30 
 	s_gisu∆ök_mqâ_mesßge
  {
 
-24 
+31 
 uöt32
  
 id
 ;
 
-25 
+32 
 uöt8
  
 behavi‹
 ;
 
-26 
+33 
 uöt16
  
 t›ic_Àn
 ;
 
-27 
+34 
 uöt16
  
 a˘_Àn
 ;
 
-28 
+35 
 uöt16
  
 d©a_Àn
 ;
 
-29 *
+36 
+TOPIC_TYPE_ACT
+ 
+a˘_ty≥
+;
+
+37 *
 t›ic
 ;
 
-30 *
+38 *
 a˘
 ;
 
-31 *
+39 *
 d©a
 ;
 
-32 } 
+40 } 
 	tgisu∆ök_mqâ_mesßge
 ;
 
-35 
+43 
 MQTT_CONNECT_SUCCEED
 ,
 
-36 
+44 
 MQTT_CONNECT_FAILED
 ,
 
-37 } 
+45 } 
 	tMQTT_CONNECT_STATUS
 ;
 
-40 
+48 
 MQTT_PUBLISH_NOACK
 ,
 
-41 
+49 
 MQTT_PUBLISH_NEEDACK
 ,
 
-42 } 
+50 } 
 	tMQTT_PUBLISH_ACKSTATUS
 ;
 
-44 
+52 
 	tGISUNLINK_MQTT_CONNECT
 (
 	tMQTT_CONNECT_STATUS
@@ -7997,7 +8231,7 @@ MQTT_PUBLISH_NEEDACK
 	t°©us
 );
 
-45 
+53 
 	tGISUNLINK_MQTT_MESSAGE
 (
 	tgisu∆ök_mqâ_mesßge
@@ -8005,13 +8239,13 @@ MQTT_PUBLISH_NEEDACK
 	tmesßge
 );
 
-51 
+59 
 gisu∆ök_mqâ_öô
 (*
 Devi˚HWSn_addr
 );
 
-58 
+66 
 gisu∆ök_mqâ_c⁄√˘
 (
 GISUNLINK_MQTT_CONNECT
@@ -8023,13 +8257,13 @@ GISUNLINK_MQTT_MESSAGE
 mesßgeCb
 );
 
-63 
+71 
 boﬁ
  
 gisu∆ök_mqâ_isc⁄√˘ed
 ();
 
-70 
+78 
 boﬁ
  
 gisu∆ök_mqâ_subs¸ibe
@@ -8041,7 +8275,7 @@ uöt8
 qos
 );
 
-79 
+87 
 boﬁ
  
 gisu∆ök_mqâ_publish
@@ -8061,11 +8295,11 @@ publish_id
 ack°©us
 );
 
-84 *
+92 *
 gisu∆ök_mqâ_˛õ¡id
 ();
 
-90 
+98 
 gisu∆ök_mqâ_‰ì_mesßge
 (
 gisu∆ök_mqâ_mesßge
@@ -8073,7 +8307,7 @@ gisu∆ök_mqâ_mesßge
 mesßge
 );
 
-92 #ifde‡
+100 #ifde‡
 __˝lu•lus
 
 
@@ -8816,64 +9050,52 @@ time_sync
 ;
 
 31 
-boﬁ
- 
-upd©e_ªåy
-;
-
-32 
 uöt8
  
 °©e
 ;
 
-33 
-uöt16
- 
-upd©e_ªåy_tick
-;
-
-34 
+32 
 devi˚HWSn
 [
 DEVICEINFOSIZE
 ];
 
-35 
+33 
 devi˚FWVîsi⁄
 [
 DEVICEINFOSIZE
 ];
 
-36 
+34 
 GISUNLINK_HEAP_SIZE
  *
 hópSize
 ;
 
-37 
+35 
 GISUNLINK_IS_CONNECT_AP
  *
 isC⁄√˘Ap
 ;
 
-38 
+36 
 GISUNLINK_MESSAGE_EVENT
  *
 u¨tH™dÀ
 ;
 
-39 
+37 
 GISUNLINK_MESSAGE_EVENT
  *
 rouãH™dÀ
 ;
 
-40 } 
+38 } 
 	tgisu∆ök_sy°em_˘æ
 ;
 
-42 
+40 
 uöt8
  
 	tGISUNLINK_MESSAGE_CB
@@ -8885,7 +9107,7 @@ uöt8
 	tmesßge
 );
 
-48 
+46 
 gisu∆ök_sy°em_˘æ
  *
 gisu∆ök_sy°em_öô
@@ -8895,7 +9117,7 @@ GISUNLINK_MESSAGE_CB
 mesßgeCb
 );
 
-54 
+52 
 boﬁ
  
 gisu∆ök_sy°em_time_ok
@@ -8905,7 +9127,7 @@ gisu∆ök_sy°em_˘æ
 gisu∆ök_sy°em
 );
 
-60 
+58 
 gisu∆ök_sy°em_£t_°©e
 (
 gisu∆ök_sy°em_˘æ
@@ -8917,13 +9139,13 @@ uöt8
 °©e
 );
 
-65 
+63 
 boﬁ
  
 gisu∆ök_sy°em_∑úög
 ();
 
-67 #ifde‡
+65 #ifde‡
 __˝lu•lus
 
 
@@ -9082,46 +9304,58 @@ upd©e
 ;
 
 29 
-uöt32
+boﬁ
  
-vîsi⁄
+upd©e_ªåy
 ;
 
 30 
-uöt32
+uöt16
  
-fûe_size
+upd©e_ªåy_tick
 ;
 
 31 
 uöt32
  
-£nd_size
+vîsi⁄
 ;
 
 32 
+uöt32
+ 
+fûe_size
+;
+
+33 
+uöt32
+ 
+£nd_size
+;
+
+34 
 GISUNLINK_FIRMWARE_QUERY
  *
 quîy
 ;
 
-33 
+35 
 GISUNLINK_FIRMWARE_TRANSFER
  *
 å™s„r
 ;
 
-34 
+36 
 GISUNLINK_FIRMWARE_CHK
  *
 check
 ;
 
-35 } 
+37 } 
 	tgisu∆ök_fúmw¨e_upd©e_hook
 ;
 
-42 
+44 
 gisu∆ök_upd©efúmw¨e_dow∆ﬂd_√w_fúmw¨e
 (c⁄° *
 js⁄D©a
@@ -9131,11 +9365,11 @@ uöt16
 js⁄_Àn
 );
 
-47 
+49 
 gisu∆ök_upd©efúmw¨e_öô
 ();
 
-53 
+55 
 gisu∆ök_upd©efúmw¨e_ªgi°î_hook
 (
 gisu∆ök_fúmw¨e_upd©e_hook
@@ -9143,11 +9377,11 @@ gisu∆ök_fúmw¨e_upd©e_hook
 hook
 );
 
-58 
+60 
 gisu∆ök_upd©efúmw¨e_°¨t_sig«l
 ();
 
-60 #ifde‡
+62 #ifde‡
 __˝lu•lus
 
 
@@ -13785,63 +14019,59 @@ uöt8
 	mid
 ;
 
-22 *
-	mmoduÀD©a
-;
-
-23 
+22 
 GISUNLINK_MESSAGE_CALLBACK
  *
 	mpˇŒback
 ;
 
-24 
+23 
 _gisu∆ök_moduÀ
  *
 	m√xt
 ;
 
-25 } 
+24 } 
 	tgisu∆ök_moduÀ
 ;
 
-27 
+26 
 	s_gisu∆ök_moduÀ_˘æ
  {
 
-28 
+27 
 uöt32
  
 	mmoduÀ_Êag
 ;
 
-29 *
+28 *
 	mmsg_queue
 ;
 
-30 *
+29 *
 	mthªad_id
 ;
 
-31 
+30 
 gisu∆ök_moduÀ
  *
 	mlök
 ;
 
-32 *
+31 *
 	masync_nŸi˚
 ;
 
-33 *
+32 *
 	mmsg_muãx
 ;
 
-34 } 
+33 } 
 	tgisu∆ök_moduÀ_˘æ
 ;
 
-36 
+35 
 gisu∆ök_moduÀ_˘æ
  *
 	gmoduÀs
@@ -13849,13 +14079,13 @@ gisu∆ök_moduÀ_˘æ
 NULL
 ;
 
-38 *
+37 *
 	$gisu∆ök_mesßge_mÆloc
 (*
 msg_d©a
 ) {
 
-39 
+38 
 gisu∆ök_mesßge
  *
 msg_öfo
@@ -13863,7 +14093,7 @@ msg_öfo
 NULL
 ;
 
-41 
+40 
 msg_öfo
  = 
 	`gisu∆ök_mÆloc
@@ -13871,17 +14101,17 @@ msg_öfo
 gisu∆ök_mesßge
 ));
 
-42 if(
+41 if(
 msg_öfo
  =
 NULL
 ) {
 
-43  
+42  
 NULL
 ;
 
-45 
+44 
 	`mem˝y
 (
 msg_öfo
@@ -13891,21 +14121,21 @@ msg_d©a
 gisu∆ök_mesßge
 ));
 
-46  
+45  
 msg_öfo
 ;
 
-47 
+46 
 	}
 }
 
-49 *
+48 *
 	$gisu∆ök_mesßge_‰ì
 (*
 msg_d©a
 ) {
 
-50 
+49 
 gisu∆ök_mesßge
  *
 msg_öfo
@@ -13913,13 +14143,13 @@ msg_öfo
 msg_d©a
 ;
 
-52 if(
+51 if(
 msg_öfo
 ->
 d©a
 ) {
 
-53 
+52 
 	`gisu∆ök_‰ì
 (
 msg_öfo
@@ -13927,41 +14157,41 @@ msg_öfo
 d©a
 );
 
-54 
+53 
 msg_öfo
 ->
 d©a
  = 
 NULL
 ;
+
+56 
+	`gisu∆ök_‰ì
+(
+msg_öfo
+);
 
 57 
-	`gisu∆ök_‰ì
-(
-msg_öfo
-);
-
-58 
 msg_öfo
  = 
 NULL
 ;
 
-59  
+58  
 NULL
 ;
 
-60 
+59 
 	}
 }
 
-62 
+61 
 	$gisu∆ök_mesßge_async_maö
 (*
 ∑øm
 ) {
 
-63 
+62 
 gisu∆ök_mesßge
  *
 pmsg_öfo
@@ -13969,7 +14199,7 @@ pmsg_öfo
 NULL
 ;
 
-64 
+63 
 gisu∆ök_moduÀ
  *
 pmodñ_lök
@@ -13977,7 +14207,7 @@ pmodñ_lök
 NULL
 ;
 
-65 
+64 
 gisu∆ök_moduÀ_˘æ
  *
 moduÀ_li°
@@ -13985,7 +14215,7 @@ moduÀ_li°
 ∑øm
 ;
 
-68 
+67 
 	`gisu∆ök_gë_£m
 (
 moduÀ_li°
@@ -13993,7 +14223,7 @@ moduÀ_li°
 async_nŸi˚
 );
 
-69 
+68 
 	`gisu∆ök_queue_nŸ_em±y
 (
 moduÀ_li°
@@ -14001,7 +14231,7 @@ moduÀ_li°
 msg_queue
 )) {
 
-70 
+69 
 pmsg_öfo
  = (
 gisu∆ök_mesßge
@@ -14013,13 +14243,13 @@ moduÀ_li°
 msg_queue
 );
 
-71 if(
+70 if(
 pmsg_öfo
  =
 NULL
 ) {
 
-75 
+74 
 	`gisu∆ök_gë_lock
 (
 moduÀ_li°
@@ -14027,7 +14257,7 @@ moduÀ_li°
 msg_muãx
 );
 
-76 if(
+75 if(
 moduÀ_li°
 ->
 moduÀ_Êag
@@ -14037,7 +14267,7 @@ pmsg_öfo
 d°_id
 )) {
 
-77 
+76 
 pmodñ_lök
  = 
 moduÀ_li°
@@ -14045,11 +14275,11 @@ moduÀ_li°
 lök
 ;
 
-78 
+77 
 pmodñ_lök
 ) {
 
-79 if(
+78 if(
 pmodñ_lök
 ->
 id
@@ -14059,13 +14289,13 @@ pmsg_öfo
 d°_id
 ) {
 
-82 
+81 
 pmodñ_lök
  =Ömodñ_lök->
 √xt
 ;
 
-85 
+84 
 	`gisu∆ök_‰ì_lock
 (
 moduÀ_li°
@@ -14073,27 +14303,11 @@ moduÀ_li°
 msg_muãx
 );
 
-86 if(
+85 if(
 pmodñ_lök
 ) {
 
-87 if(
-pmodñ_lök
-->
-modñD©a
-) {
-
-88 
-pmsg_öfo
--->
-moduÀ_d©a
- = 
-pmodñ_lök
-->
-moduÀD©a
-;
-
-90 
+86 
 pmodñ_lök
 ->
 	`pˇŒback
@@ -14101,37 +14315,37 @@ pmodñ_lök
 pmsg_öfo
 );
 
-93 if(
+89 if(
 pmsg_öfo
 ->
 ‰ì
 ) {
 
-94 
+90 
 pmsg_öfo
 ->
 	`‰ì
 (pmsg_info);
 
-96 
+92 
 	`gisu∆ök_mesßge_‰ì
 (
 pmsg_öfo
 );
 
-100 
+96 
 	}
 }
 
-102 
+98 
 	$gisu∆ök_mesßge_öô
 () {
 
-103 if(
+99 if(
 moduÀs
 ) {
 
-104 
+100 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -14141,7 +14355,7 @@ __func__
 __LINE__
 );
 
-108 
+104 
 moduÀs
  = (
 gisu∆ök_moduÀ_˘æ
@@ -14149,13 +14363,13 @@ gisu∆ök_moduÀ_˘æ
 	`gisu∆ök_mÆloc
 ((gisunlink_module_ctrl));
 
-110 if(
+106 if(
 moduÀs
  =
 NULL
 ) {
 
-111 
+107 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -14165,7 +14379,7 @@ __func__
 __LINE__
 );
 
-115 
+111 
 	`mem£t
 (
 moduÀs
@@ -14173,7 +14387,7 @@ moduÀs
 gisu∆ök_moduÀ_˘æ
 ));
 
-116 
+112 
 moduÀs
 ->
 msg_muãx
@@ -14181,7 +14395,7 @@ msg_muãx
 	`gisu∆ök_¸óã_lock
 ();
 
-117 
+113 
 moduÀs
 ->
 msg_queue
@@ -14191,7 +14405,7 @@ msg_queue
 MAX_MSG_SIZE
 );
 
-118 
+114 
 moduÀs
 ->
 async_nŸi˚
@@ -14201,7 +14415,7 @@ async_nŸi˚
 MAX_MSG_SIZE
 ,0);
 
-119 
+115 
 moduÀs
 ->
 thªad_id
@@ -14211,11 +14425,11 @@ thªad_id
 gisu∆ök_mesßge_async_maö
 , "message_task", modules, 2048);
 
-121 
+117 
 	}
 }
 
-123 
+119 
 	$gisu∆ök_mesßge_ªgi°î
 (
 uöt8
@@ -14225,11 +14439,9 @@ modñ_id
 GISUNLINK_MESSAGE_CALLBACK
  *
 pModñCÆl
-, *
-modñD©a
 ) {
 
-124 
+120 
 gisu∆ök_moduÀ
  *
 pmodñ_lök
@@ -14239,13 +14451,13 @@ NULL
 √w_modñ
  = NULL;
 
-126 if(
+122 if(
 moduÀs
  =
 NULL
 ) {
 
-130 
+126 
 	`gisu∆ök_gë_lock
 (
 moduÀs
@@ -14253,7 +14465,7 @@ moduÀs
 msg_muãx
 );
 
-131 if(0 =(
+127 if(0 =(
 moduÀs
 ->
 moduÀ_Êag
@@ -14261,7 +14473,7 @@ moduÀ_Êag
 modñ_id
 ))) {
 
-132 
+128 
 pmodñ_lök
  = 
 moduÀs
@@ -14269,7 +14481,7 @@ moduÀs
 lök
 ;
 
-133 
+129 
 √w_modñ
  = (
 gisu∆ök_moduÀ
@@ -14277,21 +14489,11 @@ gisu∆ök_moduÀ
 	`gisu∆ök_mÆloc
 ((gisunlink_module));
 
-134 if(
+130 if(
 √w_modñ
 ) {
 
-135 if(
-modñD©a
-) {
-
-137 
-√w_modñ
-->
-modñD©a
- = modelData;
-
-139 
+131 
 √w_modñ
 ->
 id
@@ -14299,7 +14501,7 @@ id
 modñ_id
 ;
 
-140 
+132 
 √w_modñ
 ->
 pˇŒback
@@ -14307,7 +14509,7 @@ pˇŒback
 pModñCÆl
 ;
 
-141 
+133 
 √w_modñ
 ->
 √xt
@@ -14315,23 +14517,23 @@ pModñCÆl
 NULL
 ;
 
-142 if(
+134 if(
 pmodñ_lök
 ) {
 
-143 
+135 
 pmodñ_lök
 ->
 √xt
 ) {
 
-144 
+136 
 pmodñ_lök
  =Ömodñ_lök->
 √xt
 ;
 
-146 
+138 
 pmodñ_lök
 ->
 √xt
@@ -14339,7 +14541,7 @@ pmodñ_lök
 √w_modñ
 ;
 
-148 
+140 
 moduÀs
 ->
 lök
@@ -14347,7 +14549,7 @@ lök
 √w_modñ
 ;
 
-151 
+143 
 moduÀs
 ->
 moduÀ_Êag
@@ -14355,7 +14557,7 @@ moduÀ_Êag
 modñ_id
 );
 
-154 
+146 
 	`gisu∆ök_‰ì_lock
 (
 moduÀs
@@ -14363,11 +14565,11 @@ moduÀs
 msg_muãx
 );
 
-156 
+148 
 	}
 }
 
-158 
+150 
 	$gisu∆ök_mesßge_uƒegi°î
 (
 uöt8
@@ -14375,7 +14577,7 @@ uöt8
 modñ_id
 ) {
 
-159 
+151 
 gisu∆ök_moduÀ
  *
 ¥e_ôem
@@ -14385,13 +14587,13 @@ NULL
 pmodñ_lök
  = NULL;
 
-161 if(
+153 if(
 moduÀs
  =
 NULL
 ) {
 
-165 
+157 
 	`gisu∆ök_gë_lock
 (
 moduÀs
@@ -14399,7 +14601,7 @@ moduÀs
 msg_muãx
 );
 
-167 if(
+159 if(
 moduÀs
 ->
 moduÀ_Êag
@@ -14407,7 +14609,7 @@ moduÀ_Êag
 modñ_id
 )) {
 
-168 
+160 
 pmodñ_lök
  = 
 moduÀs
@@ -14415,11 +14617,11 @@ moduÀs
 lök
 ;
 
-169 
+161 
 pmodñ_lök
 ) {
 
-170 if(
+162 if(
 pmodñ_lök
 ->
 id
@@ -14427,13 +14629,13 @@ id
 modñ_id
 ) {
 
-171 if(
+163 if(
 ¥e_ôem
  =
 NULL
 ) {
 
-172 
+164 
 moduÀs
 ->
 lök
@@ -14443,7 +14645,7 @@ pmodñ_lök
 √xt
 ;
 
-174 
+166 
 ¥e_ôem
 ->
 √xt
@@ -14451,13 +14653,13 @@ pmodñ_lök
 pmodñ_lök
 ->next;
 
-176 
+168 
 	`gisu∆ök_‰ì
 (
 pmodñ_lök
 );
 
-177 
+169 
 moduÀs
 ->
 moduÀ_Êag
@@ -14465,19 +14667,19 @@ moduÀ_Êag
 modñ_id
 );
 
-180 
+172 
 ¥e_ôem
  = 
 pmodñ_lök
 ;
 
-181 
+173 
 pmodñ_lök
  =Ömodñ_lök->
 √xt
 ;
 
-184 
+176 
 	`gisu∆ök_‰ì_lock
 (
 moduÀs
@@ -14485,11 +14687,11 @@ moduÀs
 msg_muãx
 );
 
-185 
+177 
 	}
 }
 
-187 
+179 
 uöt8
  
 	$gisu∆ök_mesßge_push
@@ -14499,7 +14701,7 @@ gisu∆ök_mesßge
 msg
 ) {
 
-188 
+180 
 gisu∆ök_moduÀ
  *
 pmodñ_lök
@@ -14507,13 +14709,13 @@ pmodñ_lök
 NULL
 ;
 
-190 
+182 
 uöt8
  
 ªt
  = 0x00;
 
-192 if(
+184 if(
 moduÀs
  =
 NULL
@@ -14521,7 +14723,7 @@ NULL
 msg
  == NULL) {
 
-196 
+188 
 	`gisu∆ök_gë_lock
 (
 moduÀs
@@ -14529,13 +14731,13 @@ moduÀs
 msg_muãx
 );
 
-197 if(
+189 if(
 msg
 ->
 ty≥
 ) {
 
-198 
+190 
 gisu∆ök_mesßge
  *
 ≤ew_msg
@@ -14543,7 +14745,7 @@ gisu∆ök_mesßge
 NULL
 ;
 
-200 if(
+192 if(
 msg
 ->
 mÆloc
@@ -14551,7 +14753,7 @@ mÆloc
 NULL
 ) {
 
-201 
+193 
 ≤ew_msg
  = (
 gisu∆ök_mesßge
@@ -14561,7 +14763,7 @@ gisu∆ök_mesßge
 msg
 );
 
-203 
+195 
 ≤ew_msg
  = (
 gisu∆ök_mesßge
@@ -14571,7 +14773,7 @@ msg
 	`mÆloc
 (msg);
 
-205 
+197 
 	`gisu∆ök_queue_push
 (
 moduÀs
@@ -14581,7 +14783,7 @@ msg_queue
 ≤ew_msg
 );
 
-206 
+198 
 	`gisu∆ök_put_£m
 (
 moduÀs
@@ -14589,7 +14791,7 @@ moduÀs
 async_nŸi˚
 );
 
-208 if(
+200 if(
 moduÀs
 ->
 moduÀ_Êag
@@ -14599,7 +14801,7 @@ msg
 d°_id
 )) {
 
-209 
+201 
 pmodñ_lök
  = 
 moduÀs
@@ -14607,11 +14809,11 @@ moduÀs
 lök
 ;
 
-210 
+202 
 pmodñ_lök
 ) {
 
-211 if(
+203 if(
 pmodñ_lök
 ->
 id
@@ -14621,13 +14823,13 @@ msg
 d°_id
 ) {
 
-214 
+206 
 pmodñ_lök
  =Ömodñ_lök->
 √xt
 ;
 
-218 
+210 
 	`gisu∆ök_‰ì_lock
 (
 moduÀs
@@ -14635,27 +14837,11 @@ moduÀs
 msg_muãx
 );
 
-220 if(
+212 if(
 pmodñ_lök
 ) {
 
-221 if(
-pmodñ_lök
-->
-modñD©a
-) {
-
-222 
-msg
-->
-moduÀ_d©a
- = 
-pmodñ_lök
-->
-moduÀD©a
-;
-
-224 
+213 
 ªt
  = 
 pmodñ_lök
@@ -14665,13 +14851,13 @@ pmodñ_lök
 msg
 );
 
-227  
+216  
 pmodñ_lök
 ?
 ªt
 :0xFF;
 
-228 
+217 
 	}
 }
 
@@ -15315,19 +15501,31 @@ d©a_Àn
 ª•_a˘
  = "resp";
 
-122 if(
+121 c⁄° *
+upd©e_vî
+ = "update_ver";
+
+122 c⁄° *
+å™s„r
+ = "transfer";
+
+123 c⁄° *
+devi˚_öfo
+ = "device_info";
+
+125 if(
 mqâ
  =
 NULL
 ) {
 
-126 if(
+129 if(
 mqâ
  && mqâ->
 mesßgeCb
 ) {
 
-127 
+130 
 gisu∆ök_mqâ_mesßge
  *
 mesßge
@@ -15335,13 +15533,13 @@ mesßge
 NULL
 ;
 
-128 if(
+131 if(
 d©a
  && 
 d©a_Àn
 ) {
 
-129 
+132 
 cJSON_Hooks
  
 js_hook
@@ -15351,13 +15549,13 @@ gisu∆ök_mÆloc
 gisu∆ök_‰ì
 };
 
-130 
+133 
 	`cJSON_InôHooks
 (&
 js_hook
 );
 
-131 
+134 
 cJSON
  *
 pJs⁄
@@ -15367,7 +15565,7 @@ pJs⁄
 d©a
 );
 
-132 
+135 
 cJSON
  *
 ôem
@@ -15375,11 +15573,11 @@ cJSON
 NULL
 ;
 
-133 if(
+136 if(
 pJs⁄
 ) {
 
-134 
+137 
 mesßge
  = (
 gisu∆ök_mqâ_mesßge
@@ -15387,11 +15585,11 @@ gisu∆ök_mqâ_mesßge
 	`gisu∆ök_mÆloc
 ((gisunlink_mqtt_message));
 
-135 if(
+138 if(
 mesßge
 ) {
 
-136 if((
+139 if((
 ôem
  = 
 	`cJSON_GëObje˘Iãm
@@ -15399,7 +15597,7 @@ mesßge
 pJs⁄
 , "id"))) {
 
-137 if(
+140 if(
 ôem
 ->
 ty≥
@@ -15407,7 +15605,7 @@ ty≥
 cJSON_Numbî
 ) {
 
-138 
+141 
 mesßge
 ->
 id
@@ -15417,7 +15615,7 @@ id
 vÆueöt
 ;
 
-141 if((
+144 if((
 ôem
  = 
 	`cJSON_GëObje˘Iãm
@@ -15425,7 +15623,7 @@ vÆueöt
 pJs⁄
 , "act"))) {
 
-142 if(
+145 if(
 ôem
 ->
 ty≥
@@ -15433,7 +15631,7 @@ ty≥
 cJSON_Såög
 ) {
 
-143 
+146 
 	`a•rötf
 (&
 mesßge
@@ -15445,7 +15643,7 @@ a˘
 vÆue°rög
 );
 
-144 
+147 
 mesßge
 ->
 a˘_Àn
@@ -15455,7 +15653,7 @@ a˘_Àn
 a˘
 ) - 1;
 
-147 if((
+150 if((
 ôem
  = 
 	`cJSON_GëObje˘Iãm
@@ -15463,7 +15661,7 @@ a˘
 pJs⁄
 , "behavior"))) {
 
-148 if(
+151 if(
 ôem
 ->
 ty≥
@@ -15471,7 +15669,7 @@ ty≥
 cJSON_Numbî
 ) {
 
-149 
+152 
 mesßge
 ->
 behavi‹
@@ -15481,7 +15679,7 @@ behavi‹
 vÆueöt
 ;
 
-153 if((
+156 if((
 ôem
  = 
 	`cJSON_GëObje˘Iãm
@@ -15489,7 +15687,7 @@ vÆueöt
 pJs⁄
 , "data"))) {
 
-154 if(
+157 if(
 ôem
 ->
 ty≥
@@ -15499,7 +15697,7 @@ cJSON_Såög
 cJSON_Raw
 ) {
 
-155 
+158 
 	`a•rötf
 (&
 mesßge
@@ -15511,7 +15709,7 @@ d©a
 vÆue°rög
 );
 
-156 } if(
+159 } if(
 ôem
 ->
 ty≥
@@ -15521,7 +15719,7 @@ cJSON_Aºay
 cJSON_Obje˘
 ) {
 
-157 
+160 
 mesßge
 ->
 d©a
@@ -15531,13 +15729,13 @@ d©a
 ôem
 );
 
-159 if(
+162 if(
 mesßge
 ->
 d©a
 ) {
 
-160 
+163 
 mesßge
 ->
 d©a_Àn
@@ -15547,25 +15745,25 @@ d©a_Àn
 d©a
 ) - 1;
 
-162 
+165 
 mesßge
 ->
 d©a_Àn
  = 0;
 
-166 i‡(
+169 i‡(
 t›ic
  && 
 t›ic_Àn
 ) {
 
-167 
+170 
 mesßge
 ->
 t›ic_Àn
  =Åopic_len;
 
-168 
+171 
 mesßge
 ->
 t›ic
@@ -15575,7 +15773,7 @@ t›ic
 t›ic_Àn
 );
 
-169 
+172 
 	`mem˝y
 (
 mesßge
@@ -15585,23 +15783,23 @@ t›ic
 t›ic_Àn
 );
 
-172 
+175 
 	`cJSON_Dñëe
 (
 pJs⁄
 );
 
-173 
+176 
 pJs⁄
  = 
 NULL
 ;
 
-177 if(
+180 if(
 mesßge
 ) {
 
-178 if(
+181 if(
 	`memcmp
 (
 mesßge
@@ -15613,7 +15811,7 @@ a˘
 a˘_Àn
 ) == 0) {
 
-179 
+182 
 uöt32
  
 id
@@ -15627,11 +15825,11 @@ d©a
 d©a_Àn
 );
 
-180 if(
+183 if(
 id
 ) {
 
-181 
+184 
 gisu∆ök_mqâ_∑ckë
  *
 ∑ckë
@@ -15647,11 +15845,11 @@ id
 gisu∆ök_m©chög_∑ckage
 );
 
-182 if(
+185 if(
 ∑ckë
 ) {
 
-183 
+186 
 	`gisu∆ök_‰ì
 (
 ∑ckë
@@ -15659,7 +15857,7 @@ gisu∆ök_m©chög_∑ckage
 t›ic
 );
 
-184 
+187 
 	`gisu∆ök_‰ì
 (
 ∑ckë
@@ -15667,13 +15865,73 @@ t›ic
 ∑ylﬂd
 );
 
-185 
+188 
 	`gisu∆ök_‰ì
 (
 ∑ckë
 );
 
-189 
+192 if(
+	`memcmp
+(
+mesßge
+->
+a˘
+,
+upd©e_vî
+,mesßge->
+a˘_Àn
+) == 0) {
+
+193 
+mesßge
+->
+a˘_ty≥
+ = 
+UPDATE_VER_ACT
+;
+
+194 } if(
+	`memcmp
+(
+mesßge
+->
+a˘
+,
+å™s„r
+,mesßge->
+a˘_Àn
+) == 0) {
+
+195 
+mesßge
+->
+a˘_ty≥
+ = 
+TRANSFER_ACT
+;
+
+196 } if(
+	`memcmp
+(
+mesßge
+->
+a˘
+,
+devi˚_öfo
+,mesßge->
+a˘_Àn
+) == 0) {
+
+197 
+mesßge
+->
+a˘_ty≥
+ = 
+DEVICE_INFO_ACT
+;
+
+199 
 mqâ
 ->
 	`mesßgeCb
@@ -15681,17 +15939,17 @@ mqâ
 mesßge
 );
 
-191 
+201 
 	`gisu∆ök_mqâ_‰ì_mesßge
 (
 mesßge
 );
 
-194 
+204 
 	}
 }
 
-196 
+206 
 boﬁ
  
 	$gisu∆ök_mqâ_thªad_subs¸ibe
@@ -15705,11 +15963,11 @@ gisu∆ök_mqâ_∑ckë
 ∑ckë
 ) {
 
-197 
+207 
 rc
  = 0;
 
-198 
+208 
 boﬁ
  
 ªt
@@ -15717,7 +15975,7 @@ boﬁ
 åue
 ;
 
-199 if(
+209 if(
 mqâ
  && mqâ->
 ˛õ¡
@@ -15725,7 +15983,7 @@ mqâ
 is_c⁄√˘ed
 ) {
 
-200 if((
+210 if((
 rc
  = 
 	`e•_mqâ_˛õ¡_subs¸ibe
@@ -15741,7 +15999,7 @@ t›ic
 qos
 )) < 0) {
 
-201 
+211 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -15753,21 +16011,21 @@ t›ic
 rc
 );
 
-202 
+212 
 ªt
  = 
 Ál£
 ;
 
-205  
+215  
 ªt
 ;
 
-206 
+216 
 	}
 }
 
-208 
+218 
 boﬁ
  
 	$gisu∆ök_mqâ_thªad_publish
@@ -15781,11 +16039,11 @@ gisu∆ök_mqâ_∑ckë
 ∑ckë
 ) {
 
-209 
+219 
 rc
  = 0;
 
-210 
+220 
 boﬁ
  
 ªt
@@ -15793,7 +16051,7 @@ boﬁ
 åue
 ;
 
-211 if(
+221 if(
 mqâ
  && mqâ->
 ˛õ¡
@@ -15801,7 +16059,7 @@ mqâ
 is_c⁄√˘ed
 ) {
 
-212 if((
+222 if((
 rc
  = 
 	`e•_mqâ_˛õ¡_publish
@@ -15821,7 +16079,7 @@ t›ic
 qos
 , 0)) < 0) {
 
-213 
+223 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -15833,21 +16091,21 @@ t›ic
 rc
 );
 
-214 
+224 
 ªt
  = 
 Ál£
 ;
 
-217  
+227  
 ªt
 ;
 
-218 
+228 
 	}
 }
 
-220 
+230 
 	$gisu∆ök_hâp_mesßge
 (
 °©us_code
@@ -15859,17 +16117,17 @@ d©a_Àn
 ∑øm
 ) {
 
-221 if(
+231 if(
 °©us_code
  == 200) {
 
-222 c⁄° *
+232 c⁄° *
 js⁄D©a
  = 
 d©a
 ;
 
-223 
+233 
 cJSON_Hooks
  
 js_hook
@@ -15879,13 +16137,13 @@ gisu∆ök_mÆloc
 gisu∆ök_‰ì
 };
 
-224 
+234 
 	`cJSON_InôHooks
 (&
 js_hook
 );
 
-225 
+235 
 cJSON
  *
 pJs⁄
@@ -15895,11 +16153,11 @@ pJs⁄
 js⁄D©a
 );
 
-226 if(
+236 if(
 pJs⁄
 ) {
 
-227 
+237 
 cJSON
  *
 ôem
@@ -15907,7 +16165,7 @@ cJSON
 NULL
 ;
 
-228 if((
+238 if((
 ôem
  = 
 	`cJSON_GëObje˘Iãm
@@ -15915,7 +16173,7 @@ NULL
 pJs⁄
 , "code"))) {
 
-229 if(
+239 if(
 ôem
 ->
 ty≥
@@ -15925,7 +16183,7 @@ cJSON_True
 cJSON_Numbî
 ) {
 
-230 
+240 
 gisu∆ök_mqâ
 ->
 hâpcode
@@ -15935,7 +16193,7 @@ hâpcode
 vÆueöt
 ;
 
-231 
+241 
 cJSON
  *
 d©a_ôem
@@ -15943,7 +16201,7 @@ d©a_ôem
 NULL
 ;
 
-232 if((
+242 if((
 d©a_ôem
  = 
 	`cJSON_GëObje˘Iãm
@@ -15951,63 +16209,9 @@ d©a_ôem
 pJs⁄
 , "data"))) {
 
-233 if(
+243 if(
 d©a_ôem
 ) {
-
-234 if((
-ôem
- = 
-	`cJSON_GëObje˘Iãm
-(
-d©a_ôem
-, "mqtt_host"))) {
-
-235 if(
-ôem
-->
-ty≥
- =
-cJSON_Såög
-) {
-
-236 
-	`a•rötf
-(&
-gisu∆ök_mqâ
-->
-brokî
-, "%s",
-ôem
-->
-vÆue°rög
-);
-
-239 if((
-ôem
- = 
-	`cJSON_GëObje˘Iãm
-(
-d©a_ôem
-, "mqtt_port"))) {
-
-240 if(
-ôem
-->
-ty≥
- =
-cJSON_Numbî
-) {
-
-241 
-gisu∆ök_mqâ
-->
-p‹t
- = 
-ôem
-->
-vÆueöt
-;
 
 244 if((
 ôem
@@ -16015,7 +16219,7 @@ vÆueöt
 	`cJSON_GëObje˘Iãm
 (
 d©a_ôem
-, "username"))) {
+, "mqtt_host"))) {
 
 245 if(
 ôem
@@ -16030,7 +16234,7 @@ cJSON_Såög
 (&
 gisu∆ök_mqâ
 ->
-u£∫ame
+brokî
 , "%s",
 ôem
 ->
@@ -16043,9 +16247,35 @@ vÆue°rög
 	`cJSON_GëObje˘Iãm
 (
 d©a_ôem
-, "password"))) {
+, "mqtt_port"))) {
 
 250 if(
+ôem
+->
+ty≥
+ =
+cJSON_Numbî
+) {
+
+251 
+gisu∆ök_mqâ
+->
+p‹t
+ = 
+ôem
+->
+vÆueöt
+;
+
+254 if((
+ôem
+ = 
+	`cJSON_GëObje˘Iãm
+(
+d©a_ôem
+, "username"))) {
+
+255 if(
 ôem
 ->
 ty≥
@@ -16053,7 +16283,35 @@ ty≥
 cJSON_Såög
 ) {
 
-251 
+256 
+	`a•rötf
+(&
+gisu∆ök_mqâ
+->
+u£∫ame
+, "%s",
+ôem
+->
+vÆue°rög
+);
+
+259 if((
+ôem
+ = 
+	`cJSON_GëObje˘Iãm
+(
+d©a_ôem
+, "password"))) {
+
+260 if(
+ôem
+->
+ty≥
+ =
+cJSON_Såög
+) {
+
+261 
 	`a•rötf
 (&
 gisu∆ök_mqâ
@@ -16065,23 +16323,23 @@ gisu∆ök_mqâ
 vÆue°rög
 );
 
-259 
+269 
 	`cJSON_Dñëe
 (
 pJs⁄
 );
 
-260 
+270 
 pJs⁄
  = 
 NULL
 ;
 
-262 
+272 
 	}
 }
 
-264 
+274 
 e•_îr_t
  
 	$_hâp_evít_h™dÀr
@@ -16091,41 +16349,41 @@ e•_hâp_˛õ¡_evít_t
 evt
 ) {
 
-265 
+275 
 evt
 ->
 evít_id
 ) {
 
-266 
+276 
 HTTP_EVENT_ERROR
 :
 
-267 
+277 
 HTTP_EVENT_ON_CONNECTED
 :
 
-268 
+278 
 HTTP_EVENT_HEADER_SENT
 :
 
-269 
+279 
 HTTP_EVENT_ON_HEADER
 :
 
-270 
+280 
 HTTP_EVENT_ON_FINISH
 :
 
-271 
+281 
 HTTP_EVENT_DISCONNECTED
 :
 
-273 
+283 
 HTTP_EVENT_ON_DATA
 :
 
-274 i‡(!
+284 i‡(!
 	`e•_hâp_˛õ¡_is_chunked_ª•⁄£
 (
 evt
@@ -16133,7 +16391,7 @@ evt
 ˛õ¡
 )) {
 
-275 
+285 
 	`gisu∆ök_hâp_mesßge
 (
 	`e•_hâp_˛õ¡_gë_°©us_code
@@ -16149,15 +16407,15 @@ d©a_Àn
 u£r_d©a
 );
 
-279  
+289  
 ESP_OK
 ;
 
-280 
+290 
 	}
 }
 
-282 
+292 
 boﬁ
  
 	$gisu∆ök_mqâ_gë_£rvî
@@ -16171,53 +16429,53 @@ uöt32
 timeout_ms
 ) {
 
-283 *
+293 *
 po°_d©a
  = 
 NULL
 ;
 
-284 *
+294 *
 Vîsi⁄
  = 
 NULL
 ;
 
-286 
+296 
 e•_hâp_˛õ¡_c⁄fig_t
  
 c⁄fig
  = {
 
-287 .
+297 .
 uæ
  = 
 ho°
 ,
 
-288 .
+298 .
 evít_h™dÀr
  = 
 _hâp_evít_h™dÀr
 ,
 
-289 .
+299 .
 u£r_d©a
  = 
 gisu∆ök_mqâ
 ,
 
-290 .
+300 .
 timeout_ms
  =Åimeout_ms,
 
-293 
+303 
 Vîsi⁄
  = 
 	`gisu∆ök_gë_fúmw¨e_vîsi⁄
 ();
 
-295 
+305 
 po°_Àn
  = 
 	`a•rötf
@@ -16233,7 +16491,7 @@ gisu∆ök_mqâ
 Devi˚HWSn
 );
 
-296 
+306 
 e•_hâp_˛õ¡_h™dÀ_t
  
 ˛õ¡
@@ -16243,7 +16501,7 @@ e•_hâp_˛õ¡_h™dÀ_t
 c⁄fig
 );
 
-297 
+307 
 	`e•_hâp_˛õ¡_£t_mëhod
 (
 ˛õ¡
@@ -16251,19 +16509,19 @@ c⁄fig
 HTTP_METHOD_POST
 );
 
-298 
+308 
 	`e•_hâp_˛õ¡_£t_hódî
 (
 ˛õ¡
 ,"Content-Type", "application/json");
 
-299 
+309 
 	`e•_hâp_˛õ¡_£t_hódî
 (
 ˛õ¡
 ,"User-Agent", "gisunLink_iot");
 
-300 
+310 
 	`e•_hâp_˛õ¡_£t_po°_fõld
 (
 ˛õ¡
@@ -16273,7 +16531,7 @@ po°_d©a
 po°_Àn
 );
 
-302 
+312 
 e•_îr_t
  
 îr
@@ -16283,27 +16541,27 @@ e•_îr_t
 ˛õ¡
 );
 
-304 if(
+314 if(
 Vîsi⁄
 ) {
 
-305 
+315 
 	`gisu∆ök_‰ì
 (
 Vîsi⁄
 );
 
-306 
+316 
 Vîsi⁄
  = 
 NULL
 ;
 
-309 if(
+319 if(
 po°_d©a
 ) {
 
-310 
+320 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
@@ -16311,25 +16569,25 @@ GISUNLINK_PRINT_WARN
 po°_d©a
 );
 
-311 
+321 
 	`gisu∆ök_‰ì
 (
 po°_d©a
 );
 
-312 
+322 
 po°_d©a
  = 
 NULL
 ;
 
-315 if(
+325 if(
 îr
  =
 ESP_OK
 ) {
 
-316 if(
+326 if(
 	`e•_hâp_˛õ¡_gë_°©us_code
 (
 ˛õ¡
@@ -16337,7 +16595,7 @@ ESP_OK
 	`e•_hâp_˛õ¡_gë_c⁄ã¡_Àngth
 (client)) {
 
-318 
+328 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
@@ -16349,7 +16607,7 @@ GISUNLINK_PRINT_WARN
 	`e•_hâp_˛õ¡_gë_c⁄ã¡_Àngth
 (client));
 
-321 
+331 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -16357,23 +16615,23 @@ GISUNLINK_PRINT_ERROR
 îr
 );
 
-324 
+334 
 	`e•_hâp_˛õ¡_˛ónup
 (
 ˛õ¡
 );
 
-326 if(
+336 if(
 gisu∆ök_mqâ
 ->
 hâpcode
  != 20000) {
 
-327  
+337  
 Ál£
 ;
 
-330 if(
+340 if(
 gisu∆ök_mqâ
 ->
 brokî
@@ -16385,7 +16643,7 @@ u£∫ame
 ∑ssw‹d
 ) {
 
-331 
+341 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
@@ -16401,23 +16659,23 @@ u£∫ame
 ∑ssw‹d
 );
 
-332  
+342  
 åue
 ;
 
-334  
+344  
 Ál£
 ;
 
-337  
+347  
 åue
 ;
 
-338 
+348 
 	}
 }
 
-340 
+350 
 	$gisu∆ök_mqâ_öfo_ª£t
 (
 gisu∆ök_mqâ_˘æ
@@ -16425,29 +16683,29 @@ gisu∆ök_mqâ_˘æ
 mqâ
 ) {
 
-341 if(
+351 if(
 mqâ
 ) {
 
-342 
+352 
 mqâ
 ->
 hâpcode
  = 0;
 
-343 
+353 
 mqâ
 ->
 p‹t
  = 0;
 
-344 if(
+354 if(
 mqâ
 ->
 brokî
 ) {
 
-345 
+355 
 	`gisu∆ök_‰ì
 (
 mqâ
@@ -16455,7 +16713,7 @@ mqâ
 brokî
 );
 
-346 
+356 
 mqâ
 ->
 brokî
@@ -16463,13 +16721,13 @@ brokî
 NULL
 ;
 
-348 if(
+358 if(
 mqâ
 ->
 u£∫ame
 ) {
 
-349 
+359 
 	`gisu∆ök_‰ì
 (
 mqâ
@@ -16477,7 +16735,7 @@ mqâ
 u£∫ame
 );
 
-350 
+360 
 mqâ
 ->
 u£∫ame
@@ -16485,13 +16743,13 @@ u£∫ame
 NULL
 ;
 
-352 if(
+362 if(
 mqâ
 ->
 ∑ssw‹d
 ) {
 
-353 
+363 
 	`gisu∆ök_‰ì
 (
 mqâ
@@ -16499,7 +16757,7 @@ mqâ
 ∑ssw‹d
 );
 
-354 
+364 
 mqâ
 ->
 ∑ssw‹d
@@ -16507,11 +16765,11 @@ mqâ
 NULL
 ;
 
-357 
+367 
 	}
 }
 
-359 
+369 
 e•_îr_t
  
 	$mqâ_evít_h™dÀr
@@ -16521,7 +16779,7 @@ e•_mqâ_evít_h™dÀ_t
 evít
 ) {
 
-361 
+371 
 gisu∆ök_mqâ_˘æ
  *
 mqâ
@@ -16531,17 +16789,17 @@ evít
 u£r_c⁄ãxt
 ;
 
-362 
+372 
 evít
 ->
 evít_id
 ) {
 
-363 
+373 
 MQTT_EVENT_CONNECTED
 :
 
-364 
+374 
 gisu∆ök_mqâ
 ->
 is_c⁄√˘ed
@@ -16549,7 +16807,7 @@ is_c⁄√˘ed
 åue
 ;
 
-365 
+375 
 mqâ
 ->
 	`c⁄√˘Cb
@@ -16557,11 +16815,11 @@ mqâ
 MQTT_CONNECT_SUCCEED
 );
 
-367 
+377 
 MQTT_EVENT_DISCONNECTED
 :
 
-368 
+378 
 gisu∆ök_mqâ
 ->
 is_c⁄√˘ed
@@ -16569,7 +16827,7 @@ is_c⁄√˘ed
 Ál£
 ;
 
-369 
+379 
 mqâ
 ->
 	`c⁄√˘Cb
@@ -16577,7 +16835,7 @@ mqâ
 MQTT_CONNECT_FAILED
 );
 
-370 
+380 
 	`gisu∆ök_put_£m
 (
 mqâ
@@ -16585,23 +16843,23 @@ mqâ
 mesßge_£m
 );
 
-372 
+382 
 MQTT_EVENT_SUBSCRIBED
 :
 
-373 
+383 
 MQTT_EVENT_UNSUBSCRIBED
 :
 
-374 
+384 
 MQTT_EVENT_PUBLISHED
 :
 
-377 
+387 
 MQTT_EVENT_DATA
 :
 
-379 
+389 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
@@ -16613,7 +16871,7 @@ d©a_Àn
 d©a
 );
 
-380 
+390 
 	`gisu∆ök_mqâ_mesßge_¨rived
 (
 mqâ
@@ -16629,25 +16887,25 @@ d©a
 d©a_Àn
 );
 
-382 
+392 
 MQTT_EVENT_ERROR
 :
 
-383 
+393 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 , "MQTT_EVENT_ERROR");
 
-386  
+396  
 ESP_OK
 ;
 
-387 
+397 
 	}
 }
 
-389 
+399 
 	$gisu∆ök_mqâ_c⁄√˘_£rvî
 (
 gisu∆ök_mqâ_˘æ
@@ -16655,53 +16913,53 @@ gisu∆ök_mqâ_˘æ
 mqâ
 ) {
 
-390 
+400 
 e•_mqâ_˛õ¡_c⁄fig_t
  
 mqâ_cfg
  = {
 
-391 .
+401 .
 evít_h™dÀ
  = 
 mqâ_evít_h™dÀr
 ,
 
-392 .
+402 .
 u£r_c⁄ãxt
  = (*)
 mqâ
 ,
 
-393 .
+403 .
 èsk_°ack
  = 4096,
 
-394 .
+404 .
 kì∑live
  = 30,
 
-395 .
+405 .
 buf„r_size
  = 512,
 
-398 if(
+408 if(
 mqâ
  =
 NULL
 ) {
 
-402 if(
+412 if(
 	`gisu∆ök_√tm™agî_is_íãr_∑úög
 ()) {
 
-403 
+413 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"netmanager isÖairingÉxit MQTT");
 
-404 
+414 
 mqâ
 ->
 is_c⁄√˘ög
@@ -16709,13 +16967,13 @@ is_c⁄√˘ög
 Ál£
 ;
 
-409 
+419 
 	`gisu∆ök_mqâ_öfo_ª£t
 (
 mqâ
 );
 
-410 if(
+420 if(
 	`gisu∆ök_mqâ_gë_£rvî
 (
 MQTT_INFO_SERV
@@ -16725,13 +16983,13 @@ mqâ
 ˛õ¡ID
 ,5000)) {
 
-413 
+423 
 	`gisu∆ök_èsk_dñay
 (10000 / 
 p‹tTICK_PERIOD_MS
 );
 
-415 
+425 
 mqâ_cfg
 .
 ho°
@@ -16741,7 +16999,7 @@ mqâ
 brokî
 ;
 
-416 
+426 
 mqâ_cfg
 .
 p‹t
@@ -16749,7 +17007,7 @@ p‹t
 mqâ
 ->port;
 
-417 
+427 
 mqâ_cfg
 .
 ˛õ¡_id
@@ -16759,7 +17017,7 @@ mqâ
 ˛õ¡ID
 ;
 
-418 
+428 
 mqâ_cfg
 .
 u£∫ame
@@ -16767,7 +17025,7 @@ u£∫ame
 mqâ
 ->username;
 
-419 
+429 
 mqâ_cfg
 .
 ∑ssw‹d
@@ -16775,7 +17033,7 @@ mqâ_cfg
 mqâ
 ->password;
 
-421 if(
+431 if(
 mqâ
 ->
 ˛õ¡
@@ -16783,7 +17041,7 @@ mqâ
 NULL
 ) {
 
-422 
+432 
 mqâ
 ->
 ˛õ¡
@@ -16793,7 +17051,7 @@ mqâ
 mqâ_cfg
 );
 
-423 
+433 
 	`e•_mqâ_˛õ¡_°¨t
 (
 mqâ
@@ -16801,29 +17059,29 @@ mqâ
 ˛õ¡
 );
 
-424 
+434 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"gisunlink_mqtt_connect_server");
 
-426 
+436 
 	`gisu∆ök_mqâ_öfo_ª£t
 (
 mqâ
 );
 
-427 
+437 
 	}
 }
 
-429 
+439 
 	$gisu∆ök_mqâ_thªad
 (*
 ∑øm
 ) {
 
-430 
+440 
 gisu∆ök_mqâ_∑ckë
  *
 ∑ckë
@@ -16831,7 +17089,7 @@ gisu∆ök_mqâ_∑ckë
 NULL
 ;
 
-431 
+441 
 gisu∆ök_mqâ_˘æ
  *
 mqâ
@@ -16839,7 +17097,7 @@ mqâ
 ∑øm
 ;
 
-433 
+443 
 	`gisu∆ök_gë_£m
 (
 mqâ
@@ -16847,13 +17105,13 @@ mqâ
 c⁄√˘_£m
 );
 
-434 
+444 
 	`gisu∆ök_mqâ_c⁄√˘_£rvî
 (
 mqâ
 );
 
-436 
+446 
 	`gisu∆ök_gë_£m
 (
 mqâ
@@ -16861,7 +17119,7 @@ mqâ
 mesßge_£m
 );
 
-437 if(
+447 if(
 mqâ
 ->
 is_c⁄√˘ed
@@ -16869,17 +17127,17 @@ is_c⁄√˘ed
 Ál£
 ) {
 
-439 if(
+449 if(
 	`gisu∆ök_√tm™agî_is_íãr_∑úög
 ()) {
 
-440 
+450 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
-,"netmanager isÖairingÉxit MQTTÅhread");
+,"netmanager isÖairingÉxit MQÅhread");
 
-441 
+451 
 	`e•_mqâ_˛õ¡_de°roy
 (
 mqâ
@@ -16887,7 +17145,7 @@ mqâ
 ˛õ¡
 );
 
-442 
+452 
 mqâ
 ->
 ˛õ¡
@@ -16895,7 +17153,7 @@ mqâ
 NULL
 ;
 
-443 
+453 
 mqâ
 ->
 is_c⁄√˘ög
@@ -16903,19 +17161,19 @@ is_c⁄√˘ög
 Ál£
 ;
 
-446 if(
+456 if(
 mqâ
 ->
 ˛õ¡
 ) {
 
-447 
+457 
 	`gisu∆ök_mqâ_öfo_ª£t
 (
 mqâ
 );
 
-448 if(
+458 if(
 	`gisu∆ök_mqâ_gë_£rvî
 (
 MQTT_INFO_SERV
@@ -16925,13 +17183,13 @@ mqâ
 ˛õ¡ID
 ,5000)) {
 
-453 
+463 
 	`gisu∆ök_mqâ_öfo_ª£t
 (
 mqâ
 );
 
-458 
+468 
 	`gisu∆ök_queue_nŸ_em±y
 (
 mqâ
@@ -16939,7 +17197,7 @@ mqâ
 queue
 )) {
 
-459 
+469 
 boﬁ
  
 msg_îr
@@ -16947,7 +17205,7 @@ msg_îr
 åue
 ;
 
-460 
+470 
 boﬁ
  
 ˛ór_∑ckë
@@ -16955,7 +17213,7 @@ boﬁ
 åue
 ;
 
-461 if((
+471 if((
 ∑ckë
  = (
 gisu∆ök_mqâ_∑ckë
@@ -16967,17 +17225,17 @@ mqâ
 queue
 ))) {
 
-462 
+472 
 ∑ckë
 ->
 ty≥
 ) {
 
-463 
+473 
 GISUNLINK_TOPIC_SUB
 :
 
-464 
+474 
 msg_îr
  = 
 	`gisu∆ök_mqâ_thªad_subs¸ibe
@@ -16987,11 +17245,11 @@ mqâ
 ∑ckë
 );
 
-466 
+476 
 GISUNLINK_TOPIC_PUB
 :
 
-467 
+477 
 msg_îr
  = 
 	`gisu∆ök_mqâ_thªad_publish
@@ -17001,13 +17259,13 @@ mqâ
 ∑ckë
 );
 
-471 if(
+481 if(
 msg_îr
  =
 Ál£
 ) {
 
-472 if(
+482 if(
 	`gisu∆ök_mqâ_isc⁄√˘ed
 (Ë&& 
 ∑ckë
@@ -17017,7 +17275,7 @@ ack°©us
 MQTT_PUBLISH_NEEDACK
 ) {
 
-476 if(
+486 if(
 	`gisu∆ök_queue_push
 (
 mqâ
@@ -17027,13 +17285,13 @@ waô_ack_queue
 ∑ckë
 )) {
 
-477 
+487 
 ˛ór_∑ckë
  = 
 Ál£
 ;
 
-478 
+488 
 	`gisu∆ök_put_£m
 (
 mqâ
@@ -17041,7 +17299,7 @@ mqâ
 waô_ack_£m
 );
 
-479 
+489 
 ∑ckë
 ->
 °¨t_ticks
@@ -17049,7 +17307,7 @@ waô_ack_£m
 	`gisu∆ök_gë_tick_cou¡
 ();
 
-480 
+490 
 ∑ckë
 ->
 timeout_ticks
@@ -17057,19 +17315,19 @@ timeout_ticks
 GISUNLINK_FIRST_WAIT_TIME
 ;
 
-481 
+491 
 ∑ckë
 ->
 ªåy
 --;
 
-486 if(
+496 if(
 ˛ór_∑ckë
  =
 åue
 ) {
 
-487 
+497 
 	`gisu∆ök_‰ì
 (
 ∑ckë
@@ -17077,7 +17335,7 @@ GISUNLINK_FIRST_WAIT_TIME
 t›ic
 );
 
-488 
+498 
 	`gisu∆ök_‰ì
 (
 ∑ckë
@@ -17085,29 +17343,29 @@ t›ic
 ∑ylﬂd
 );
 
-489 
+499 
 	`gisu∆ök_‰ì
 (
 ∑ckë
 );
 
-494 
+504 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
 ,"MQTTÅhreadÑeset");
 
-496 
+506 
 	`gisu∆ök_de°roy_èsk
 (
 NULL
 );
 
-497 
+507 
 	}
 }
 
-499 
+509 
 	$gisu∆ök_m©chög_∑ckage_timeout
 (*
 §c
@@ -17115,7 +17373,7 @@ NULL
 ôem
 ) {
 
-500 
+510 
 uöt32
  *
 §c_d©a
@@ -17123,7 +17381,7 @@ uöt32
 §c
 ;
 
-501 
+511 
 gisu∆ök_mqâ_∑ckë
  *
 ∑ckë
@@ -17131,7 +17389,7 @@ gisu∆ök_mqâ_∑ckë
 ôem
 ;
 
-503 if((*
+513 if((*
 §c_d©a
  - 
 ∑ckë
@@ -17143,17 +17401,17 @@ timeout_ticks
 p‹tTICK_PERIOD_MS
 ) {
 
-508 
+518 
 	}
 }
 
-510 
+520 
 	$gisu∆ök_mqâ_waô_ack_thªad
 (*
 ∑øm
 ) {
 
-511 
+521 
 gisu∆ök_mqâ_∑ckë
  *
 ∑ckë
@@ -17161,7 +17419,7 @@ gisu∆ök_mqâ_∑ckë
 NULL
 ;
 
-512 
+522 
 gisu∆ök_mqâ_˘æ
  *
 mqâ
@@ -17169,7 +17427,7 @@ mqâ
 ∑øm
 ;
 
-514 
+524 
 	`gisu∆ök_gë_£m
 (
 mqâ
@@ -17177,7 +17435,7 @@ mqâ
 waô_ack_£m
 );
 
-515 
+525 
 	`gisu∆ök_queue_nŸ_em±y
 (
 mqâ
@@ -17185,7 +17443,7 @@ mqâ
 waô_ack_queue
 )) {
 
-516 
+526 
 uöt16
  
 waô_ª•⁄ds
@@ -17197,7 +17455,7 @@ mqâ
 waô_ack_queue
 );
 
-517 
+527 
 	`gisu∆ök_queue_ª£t
 (
 mqâ
@@ -17205,13 +17463,13 @@ mqâ
 waô_ack_queue
 );
 
-518 
+528 
 i
  = 0; i < 
 waô_ª•⁄ds
 ; i++) {
 
-519 
+529 
 uöt32
  
 now_time
@@ -17219,7 +17477,7 @@ now_time
 	`gisu∆ök_gë_tick_cou¡
 ();
 
-520 
+530 
 	`gisu∆ök_queue_lock
 (
 mqâ
@@ -17227,7 +17485,7 @@ mqâ
 waô_ack_queue
 );
 
-521 
+531 
 ∑ckë
  = 
 	`gisu∆ök_queue_gë_√xt
@@ -17241,13 +17499,13 @@ now_time
 gisu∆ök_m©chög_∑ckage_timeout
 );
 
-522 if(
+532 if(
 ∑ckë
  &&Öackë->
 ªåy
 ) {
 
-523 
+533 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -17259,7 +17517,7 @@ id
 ªåy
 );
 
-524 
+534 
 ∑ckë
 ->
 °¨t_ticks
@@ -17267,7 +17525,7 @@ id
 	`gisu∆ök_gë_tick_cou¡
 ();
 
-525 
+535 
 ∑ckë
 ->
 timeout_ticks
@@ -17275,7 +17533,7 @@ timeout_ticks
 GISUNLINK_SECOND_WAIT_TIME
 ;
 
-526 
+536 
 	`gisu∆ök_mqâ_thªad_publish
 (
 mqâ
@@ -17283,13 +17541,13 @@ mqâ
 ∑ckë
 );
 
-527 
+537 
 ∑ckë
 ->
 ªåy
 --;
 
-529 
+539 
 	`gisu∆ök_queue_u∆ock
 (
 mqâ
@@ -17297,13 +17555,13 @@ mqâ
 waô_ack_queue
 );
 
-530 if(
+540 if(
 ∑ckë
  &&Öackë->
 ªåy
  == 0) {
 
-531 
+541 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -17315,7 +17573,7 @@ id
 ªåy
 );
 
-532 
+542 
 ∑ckë
  = 
 	`gisu∆ök_queue_p›_ôem
@@ -17325,11 +17583,11 @@ mqâ
 waô_ack_queue
 ,packet);
 
-533 if(
+543 if(
 ∑ckë
 ) {
 
-534 
+544 
 	`gisu∆ök_‰ì
 (
 ∑ckë
@@ -17337,7 +17595,7 @@ waô_ack_queue
 t›ic
 );
 
-535 
+545 
 	`gisu∆ök_‰ì
 (
 ∑ckë
@@ -17345,13 +17603,13 @@ t›ic
 ∑ylﬂd
 );
 
-536 
+546 
 	`gisu∆ök_‰ì
 (
 ∑ckë
 );
 
-540 
+550 
 	`gisu∆ök_èsk_dñay
 (
 GISUNLINK_WAIT_TASK_DELAY
@@ -17359,27 +17617,27 @@ GISUNLINK_WAIT_TASK_DELAY
 p‹tTICK_PERIOD_MS
 );
 
-543 
+553 
 	`gisu∆ök_de°roy_èsk
 (
 NULL
 );
 
-544 
+554 
 	}
 }
 
-547 
+557 
 	$gisu∆ök_mqâ_öô
 (*
 Devi˚HWSn_addr
 ) {
 
-548 if(
+558 if(
 gisu∆ök_mqâ
 ) {
 
-549 
+559 
 gisu∆ök_mqâ
 ->
 Devi˚HWSn
@@ -17387,7 +17645,7 @@ Devi˚HWSn
 Devi˚HWSn_addr
 ;
 
-553 if((
+563 if((
 gisu∆ök_mqâ
  = (
 gisu∆ök_mqâ_˘æ
@@ -17395,7 +17653,7 @@ gisu∆ök_mqâ_˘æ
 	`gisu∆ök_mÆloc
 ((gisunlink_mqtt_ctrl)))) {
 
-554 
+564 
 gisu∆ök_mqâ
 ->
 is_c⁄√˘ög
@@ -17403,7 +17661,7 @@ is_c⁄√˘ög
 Ál£
 ;
 
-555 
+565 
 gisu∆ök_mqâ
 ->
 is_c⁄√˘ed
@@ -17411,7 +17669,7 @@ is_c⁄√˘ed
 Ál£
 ;
 
-556 
+566 
 gisu∆ök_mqâ
 ->
 Devi˚HWSn
@@ -17419,7 +17677,7 @@ Devi˚HWSn
 Devi˚HWSn_addr
 ;
 
-557 
+567 
 gisu∆ök_mqâ
 ->
 queue
@@ -17429,7 +17687,7 @@ queue
 GISUNLINK_MAX_QUEUE_NUM
 );
 
-558 
+568 
 gisu∆ök_mqâ
 ->
 waô_ack_queue
@@ -17439,7 +17697,7 @@ waô_ack_queue
 GISUNLINK_MAX_WAIT_QUEUE_NUM
 );
 
-559 
+569 
 gisu∆ök_mqâ
 ->
 waô_ack_£m
@@ -17449,7 +17707,7 @@ waô_ack_£m
 GISUNLINK_MAX_WAIT_QUEUE_NUM
 ,0);
 
-560 
+570 
 gisu∆ök_mqâ
 ->
 c⁄√˘_£m
@@ -17459,7 +17717,7 @@ c⁄√˘_£m
 GISUNLINK_MAX_QUEUE_NUM
 ,0);
 
-561 
+571 
 gisu∆ök_mqâ
 ->
 mesßge_£m
@@ -17469,7 +17727,7 @@ mesßge_£m
 GISUNLINK_MAX_QUEUE_NUM
 ,0);
 
-562 
+572 
 gisu∆ök_mqâ
 ->
 ˛õ¡ID
@@ -17477,7 +17735,7 @@ gisu∆ök_mqâ
 	`gisu∆ök_gë_mac_wôh_°rög
 ("gsl_");
 
-563 
+573 
 	`gisu∆ök_¸óã_èsk_wôh_Pri‹ôy
 (
 gisu∆ök_mqâ_thªad
@@ -17485,7 +17743,7 @@ gisu∆ök_mqâ_thªad
 gisu∆ök_mqâ
 , 2048,8);
 
-564 
+574 
 	`gisu∆ök_¸óã_èsk_wôh_Pri‹ôy
 (
 gisu∆ök_mqâ_waô_ack_thªad
@@ -17493,11 +17751,11 @@ gisu∆ök_mqâ_waô_ack_thªad
 gisu∆ök_mqâ
 ,1536,7);
 
-566 
+576 
 	}
 }
 
-568 
+578 
 	$gisu∆ök_mqâ_c⁄√˘
 (
 GISUNLINK_MQTT_CONNECT
@@ -17509,7 +17767,7 @@ GISUNLINK_MQTT_MESSAGE
 mesßgeCb
 ) {
 
-569 if(
+579 if(
 gisu∆ök_mqâ
  && 
 mesßgeCb
@@ -17519,7 +17777,7 @@ is_c⁄√˘ög
 Ál£
 ) {
 
-570 
+580 
 gisu∆ök_mqâ
 ->
 is_c⁄√˘ög
@@ -17527,19 +17785,19 @@ is_c⁄√˘ög
 åue
 ;
 
-571 
+581 
 gisu∆ök_mqâ
 ->
 mesßgeCb
  = messageCb;
 
-572 
+582 
 gisu∆ök_mqâ
 ->
 c⁄√˘Cb
  = connectCb;
 
-573 
+583 
 	`gisu∆ök_put_£m
 (
 gisu∆ök_mqâ
@@ -17547,17 +17805,17 @@ gisu∆ök_mqâ
 c⁄√˘_£m
 );
 
-575 
+585 
 	}
 }
 
-577 
+587 
 boﬁ
  
 	$gisu∆ök_mqâ_isc⁄√˘ed
 () {
 
-578 if(
+588 if(
 gisu∆ök_mqâ
  && gisu∆ök_mqâ->
 ˛õ¡
@@ -17567,19 +17825,19 @@ is_c⁄√˘ed
 åue
 ) {
 
-579  
+589  
 åue
 ;
 
-581  
+591  
 Ál£
 ;
 
-582 
+592 
 	}
 }
 
-584 
+594 
 boﬁ
  
 	$gisu∆ök_mqâ_subs¸ibe
@@ -17591,13 +17849,13 @@ uöt8
 qos
 ) {
 
-585 if(
+595 if(
 gisu∆ök_mqâ
  && gisu∆ök_mqâ->
 is_c⁄√˘ed
 ) {
 
-586 
+596 
 gisu∆ök_mqâ_∑ckë
  *
 ∑ckë
@@ -17605,7 +17863,7 @@ gisu∆ök_mqâ_∑ckë
 	`gisu∆ök_mÆloc
 ((gisunlink_mqtt_packet));
 
-587 
+597 
 ∑ckë
 ->
 ty≥
@@ -17613,7 +17871,7 @@ ty≥
 GISUNLINK_TOPIC_SUB
 ;
 
-588 
+598 
 ∑ckë
 ->
 ack°©us
@@ -17621,13 +17879,13 @@ ack°©us
 MQTT_PUBLISH_NOACK
 ;
 
-589 
+599 
 ∑ckë
 ->
 qos
  = qos;
 
-590 
+600 
 ∑ckë
 ->
 ªåy
@@ -17635,7 +17893,7 @@ qos
 GISUNLINK_RETRY_NUM
 ;
 
-591 
+601 
 	`a•rötf
 (&
 ∑ckë
@@ -17643,7 +17901,7 @@ GISUNLINK_RETRY_NUM
 t›ic
 ,"%s",topic);
 
-592 if(
+602 if(
 	`gisu∆ök_queue_push
 (
 gisu∆ök_mqâ
@@ -17653,7 +17911,7 @@ queue
 ∑ckë
 )) {
 
-593 
+603 
 	`gisu∆ök_put_£m
 (
 gisu∆ök_mqâ
@@ -17661,7 +17919,7 @@ gisu∆ök_mqâ
 mesßge_£m
 );
 
-595 
+605 
 	`gisu∆ök_‰ì
 (
 ∑ckë
@@ -17669,29 +17927,29 @@ mesßge_£m
 t›ic
 );
 
-596 
+606 
 	`gisu∆ök_‰ì
 (
 ∑ckë
 );
 
-597  
+607  
 Ál£
 ;
 
-599  
+609  
 åue
 ;
 
-601  
+611  
 Ál£
 ;
 
-602 
+612 
 	}
 }
 
-604 
+614 
 boﬁ
  
 	$gisu∆ök_mqâ_publish
@@ -17713,13 +17971,13 @@ boﬁ
 ack°©us
 ) {
 
-605 if(
+615 if(
 gisu∆ök_mqâ
  && gisu∆ök_mqâ->
 is_c⁄√˘ed
 ) {
 
-606 
+616 
 gisu∆ök_mqâ_∑ckë
  *
 ∑ckë
@@ -17727,7 +17985,7 @@ gisu∆ök_mqâ_∑ckë
 	`gisu∆ök_mÆloc
 ((gisunlink_mqtt_packet));
 
-607 
+617 
 ∑ckë
 ->
 ty≥
@@ -17735,19 +17993,19 @@ ty≥
 GISUNLINK_TOPIC_PUB
 ;
 
-608 
+618 
 ∑ckë
 ->
 ack°©us
  =áckstatus;
 
-609 
+619 
 ∑ckë
 ->
 qos
  = qos;
 
-610 
+620 
 ∑ckë
 ->
 id
@@ -17755,7 +18013,7 @@ id
 publish_id
 ;
 
-611 
+621 
 ∑ckë
 ->
 ªåy
@@ -17763,7 +18021,7 @@ publish_id
 GISUNLINK_RETRY_NUM
 ;
 
-612 
+622 
 	`a•rötf
 (&
 ∑ckë
@@ -17771,7 +18029,7 @@ GISUNLINK_RETRY_NUM
 t›ic
 ,"%s",topic);
 
-613 
+623 
 	`a•rötf
 (&
 ∑ckë
@@ -17779,7 +18037,7 @@ t›ic
 ∑ylﬂd
 ,"%s",payload);
 
-614 if(
+624 if(
 	`gisu∆ök_queue_push
 (
 gisu∆ök_mqâ
@@ -17789,7 +18047,7 @@ queue
 ∑ckë
 )) {
 
-615 
+625 
 	`gisu∆ök_put_£m
 (
 gisu∆ök_mqâ
@@ -17797,7 +18055,7 @@ gisu∆ök_mqâ
 mesßge_£m
 );
 
-617 
+627 
 	`gisu∆ök_‰ì
 (
 ∑ckë
@@ -17805,7 +18063,7 @@ mesßge_£m
 t›ic
 );
 
-618 
+628 
 	`gisu∆ök_‰ì
 (
 ∑ckë
@@ -17813,51 +18071,51 @@ t›ic
 ∑ylﬂd
 );
 
-619 
+629 
 	`gisu∆ök_‰ì
 (
 ∑ckë
 );
 
-620  
+630  
 Ál£
 ;
 
-622  
+632  
 åue
 ;
 
-624  
+634  
 Ál£
 ;
 
-625 
+635 
 	}
 }
 
-627 *
+637 *
 	$gisu∆ök_mqâ_˛õ¡id
 () {
 
-628 if(
+638 if(
 gisu∆ök_mqâ
 ) {
 
-629  
+639  
 gisu∆ök_mqâ
 ->
 ˛õ¡ID
 ;
 
-631  
+641  
 NULL
 ;
 
-632 
+642 
 	}
 }
 
-634 
+644 
 	$gisu∆ök_mqâ_‰ì_mesßge
 (
 gisu∆ök_mqâ_mesßge
@@ -17865,17 +18123,17 @@ gisu∆ök_mqâ_mesßge
 mesßge
 ) {
 
-635 if(
+645 if(
 mesßge
 ) {
 
-636 if(
+646 if(
 mesßge
 ->
 t›ic
 ) {
 
-637 
+647 
 	`gisu∆ök_‰ì
 (
 mesßge
@@ -17883,7 +18141,7 @@ mesßge
 t›ic
 );
 
-638 
+648 
 mesßge
 ->
 t›ic
@@ -17891,13 +18149,13 @@ t›ic
 NULL
 ;
 
-640 if(
+650 if(
 mesßge
 ->
 a˘
 ) {
 
-641 
+651 
 	`gisu∆ök_‰ì
 (
 mesßge
@@ -17905,7 +18163,7 @@ mesßge
 a˘
 );
 
-642 
+652 
 mesßge
 ->
 a˘
@@ -17913,13 +18171,13 @@ a˘
 NULL
 ;
 
-644 if(
+654 if(
 mesßge
 ->
 d©a
 ) {
 
-645 
+655 
 	`gisu∆ök_‰ì
 (
 mesßge
@@ -17927,7 +18185,7 @@ mesßge
 d©a
 );
 
-646 
+656 
 mesßge
 ->
 d©a
@@ -17935,19 +18193,19 @@ d©a
 NULL
 ;
 
-649 
+659 
 	`gisu∆ök_‰ì
 (
 mesßge
 );
 
-650 
+660 
 mesßge
  = 
 NULL
 ;
 
-653 
+663 
 	}
 }
 
@@ -25967,13 +26225,7 @@ time°amp
 	~"gisu∆ök_upd©efúmw¨e.h
 "
 
-31 
-timevÆ
- 
-	gsy°ime
-;
-
-33 
+31 
 	$gisu∆ök_¢ç_ª•⁄d
 (
 SNTP_RESPOND
@@ -25983,11 +26235,11 @@ SNTP_RESPOND
 ∑øm
 ) {
 
-34 if(
+32 if(
 ∑øm
 ) {
 
-35 
+33 
 gisu∆ök_sy°em_˘æ
  *
 gisu∆ök_sy°em
@@ -25995,19 +26247,19 @@ gisu∆ök_sy°em
 ∑øm
 ;
 
-36 if(
+34 if(
 GISUNLINK_SNTP_SUCCEED
  =
 ªps⁄d
 ) {
 
-37 
+35 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
 ,"systemÅime sync ok");
 
-38 
+36 
 	`gisu∆ök_sy°em_£t_°©e
 (
 gisu∆ök_sy°em
@@ -26015,7 +26267,7 @@ gisu∆ök_sy°em
 GISUNLINK_NETMANAGER_TIME_SUCCEED
 );
 
-39 
+37 
 gisu∆ök_sy°em
 ->
 time_sync
@@ -26023,13 +26275,13 @@ time_sync
 åue
 ;
 
-41 
+39 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
 ,"systemÅime sync failed");
 
-42 
+40 
 	`gisu∆ök_sy°em_£t_°©e
 (
 gisu∆ök_sy°em
@@ -26037,7 +26289,7 @@ gisu∆ök_sy°em
 GISUNLINK_NETMANAGER_TIME_FAILED
 );
 
-43 
+41 
 gisu∆ök_sy°em
 ->
 time_sync
@@ -26045,11 +26297,11 @@ time_sync
 Ál£
 ;
 
-46 
+44 
 	}
 }
 
-48 
+46 
 	$gisu∆ök_sy°em_√tm™agî_evít
 (*
 mesßge
@@ -26057,7 +26309,7 @@ mesßge
 ∑øm
 ) {
 
-49 
+47 
 gisu∆ök_√tm™agî_evít
  *
 evít
@@ -26065,11 +26317,11 @@ evít
 mesßge
 ;
 
-50 if(
+48 if(
 mesßge
 ) {
 
-51 
+49 
 	`gisu∆ök_sy°em_£t_°©e
 ((
 gisu∆ök_sy°em_˘æ
@@ -26081,7 +26333,7 @@ evít
 id
 );
 
-52 (
+50 (
 uöt8
 )
 evít
@@ -26089,43 +26341,43 @@ evít
 id
 ) {
 
-53 
+51 
 GISUNLINK_NETMANAGER_IDLE
 :
 
-54 
+52 
 GISUNLINK_NETMANAGER_START
 :
 
-55 
+53 
 GISUNLINK_NETMANAGER_CONNECTING
 :
 
-56 
+54 
 GISUNLINK_NETMANAGER_RECONNECTING
 :
 
-57 
+55 
 GISUNLINK_NETMANAGER_ENT_CONFIG
 :
 
-58 
+56 
 GISUNLINK_NETMANAGER_EXI_CONFIG
 :
 
-59 
+57 
 GISUNLINK_NETMANAGER_SAVE_CONFIG
 :
 
-61 
+59 
 GISUNLINK_NETMANAGER_CONNECTED
 :
 
-63 
+61 
 	`gisu∆ök_upd©efúmw¨e_°¨t_sig«l
 ();
 
-64 
+62 
 	`gisu∆ök_¢ç_öôülize
 (
 gisu∆ök_¢ç_ª•⁄d
@@ -26133,11 +26385,11 @@ gisu∆ök_¢ç_ª•⁄d
 ∑øm
 );
 
-67 
+65 
 GISUNLINK_NETMANAGER_DISCONNECTED
 :
 
-68 ((
+66 ((
 gisu∆ök_sy°em_˘æ
  *)
 ∑øm
@@ -26147,11 +26399,11 @@ time_sync
 Ál£
 ;
 
-72 
+70 
 	}
 }
 
-74 
+72 
 	$gisu∆ök_sy°em_u¨t_evít
 (*
 mesßge
@@ -26159,7 +26411,7 @@ mesßge
 ∑øm
 ) {
 
-75 
+73 
 gisu∆ök_u¨t_evít
  *
 u¨t
@@ -26167,43 +26419,43 @@ u¨t
 mesßge
 ;
 
-76 if(
+74 if(
 u¨t
 ) {
 
-77 
+75 
 u¨t
 ->
 cmd
 ) {
 
-78 
+76 
 GISUNLINK_NETWORK_RESET
 :
 
-80 if(
+78 if(
 Ál£
  =
 	`gisu∆ök_√tm™agî_is_íãr_∑úög
 ()) {
 
-81 
+79 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"GISUNLINK_RESETNET_CMD");
 
-82 
+80 
 	`gisu∆ök_√tm™agî_íãr_∑úög
 (
 GISUNLINK_MAIN_MODULE
 );
 
-86 
+84 
 GISUNLINK_DEV_SN
 :
 
-88 *
+86 *
 devi˚_¢
  = 
 	`gisu∆ök_gë_mac_wôh_°rög
@@ -26211,19 +26463,19 @@ devi˚_¢
 NULL
 );
 
-89 
+87 
 gisu∆ök_≥rùhîÆ_mesßge
  
 u¨t_mesßge
  = {
 
-90 .
+88 .
 cmd
  = 
 GISUNLINK_DEV_SN
 ,
 
-91 .
+89 .
 d©a
  = (
 uöt8
@@ -26231,7 +26483,7 @@ uöt8
 devi˚_¢
 ,
 
-92 .
+90 .
 d©a_Àn
  = 
 	`°æí
@@ -26239,41 +26491,41 @@ d©a_Àn
 devi˚_¢
 ),
 
-93 .
+91 .
 ª•⁄d
  = 
 UART_NO_RESPOND
 ,
 
-94 .
+92 .
 ª•⁄dCb
  = 
 NULL
 ,
 
-96 
+94 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
 (&
 u¨t_mesßge
 );
 
-98 
+96 
 	`gisu∆ök_‰ì
 (
 devi˚_¢
 );
 
-99 
+97 
 devi˚_¢
  = 
 NULL
 ;
 
-102 
+100 
 GISUNLINK_NETWORK_STATUS
 :
 
-104 
+102 
 uöt8
  
 °©e
@@ -26283,51 +26535,51 @@ gisu∆ök_sy°em_˘æ
 ∑øm
 )->state;
 
-105 
+103 
 gisu∆ök_≥rùhîÆ_mesßge
  
 u¨t_mesßge
  = {
 
-106 .
+104 .
 cmd
  = 
 GISUNLINK_NETWORK_STATUS
 ,
 
-107 .
+105 .
 d©a
  = &
 °©e
 ,
 
-108 .
+106 .
 d©a_Àn
  = 1,
 
-109 .
+107 .
 ª•⁄d
  = 
 UART_NO_RESPOND
 ,
 
-110 .
+108 .
 ª•⁄dCb
  = 
 NULL
 ,
 
-112 
+110 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
 (&
 u¨t_mesßge
 );
 
-117 
+115 
 	}
 }
 
-119 
+117 
 	$gisu∆ök_sy°em_£ç¨m
 (
 gisu∆ök_sy°em_˘æ
@@ -26335,7 +26587,7 @@ gisu∆ök_sy°em_˘æ
 gisu∆ök_sy°em
 ) {
 
-120 
+118 
 gisu∆ök_sy°em
 ->
 time_sync
@@ -26343,7 +26595,7 @@ time_sync
 Ál£
 ;
 
-123 
+121 
 gisu∆ök_sy°em
 ->
 isC⁄√˘Ap
@@ -26351,7 +26603,7 @@ isC⁄√˘Ap
 gisu∆ök_√tm™agî_is_c⁄√˘ed_≠
 ;
 
-124 
+122 
 gisu∆ök_sy°em
 ->
 u¨tH™dÀ
@@ -26359,7 +26611,7 @@ u¨tH™dÀ
 gisu∆ök_sy°em_u¨t_evít
 ;
 
-125 
+123 
 gisu∆ök_sy°em
 ->
 rouãH™dÀ
@@ -26367,11 +26619,11 @@ rouãH™dÀ
 gisu∆ök_sy°em_√tm™agî_evít
 ;
 
-128 
+126 
 	}
 }
 
-130 
+128 
 gisu∆ök_sy°em_˘æ
  *
 	$gisu∆ök_sy°em_öô
@@ -26381,7 +26633,7 @@ GISUNLINK_MESSAGE_CB
 mesßgeCb
 ) {
 
-131 
+129 
 gisu∆ök_sy°em_˘æ
  *
 gisu∆ök_sy°em
@@ -26389,11 +26641,11 @@ gisu∆ök_sy°em
 	`gisu∆ök_mÆloc
 ((gisunlink_system_ctrl));
 
-132 if(
+130 if(
 gisu∆ök_sy°em
 ) {
 
-133 
+131 
 	`mem£t
 (
 gisu∆ök_sy°em
@@ -26401,7 +26653,7 @@ gisu∆ök_sy°em
 gisu∆ök_sy°em_˘æ
 ));
 
-134 
+132 
 gisu∆ök_sy°em
 ->
 °©e
@@ -26409,21 +26661,21 @@ gisu∆ök_sy°em
 	`gisu∆ök_√tm™agî_gë_°©e
 ();
 
-136 
+134 
 	`gisu∆ök_sy°em_£ç¨m
 (
 gisu∆ök_sy°em
 );
 
-138 
+136 
 	`gisu∆ök_mesßge_öô
 ();
 
-139 if(
+137 if(
 mesßgeCb
 ) {
 
-140 
+138 
 	`gisu∆ök_mesßge_ªgi°î
 (
 GISUNLINK_MAIN_MODULE
@@ -26435,19 +26687,19 @@ gisu∆ök_mesßge
 mesßgeCb
 );
 
-143 
+141 
 	`gisu∆ök_c⁄fig_öô
 ();
 
-145 
+143 
 	`gisu∆ök_√tm™agî_öô
 ();
 
-149 
+147 
 	`gisu∆ök_≥rùhîÆ_öô
 ();
 
-151 
+149 
 	`gisu∆ök_mqâ_öô
 (
 gisu∆ök_sy°em
@@ -26455,19 +26707,19 @@ gisu∆ök_sy°em
 devi˚HWSn
 );
 
-153 
+151 
 	`gisu∆ök_upd©efúmw¨e_öô
 ();
 
-155  
+153  
 gisu∆ök_sy°em
 ;
 
-156 
+154 
 	}
 }
 
-158 
+156 
 boﬁ
  
 	$gisu∆ök_sy°em_time_ok
@@ -26477,21 +26729,21 @@ gisu∆ök_sy°em_˘æ
 gisu∆ök_sy°em
 ) {
 
-159 if(
+157 if(
 gisu∆ök_sy°em
 ) {
 
-160 if(
+158 if(
 gisu∆ök_sy°em
 ->
 time_sync
 ) {
 
-161  
+159  
 åue
 ;
 
-163 
+161 
 	`gisu∆ök_¢ç_öôülize
 (
 gisu∆ök_¢ç_ª•⁄d
@@ -26499,15 +26751,15 @@ gisu∆ök_¢ç_ª•⁄d
 gisu∆ök_sy°em
 );
 
-166  
+164  
 Ál£
 ;
 
-167 
+165 
 	}
 }
 
-169 
+167 
 	$gisu∆ök_sy°em_£t_°©e
 (
 gisu∆ök_sy°em_˘æ
@@ -26519,103 +26771,103 @@ uöt8
 °©e
 ) {
 
-170 if(
+168 if(
 gisu∆ök_sy°em
 ) {
 
-171 
+169 
 gisu∆ök_sy°em
 ->
 °©e
  = state;
 
-172 
+170 
 gisu∆ök_≥rùhîÆ_mesßge
  
 u¨t_mesßge
  = {
 
-173 .
+171 .
 cmd
  = 
 GISUNLINK_NETWORK_STATUS
 ,
 
-174 .
+172 .
 d©a
  = &
 °©e
 ,
 
-175 .
+173 .
 d©a_Àn
  = 1,
 
-176 .
+174 .
 ª•⁄d
  = 
 UART_NO_RESPOND
 ,
 
-177 .
+175 .
 ª•⁄dCb
  = 
 NULL
 ,
 
-180 if(
+178 if(
 	`gisu∆ök_sy°em_∑úög
 (Ë=
 Ál£
 ) {
 
-181 
+179 
 °©e
 ) {
 
-182 
+180 
 GISUNLINK_NETMANAGER_ENT_CONFIG
 :
 
-183 
+181 
 GISUNLINK_NETMANAGER_EXI_CONFIG
 :
 
-184 
+182 
 GISUNLINK_NETMANAGER_SAVE_CONFIG
 :
 
-185 
+183 
 GISUNLINK_NETMANAGER_CONNECTED_SER
 :
 
-186 
+184 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
 (&
 u¨t_mesßge
 );
 
-190 
+188 
 	`gisu∆ök_≥rùhîÆ_£nd_mesßge
 (&
 u¨t_mesßge
 );
 
-193 
+191 
 	}
 }
 
-195 
+193 
 boﬁ
  
 	$gisu∆ök_sy°em_∑úög
 () {
 
-196  
+194  
 	`gisu∆ök_√tm™agî_is_íãr_∑úög
 ();
 
-197 
+195 
 	}
 }
 
@@ -28681,7 +28933,7 @@ md5
 size
 );
 
-437 
+436 
 boﬁ
  
 å™s„r_ovî
@@ -28689,7 +28941,7 @@ boﬁ
 Ál£
 ;
 
-438 
+437 
 boﬁ
  
 ˛ón_vîsi⁄
@@ -28697,7 +28949,21 @@ boﬁ
 Ál£
 ;
 
-439 
+438 
+upd©e_hook
+->
+upd©e_ªåy
+ = 
+Ál£
+;
+
+439 
+upd©e_hook
+->
+upd©e_ªåy_tick
+ = 0;
+
+440 
 upd©e_hook
 ->
 	`quîy
@@ -28705,11 +28971,11 @@ upd©e_hook
 fúmw¨e
 )) {
 
-440 
+441 
 GISUNLINK_NEED_UPGRADE
 :
 
-442 
+443 
 upd©e_hook
 ->
 upd©e
@@ -28717,7 +28983,7 @@ upd©e
 åue
 ;
 
-443 
+444 
 upd©e_hook
 ->
 vîsi⁄
@@ -28729,7 +28995,7 @@ dow∆ﬂd
 vî
 ;
 
-444 
+445 
 upd©e_hook
 ->
 fûe_size
@@ -28741,7 +29007,7 @@ dow∆ﬂd
 size
 ;
 
-445 if(
+446 if(
 	`gisu∆ök_upd©efúmw¨e_£nd_fúmw¨e
 (
 FW_FILE_PATH
@@ -28755,21 +29021,15 @@ dow∆ﬂd
 size
 ) {
 
-446 
+447 
 å™s„r_ovî
  = 
 åue
 ;
 
-450 
+451 
 GISUNLINK_NO_NEED_UPGRADE
 :
-
-451 
-	`gisu∆ök_¥öt
-(
-GISUNLINK_PRINT_ERROR
-,"deviceÇoÇeedÅo update firmware");
 
 452 
 ˛ón_vîsi⁄
@@ -28777,85 +29037,99 @@ GISUNLINK_PRINT_ERROR
 åue
 ;
 
-454 
+453 
+	`gisu∆ök_¥öt
+(
+GISUNLINK_PRINT_ERROR
+,"deviceÇoÇeedÅo update firmware");
+
+455 
 GISUNLINK_DEVICE_TIMEOUT
 :
 
-455 
+457 
+upd©e_hook
+->
+upd©e_ªåy
+ = 
+åue
+;
+
+458 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"device is off-line");
 
-459 if(
+463 if(
 å™s„r_ovî
 ) {
 
-460 
+464 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
 ,"firmwareÅransfer finish");
 
-461 
+465 
 upd©e_hook
 ->
 	`check
 ()) {
 
-462 
+466 
 GISUNLINK_FIRMWARE_CHK_OK
 :
 
-463 
+467 
 ˛ón_vîsi⁄
  = 
 åue
 ;
 
-465 
+469 
 GISUNLINK_DEVICE_TIMEOUT
 :
 
-466 
+470 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"device is off-line");
 
-468 
+472 
 GISUNLINK_FIRMWARE_CHK_NO_OK
 :
 
-470 
+474 
 ˛ón_vîsi⁄
  = 
 Ál£
 ;
 
-471 
+475 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"device check dataÉrror!");
 
-475 
+479 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"firmwareÅransfer unfinished");
 
-478 if(
+482 if(
 ˛ón_vîsi⁄
 ) {
 
-479 
+483 
 	`gisu∆ök_upd©efúmw¨e_ªmove_fûe
 (
 FW_FILE_PATH
 );
 
-480 
+484 
 fúmw¨e
 ->
 å™s„r_ovî
@@ -28863,7 +29137,7 @@ fúmw¨e
 åue
 ;
 
-481 
+485 
 	`gisu∆ök_c⁄fig_£t
 (
 FIRMWARE
@@ -28871,23 +29145,23 @@ FIRMWARE
 fúmw¨e
 );
 
-482 if(
+486 if(
 å™s„r_ovî
 ) {
 
-483 
+487 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_WARN
 ,"device succeedÑeceive data!");
 
-487 
+491 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
 ,"noÅhinkÅo do");
 
-490 
+494 
 	`gisu∆ök_fúmw¨e_dow∆ﬂd_‰ì
 (
 fúmw¨e
@@ -28895,7 +29169,7 @@ fúmw¨e
 dow∆ﬂd
 );
 
-491 
+495 
 fúmw¨e
 ->
 dow∆ﬂd
@@ -28903,23 +29177,23 @@ dow∆ﬂd
 NULL
 ;
 
-492 
+496 
 îr‹_exô
 :
 
-493 
+497 
 	`gisu∆ök_‰ì
 (
 fúmw¨e
 );
 
-494 
+498 
 fúmw¨e
  = 
 NULL
 ;
 
-495 
+499 
 upd©e_hook
 ->
 upd©e
@@ -28927,35 +29201,35 @@ upd©e
 Ál£
 ;
 
-496 
+500 
 upd©e_hook
 ->
 fûe_size
  = 0;
 
-497 
+501 
 upd©e_hook
 ->
 £nd_size
  = 0;
 
-498 
+502 
 upd©e_hook
 ->
 vîsi⁄
  = 0;
 
-499 
+503 
 	}
 }
 
-501 
+505 
 	$gisu∆ök_upd©efúmw¨e_èsk
 (*
 ∑øm
 ) {
 
-502 
+506 
 gisu∆ök_upd©efúmw¨e_˘æ
  *
 ufw_˘æ
@@ -28963,7 +29237,7 @@ ufw_˘æ
 ∑øm
 ;
 
-504 
+508 
 	`gisu∆ök_gë_£m
 (
 ufw_˘æ
@@ -28971,13 +29245,13 @@ ufw_˘æ
 thªad_£m
 );
 
-506 
+510 
 	`gisu∆ök_upd©efúmw¨e_dow∆ﬂd
 (
 ufw_˘æ
 );
 
-508 
+512 
 gisu∆ök_fúmw¨e_dow∆ﬂd
  *
 œ°_dow∆ﬂd_èsk
@@ -28985,25 +29259,25 @@ gisu∆ök_fúmw¨e_dow∆ﬂd
 	`gisu∆ök_gë_dow∆ﬂd_èsk
 ();
 
-509 if(
+513 if(
 	`gisu∆ök_upd©efúmw¨e_dow∆ﬂd_check
 (
 œ°_dow∆ﬂd_èsk
 )) {
 
-510 
+514 
 	`gisu∆ök_fúmw¨e_dow∆ﬂd_‰ì
 (
 œ°_dow∆ﬂd_èsk
 );
-
-511 
-œ°_dow∆ﬂd_èsk
- = 
-NULL
-;
 
 515 
+œ°_dow∆ﬂd_èsk
+ = 
+NULL
+;
+
+519 
 	`gisu∆ök_fúmw¨e_dow∆ﬂd_‰ì
 (
 ufw_˘æ
@@ -29011,7 +29285,7 @@ ufw_˘æ
 dow∆ﬂd
 );
 
-516 
+520 
 ufw_˘æ
 ->
 dow∆ﬂd
@@ -29019,7 +29293,7 @@ dow∆ﬂd
 NULL
 ;
 
-517 
+521 
 ufw_˘æ
 ->
 dow∆ﬂd
@@ -29027,7 +29301,7 @@ dow∆ﬂd
 œ°_dow∆ﬂd_èsk
 ;
 
-518 
+522 
 ufw_˘æ
 ->
 °¨t_dow∆ﬂd
@@ -29035,7 +29309,7 @@ ufw_˘æ
 åue
 ;
 
-519 
+523 
 	`gisu∆ök_¥öt
 (
 GISUNLINK_PRINT_ERROR
@@ -29045,7 +29319,7 @@ GISUNLINK_PRINT_ERROR
 md5
 );
 
-523 
+527 
 	`gisu∆ök_upd©efúmw¨e_upd©e
 (
 ufw_˘æ
@@ -29053,25 +29327,25 @@ ufw_˘æ
 hook
 );
 
-525 
+529 
 	`gisu∆ök_de°roy_èsk
 (
 NULL
 );
 
-526 
+530 
 	}
 }
 
-528 
+532 
 	$gisu∆ök_upd©efúmw¨e_öô
 () {
 
-529 if(
+533 if(
 upd©eCål
 ) {
 
-533 if((
+537 if((
 upd©eCål
  = (
 gisu∆ök_upd©efúmw¨e_˘æ
@@ -29079,7 +29353,7 @@ gisu∆ök_upd©efúmw¨e_˘æ
 	`gisu∆ök_mÆloc
 ((gisunlink_updatefirmware_ctrl)))) {
 
-534 
+538 
 upd©eCål
 ->
 °¨t_dow∆ﬂd
@@ -29087,13 +29361,13 @@ upd©eCål
 Ál£
 ;
 
-535 
+539 
 upd©eCål
 ->
 dow∆ﬂd_ru¡ime
  = 0;
 
-536 
+540 
 upd©eCål
 ->
 thªad_£m
@@ -29103,7 +29377,7 @@ thªad_£m
 GISUNLINK_MAX_QUEUE_NUM
 ,0);
 
-537 
+541 
 	`gisu∆ök_¸óã_èsk_wôh_Pri‹ôy
 (
 gisu∆ök_upd©efúmw¨e_èsk
@@ -29111,15 +29385,15 @@ gisu∆ök_upd©efúmw¨e_èsk
 upd©eCål
 , 2048,8);
 
-539 
+543 
 	}
 }
 
-541 
+545 
 	$gisu∆ök_upd©efúmw¨e_°¨t_sig«l
 () {
 
-542 if(
+546 if(
 upd©eCål
  && upd©eCål->
 °¨t_dow∆ﬂd
@@ -29127,7 +29401,7 @@ upd©eCål
 Ál£
 ) {
 
-543 
+547 
 	`gisu∆ök_put_£m
 (
 upd©eCål
@@ -29135,11 +29409,11 @@ upd©eCål
 thªad_£m
 );
 
-545 
+549 
 	}
 }
 
-547 
+551 
 	$gisu∆ök_upd©efúmw¨e_ªgi°î_hook
 (
 gisu∆ök_fúmw¨e_upd©e_hook
@@ -29147,17 +29421,17 @@ gisu∆ök_fúmw¨e_upd©e_hook
 hook
 ) {
 
-548 if(
+552 if(
 upd©eCål
 ) {
 
-549 
+553 
 upd©eCål
 ->
 hook
  = hook;
 
-551 
+555 
 	}
 }
 

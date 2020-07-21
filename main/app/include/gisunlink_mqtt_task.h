@@ -44,7 +44,7 @@ void mqttMessageRespond(const char *act,uint8 behavior,uint32 req_id,bool result
  * @param gisunlink_mqtt_message 
  * @return void
  */
-void mqttMessageHandle(gisunlink_mqtt_message *message);
+void mqttRecvMessageHandle(gisunlink_system_ctrl *gisunlink_system, gisunlink_mqtt_message *message);
 
 #ifdef __cplusplus
 }

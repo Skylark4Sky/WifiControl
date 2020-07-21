@@ -118,6 +118,9 @@ static uint32 gisunlink_mqtt_get_resp_message_id(char *data,int data_len) {
 
 static void gisunlink_mqtt_message_arrived(gisunlink_mqtt_ctrl *mqtt,char *topic,int topic_len,char *data,int data_len) {
 	const char *resp_act = "resp";
+	const char *update_ver = "update_ver";
+	const char *transfer = "transfer";
+	const char *device_info = "device_info";
 
 	if(mqtt == NULL) {
 		return;
@@ -186,6 +189,13 @@ static void gisunlink_mqtt_message_arrived(gisunlink_mqtt_ctrl *mqtt,char *topic
 					}
 				}
 			} else {
+				if(memcmp(message->act,update_ver,message->act_len) == 0) {
+					message->act_type = UPDATE_VER_ACT;
+				} else if(memcmp(message->act,transfer,message->act_len) == 0) {
+					message->act_type = TRANSFER_ACT;
+				} else if(memcmp(message->act,device_info,message->act_len) == 0) {
+					message->act_type = DEVICE_INFO_ACT;
+				}
 				mqtt->messageCb(message);
 			}
 			gisunlink_mqtt_free_message(message);
@@ -482,7 +492,7 @@ static void gisunlink_mqtt_thread(void *param) {
 							}
 						}
 					} 
-					
+
 					if(clear_packet == true) {
 						gisunlink_free(packet->topic);
 						gisunlink_free(packet->payload);

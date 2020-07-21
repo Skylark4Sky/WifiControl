@@ -76,7 +76,6 @@ static void gisunlink_mqtt_connectCb(MQTT_CONNECT_STATUS status) {
 }
 
 static void gisunlink_mqtt_messageCb(gisunlink_mqtt_message *message) {
-
 	if(update_hook.update == true) {
 		char *msg = NULL;
 		asprintf(&msg,"system upgrade! ver:%ld file_size:%ld progress_size: %ld",update_hook.version,update_hook.file_size,update_hook.send_size);
@@ -87,8 +86,9 @@ static void gisunlink_mqtt_messageCb(gisunlink_mqtt_message *message) {
 		}
 		return;
 	} 
-
-	mqttMessageHandle(message);
+	if(message && message->data && message->data_len) {
+		mqttRecvMessageHandle(gisunlink_system, message);
+	}
 }
 
 void app_main(void) {

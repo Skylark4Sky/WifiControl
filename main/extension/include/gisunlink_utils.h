@@ -25,6 +25,8 @@ uint32 getNowTimeBySec(void);
 
 uint32 getNowTimeByUSec(void);
 
+uint32 getRequestID(void);
+
 char getApRssi(void);
 
 uint32 getHeapSize(void);

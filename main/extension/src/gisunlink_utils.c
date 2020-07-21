@@ -36,6 +36,10 @@ uint32 getNowTimeByUSec(void) {
 	return systime.tv_usec;// 1000;
 }
 
+uint32 getRequestID(void) {
+	return ((getNowTimeBySec()%100000)*10000) + getNowTimeByUSec();
+}
+
 char getApRssi(void) {
 	static int rssi = 0xFF;
 	static uint32 send_wait = 0;

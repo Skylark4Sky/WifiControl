@@ -20,12 +20,20 @@ extern "C"
 {
 #endif
 
+typedef enum {
+	UNKNOWN_ACT,
+	TRANSFER_ACT,
+	UPDATE_VER_ACT,
+	DEVICE_INFO_ACT,
+} TOPIC_TYPE_ACT;
+
 typedef struct _gisunlink_mqtt_message {
 	uint32 id; 
 	uint8 behavior;
 	uint16 topic_len;
 	uint16 act_len;
 	uint16 data_len;
+	TOPIC_TYPE_ACT act_type;
 	char *topic;
 	char *act; 
 	char *data;
