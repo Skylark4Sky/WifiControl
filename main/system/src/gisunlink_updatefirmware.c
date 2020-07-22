@@ -27,8 +27,8 @@
 
 #include "fcntl.h"
 #include "unistd.h"
-#include "cJSON.h"
 
+#include "gisunlink_utils.h"
 #include "gisunlink_config.h"
 #include "gisunlink_atomic.h" 
 #include "gisunlink_updatefirmware.h"
@@ -55,72 +55,6 @@ typedef struct _gisunlink_updatefirmware_ctrl {
 
 static gisunlink_updatefirmware_ctrl *updateCtrl = NULL;
 
-static void gisunlink_firmware_download_free(gisunlink_firmware_download *download) {
-	if(download) {
-		if(download->path) {
-			gisunlink_free(download->path);
-			download->path = NULL;
-		}
-
-		if(download->md5) {
-			gisunlink_free(download->md5);
-			download->md5 = NULL;
-		}
-
-		gisunlink_free(download);
-		download = NULL;
-	}
-}
-
-static gisunlink_firmware_download *gisunlink_updatefirmware_json_proc(const char *jsonData, uint16 json_len) {
-	cJSON *pJson = NULL; 
-	gisunlink_firmware_download *download = NULL;
-	struct cJSON_Hooks js_hook = {gisunlink_malloc, &gisunlink_free};
-	if(jsonData && json_len) {
-		cJSON_InitHooks(&js_hook);
-		download = (gisunlink_firmware_download *)gisunlink_malloc(sizeof(gisunlink_firmware_download));
-		download->download_over = false;
-		if((pJson = cJSON_Parse(jsonData)) && download) { 
-			cJSON *item = NULL;
-			if((item = cJSON_GetObjectItem(pJson, "url")) && (item->type == cJSON_String)) {
-				asprintf((char **)&download->path, "%s",item->valuestring);
-				download->path_len = strlen(item->valuestring);
-			} else {
-				goto error_exit;
-			}
-
-			if((item = cJSON_GetObjectItem(pJson, "md5")) && (item->type == cJSON_String)) {
-				asprintf((char **)&download->md5, "%s",item->valuestring);
-				download->md5_len = strlen(item->valuestring);
-			} else {
-				goto error_exit;
-			}
-			if((item = cJSON_GetObjectItem(pJson, "size")) && (item->type == cJSON_Number)) {
-				download->size = item->valueint;
-			} else {
-				goto error_exit;
-			}
-			if((item = cJSON_GetObjectItem(pJson, "ver")) && (item->type == cJSON_Number)) {
-				download->ver = item->valueint;
-			} else {
-				goto error_exit;
-			}
-			goto normal_exit;
-		} 
-	}
-error_exit:
-	if(download) {
-		gisunlink_firmware_download_free(download);
-		download = NULL;
-	}
-normal_exit:
-	if(pJson) {
-		cJSON_Delete(pJson);
-		pJson = NULL;
-	}
-	return download;
-}
-
 static gisunlink_firmware_download *gisunlink_get_download_task(void) {
 	gisunlink_firmware_download *download = NULL;
 	if((download = (gisunlink_firmware_download *)gisunlink_malloc(sizeof(gisunlink_firmware_download)))) {
@@ -130,11 +64,11 @@ static gisunlink_firmware_download *gisunlink_get_download_task(void) {
 		if(download->path && download->md5) {
 			gisunlink_config_get(DOWNLOAD,download);
 			if(download->path_len == 0 || download->ver == 0 || download->md5_len == 0) {
-				gisunlink_firmware_download_free(download);
+				firmwareDownloadTaskFree(download);
 				download = NULL;
 			}
 		} else {
-			gisunlink_firmware_download_free(download);
+			firmwareDownloadTaskFree(download);
 			download = NULL;
 		}
 	}
@@ -142,12 +76,12 @@ static gisunlink_firmware_download *gisunlink_get_download_task(void) {
 }
 
 void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16 json_len) {
-	gisunlink_firmware_download *newDownloadTask = gisunlink_updatefirmware_json_proc(jsonData,json_len);
+	gisunlink_firmware_download *newDownloadTask = analysisFirmwareDownloadTaskJSON(jsonData,json_len);
 
 	if(newDownloadTask) {
 		bool downloadStart = false;
 		if(newDownloadTask->size <= 0) {
-			gisunlink_firmware_download_free(newDownloadTask);
+			firmwareDownloadTaskFree(newDownloadTask);
 			newDownloadTask = NULL;
 			return;
 		} 
@@ -161,6 +95,7 @@ void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16
 			if(strncmp((const char *)lastDownloadTask->md5,(const char *)newDownloadTask->md5,lastDownloadTask->md5_len) != 0) {
 				downloadStart = true;
 			} else {
+				//否则上报当前固件下载状态
 				char msg[128] = {0}; 
 				if(lastDownloadTask->download_over) {
 					updateCtrl->hook->state(false,"the md5 are the smae");
@@ -173,7 +108,7 @@ void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16
 					downloadStart = true;
 				}
 			}
-			gisunlink_firmware_download_free(lastDownloadTask);
+			firmwareDownloadTaskFree(lastDownloadTask);
 			lastDownloadTask = NULL;
 		}
 
@@ -187,7 +122,7 @@ void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16
 				gisunlink_put_sem(updateCtrl->thread_sem);
 			} 
 		}
-		gisunlink_firmware_download_free(newDownloadTask);
+		firmwareDownloadTaskFree(newDownloadTask);
 	} 
 } 
 
@@ -365,13 +300,13 @@ static void gisunlink_updatefirmware_download(gisunlink_updatefirmware_ctrl *ufw
 				}
 				ufw_ctrl->download->download_over = true;
 				gisunlink_config_set(DOWNLOAD,ufw_ctrl->download);
-				gisunlink_firmware_download_free(ufw_ctrl->download);
+				firmwareDownloadTaskFree(ufw_ctrl->download);
 				ufw_ctrl->download = NULL;
-				gisunlink_firmware_download_free(new_download_task);
+				firmwareDownloadTaskFree(new_download_task);
 				new_download_task = NULL;
 				ufw_ctrl->start_download = false;
 			} else {
-				gisunlink_firmware_download_free(ufw_ctrl->download);
+				firmwareDownloadTaskFree(ufw_ctrl->download);
 				ufw_ctrl->download = NULL;
 				ufw_ctrl->download = new_download_task;
 				gisunlink_print(GISUNLINK_PRINT_ERROR,"break current download task, because has a new version come in");
@@ -494,7 +429,7 @@ static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *upda
 		gisunlink_print(GISUNLINK_PRINT_ERROR,"no think to do");
 	}
 
-	gisunlink_firmware_download_free(firmware->download);
+	firmwareDownloadTaskFree(firmware->download);
 	firmware->download = NULL;
 error_exit:
 	gisunlink_free(firmware);
@@ -514,12 +449,12 @@ static void gisunlink_updatefirmware_task(void *param) {
 			//取下载配置
 			gisunlink_firmware_download *lastDownloadTask = gisunlink_get_download_task();
 			if(gisunlink_updatefirmware_download_check(lastDownloadTask)) {
-				gisunlink_firmware_download_free(lastDownloadTask);
+				firmwareDownloadTaskFree(lastDownloadTask);
 				lastDownloadTask = NULL;
 				break;
 			} else {
 				//从新下载	
-				gisunlink_firmware_download_free(ufw_ctrl->download);
+				firmwareDownloadTaskFree(ufw_ctrl->download);
 				ufw_ctrl->download = NULL;
 				ufw_ctrl->download = lastDownloadTask;
 				ufw_ctrl->start_download = true;

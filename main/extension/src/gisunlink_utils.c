@@ -17,6 +17,7 @@
 #include "esp_system.h"
 #include "esp_log.h"
 
+#include "cJSON.h"
 #include "gisunlink_utils.h"
 #include "gisunlink_atomic.h"
 #include "gisunlink_netmanager.h"
@@ -113,5 +114,71 @@ bool getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter) {
 		}
 	}
 	return getHWInfo;
+}
+
+void firmwareDownloadTaskFree(gisunlink_firmware_download *download) {
+	if(download) {
+		if(download->path) {
+			gisunlink_free(download->path);
+			download->path = NULL;
+		}
+
+		if(download->md5) {
+			gisunlink_free(download->md5);
+			download->md5 = NULL;
+		}
+
+		gisunlink_free(download);
+		download = NULL;
+	}
+}
+
+gisunlink_firmware_download *analysisFirmwareDownloadTaskJSON(const char *jsonData, uint16 json_len) {
+	cJSON *pJson = NULL; 
+	gisunlink_firmware_download *download = NULL;
+	struct cJSON_Hooks js_hook = {gisunlink_malloc, &gisunlink_free};
+	if(jsonData && json_len) {
+		cJSON_InitHooks(&js_hook);
+		download = (gisunlink_firmware_download *)gisunlink_malloc(sizeof(gisunlink_firmware_download));
+		download->download_over = false;
+		if((pJson = cJSON_Parse(jsonData)) && download) { 
+			cJSON *item = NULL;
+			if((item = cJSON_GetObjectItem(pJson, "url")) && (item->type == cJSON_String)) {
+				asprintf((char **)&download->path, "%s",item->valuestring);
+				download->path_len = strlen(item->valuestring);
+			} else {
+				goto error_exit;
+			}
+
+			if((item = cJSON_GetObjectItem(pJson, "md5")) && (item->type == cJSON_String)) {
+				asprintf((char **)&download->md5, "%s",item->valuestring);
+				download->md5_len = strlen(item->valuestring);
+			} else {
+				goto error_exit;
+			}
+			if((item = cJSON_GetObjectItem(pJson, "size")) && (item->type == cJSON_Number)) {
+				download->size = item->valueint;
+			} else {
+				goto error_exit;
+			}
+			if((item = cJSON_GetObjectItem(pJson, "ver")) && (item->type == cJSON_Number)) {
+				download->ver = item->valueint;
+			} else {
+				goto error_exit;
+			}
+			goto normal_exit;
+		} 
+	}
+error_exit:
+	if(download) {
+		firmwareDownloadTaskFree(download);
+		download = NULL;
+	}
+normal_exit:
+	if(pJson) {
+		cJSON_Delete(pJson);
+		pJson = NULL;
+	}
+	return download;
 }
 

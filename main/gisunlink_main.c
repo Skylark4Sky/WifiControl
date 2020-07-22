@@ -98,6 +98,7 @@ void app_main(void) {
 		update_hook.query = firmwareQuery; 
 		update_hook.transfer = firmwareTransfer; 
 		update_hook.check = firmwareChk; 
+		update_hook.state = firmwareState;
 		gisunlink_updatefirmware_register_hook(&update_hook);
 	}
 

@@ -17,21 +17,14 @@
 #include "esp_system.h"
 #include "esp_log.h"
 
+#include "gisunlink_mqtt.h"
+#include "gisunlink_utils.h"
 #include "gisunlink_atomic.h"
 #include "gisunlink_peripheral.h"
 #include "gisunlink_update_task.h"
 #include "gisunlink_updatefirmware.h"
 
-static void freeUartRespondMessage(gisunlink_respond_message *respond) {
-	if(respond) {
-		if(respond->data) {
-			gisunlink_free(respond->data);
-			respond->data = NULL;
-		}
-		gisunlink_free(respond);
-		respond = NULL;
-	}
-}
+#define FIRMWARE_UPDATE_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"data\":{\"success\":%s,\"msg\":%s\"}}"
 
 uint8 firmwareQuery(gisunlink_firmware_update *firmware) {
 	uint8 ret = GISUNLINK_DEVICE_TIMEOUT;
@@ -188,5 +181,16 @@ uint8 firmwareChk(void) {
 	return ret;
 }
 
+void firmwareState(bool state,const char *msg) {
+	char *stateBuf = NULL;
+	uint32 requestID = getRequestID();
+	char *result_str = state ? "true" : "false";
+	asprintf(&stateBuf,FIRMWARE_UPDATE_FORMAT,requestID,"status",result_str,msg);
+	gisunlink_mqtt_publish(FIRMWARE_UPDATE_STATE,stateBuf,0,requestID,MQTT_PUBLISH_NOACK);
 
+	if(stateBuf) {
+		gisunlink_free(stateBuf);
+		stateBuf = NULL;
+	}
+}
 

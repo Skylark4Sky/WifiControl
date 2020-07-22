@@ -26,6 +26,8 @@ uint8 firmwareChk(void);
 
 bool firmwareTransfer(uint16 offset,uint8 *data,uint16 len);
 
+void firmwareState(bool state,const char *msg); 
+
 #ifdef __cplusplus
 }
 #endif

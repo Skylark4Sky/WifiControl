@@ -15,6 +15,7 @@
 
 #include "gisunlink.h"
 #include "gisunlink_peripheral.h"
+#include "gisunlink_updatefirmware.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -34,6 +35,10 @@ uint32 getHeapSize(void);
 void freeUartRespondMessage(gisunlink_respond_message *respond);
 
 bool getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter);
+
+void firmwareDownloadTaskFree(gisunlink_firmware_download *download);
+
+gisunlink_firmware_download *analysisFirmwareDownloadTaskJSON(const char *jsonData, uint16 json_len);
 
 #ifdef __cplusplus
 }
