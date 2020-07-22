@@ -1,4 +1,4 @@
-cscope 15 $HOME/gisunlink -q 0000005631 0000609559
+cscope 15 $HOME/gisunlink -q 0000005636 0000609788
 	@build/include/sdkconfig.h
 
 5 #´agm¨
@@ -2931,7 +2931,9 @@ ba£64SŒ
 	`a¥rštf
 (&
 publish_tÝic
-,"/pow”_run/%s",
+,"%s%s",
+STATUS_POST
+,
 gisuÆšk_sy¡em
 ->
 deviûHWSn
@@ -3095,7 +3097,9 @@ msg
 
 113 
 	`gisuÆšk_mq‰_publish
-("/pošt_sw™ch_»¥",
+(
+TRANSFER_RESPOND
+,
 »¥_buf
 ,0,
 »que¡ID
@@ -3345,7 +3349,9 @@ deviûHWSn
 
 153 
 	`gisuÆšk_mq‰_publish
-("/deviû",
+(
+GETDEVICEINFO
+,
 »¥_buf
 ,0,
 »que¡ID
@@ -6801,7 +6807,9 @@ GISUNLINK_PRINT_INFO
 	`¥rštf
 (
 sk_tÝic
-, "%s/%s","/pošt_sw™ch",
+, "%s/%s",
+TASK_TRANSFER
+,
 gisuÆšk_sy¡em
 ->
 deviûHWSn
@@ -6811,7 +6819,9 @@ deviûHWSn
 	`¥rštf
 (
 ´v_upg¿de_tÝic
-, "%s/%s","/pošt_commÚ",
+, "%s/%s",
+FIRMWARE_UPDATE
+,
 gisuÆšk_sy¡em
 ->
 deviûHWSn
@@ -6821,7 +6831,9 @@ deviûHWSn
 	`¥rštf
 (
 upg¿de_tÝic
-, "%s","/point_common");
+, "%s",
+FIRMWARE_UPDATE
+);
 
 69 
 	`gisuÆšk_mq‰_subsüibe
@@ -7352,216 +7364,246 @@ __GISUNLINK_H__
 "
 
 24 
+	#GETDEVICEINFO
+ "/deviû"
+
+	)
+
+25 
+	#TRANSFER_RESPOND
+ "/pošt_sw™ch_»¥"
+
+	)
+
+26 
+	#STATUS_POST
+ "/pow”_run/"
+
+	)
+
+27 
+	#FIRMWARE_UPDATE
+ "/pošt_commÚ"
+
+	)
+
+28 
+	#TASK_TRANSFER
+ "/pošt_sw™ch"
+
+	)
+
+30 
 	#MACMAXLEN
  6
 
 	)
 
-25 
+31 
 	#SSIDMAXLEN
  32
 
 	)
 
-26 
+32 
 	#PSWDMAXLEN
  64
 
 	)
 
-27 
+33 
 	#TOKENMAXLEN
  32
 
 	)
 
-28 
+34 
 	#DEVICEINFOSIZE
  25
 
 	)
 
-29 
+35 
 	#FIRMWARE_SEND_RETRY
  5
 
 	)
 
-30 
+36 
 	#STM32_UNIQUE_ID_SIZE
  12
 
 	)
 
-32 #ifdeà
+38 #ifdeà
 __ýlu¥lus
 
 
-38 
+44 
 WIFI_CONFIGURED_MODE
  = 0x0F,
 
-39 
+45 
 WIFI_UNCONFIGURED_MODE
  = 0xF0,
 
-40 } 
+46 } 
 	tWIFI_POWERON_MODE
 ;
 
-43 
+49 
 DEVICE_AUTHORIZE_UNKNOWN
  = 0x00,
 
-44 
+50 
 DEVICE_AUTHORIZE_PASS
  = 0x01,
 
-45 
+51 
 DEVICE_AUTHORIZE_NOTPASS
  = 0x02,
 
-46 } 
+52 } 
 	tDEVICE_AUTHORIZE_STATE
 ;
 
-50 
+56 
 GISUNLINK_NETWORK_STATUS
  = 0x05,
 
-51 
+57 
 GISUNLINK_NETWORK_RESET
  = 0x06,
 
-52 
+58 
 GISUNLINK_NETWORK_RSSI
  = 0x07,
 
-53 
+59 
 GISUNLINK_DEV_FW_INFO
  = 0x08,
 
-54 
+60 
 GISUNLINK_DEV_FW_TRANS
  = 0x09,
 
-55 
+61 
 GISUNLINK_DEV_FW_READY
  = 0x0A,
 
-56 
+62 
 GISUNLINK_DEV_SN
  = 0x0B,
 
-57 
+63 
 GISUNLINK_TASK_CONTROL
  = 0x0C,
 
-58 
+64 
 GISUNLINK_HW_SN
  = 0x0D,
 
-59 
+65 
 GISUNLINK_FIRMWARE_VERSION
  = 0x0E,
 
-60 } 
+66 } 
 	tGISUNLINK_UART_CMD
 ;
 
-63 
+69 
 GISUNLINK_NETMANAGER_IDLE
  = 0x00,
 
-64 
+70 
 GISUNLINK_NETMANAGER_START
  = 0x01,
 
-65 
+71 
 GISUNLINK_NETMANAGER_CONNECTING
  = 0x02,
 
-66 
+72 
 GISUNLINK_NETMANAGER_CONNECTED
  = 0x03,
 
-67 
+73 
 GISUNLINK_NETMANAGER_DISCONNECTED
  = 0x04,
 
-68 
+74 
 GISUNLINK_NETMANAGER_RECONNECTING
  = 0x05,
 
-69 
+75 
 GISUNLINK_NETMANAGER_ENT_CONFIG
  = 0x06,
 
-70 
+76 
 GISUNLINK_NETMANAGER_EXI_CONFIG
  = 0x07,
 
-71 
+77 
 GISUNLINK_NETMANAGER_SAVE_CONFIG
  = 0x08,
 
-72 
+78 
 GISUNLINK_NETMANAGER_TIME_SUCCEED
  = 0x09,
 
-73 
+79 
 GISUNLINK_NETMANAGER_TIME_FAILED
  = 0x0A,
 
-74 
+80 
 GISUNLINK_NETMANAGER_CONNECTED_SER
  = 0x0B,
 
-75 
+81 
 GISUNLINK_NETMANAGER_DISCONNECTED_SER
  = 0x0C,
 
-76 
+82 
 GISUNLINK_NETMANAGER_UNKNOWN
  = 0xFF
 
-77 } 
+83 } 
 	tGISUNLINK_NETMANAGER_WORK_STATE
 ;
 
-80 
+86 
 GISUNLINK_TRANSFER_FAILED
  = 0x00,
 
-81 
+87 
 GISUNLINK_NEED_UPGRADE
  = 0x63,
 
-82 
+88 
 GISUNLINK_NO_NEED_UPGRADE
  = 0x64,
 
-83 
+89 
 GISUNLINK_FIRMWARE_CHK_OK
  = 0x89,
 
-84 
+90 
 GISUNLINK_FIRMWARE_CHK_NO_OK
  = 0x90,
 
-85 
+91 
 GISUNLINK_DEVICE_TIMEOUT
  = 0xff,
 
-86 } 
+92 } 
 	tGISUNLINK_FIRMWARE_TRANSFER_STATE
 ;
 
-88 
+94 
 	s_gisuÆšk_wifi_cÚf
  {
 
-89 
+95 
 ušt8
  
 ssid
@@ -7569,13 +7611,13 @@ ssid
 SSIDMAXLEN
 ];
 
-90 
+96 
 size_t
  
 ssid_Ën
 ;
 
-91 
+97 
 ušt8
  
 pswd
@@ -7583,21 +7625,21 @@ pswd
 PSWDMAXLEN
 ];
 
-92 
+98 
 size_t
  
 pswd_Ën
 ;
 
-93 } 
+99 } 
 	tgisuÆšk_wifi_cÚf
 ;
 
-95 
+101 
 	s_gisuÆšk_tok’_cÚf
  {
 
-96 
+102 
 ušt8
  
 ¡ršg
@@ -7605,21 +7647,21 @@ ušt8
 TOKENMAXLEN
 ];
 
-97 
+103 
 size_t
  
 Ëngth
 ;
 
-98 } 
+104 } 
 	tgisuÆšk_tok’_cÚf
 ;
 
-100 
+106 
 	s_gisuÆšk_¢_code_cÚf
  {
 
-101 
+107 
 ušt8
  
 ¡ršg
@@ -7627,21 +7669,21 @@ ušt8
 TOKENMAXLEN
 ];
 
-102 
+108 
 size_t
  
 Ëngth
 ;
 
-103 } 
+109 } 
 	tgisuÆšk_¢_code_cÚf
 ;
 
-105 
+111 
 	s_gisuÆšk_cÚf
  {
 
-106 
+112 
 ušt8
  
 mac_addr
@@ -7649,167 +7691,167 @@ mac_addr
 MACMAXLEN
 ];
 
-107 
+113 
 ušt8
  
 pow”Ú
 ;
 
-108 
+114 
 ušt8
  
 is_authÜiz©iÚ
 ;
 
-109 
+115 
 gisuÆšk_wifi_cÚf
  
 wifi
 ;
 
-110 
+116 
 gisuÆšk_tok’_cÚf
  
 tok’
 ;
 
-111 
+117 
 gisuÆšk_¢_code_cÚf
  
 ¢_code
 ;
 
-112 } 
+118 } 
 	tgisuÆšk_cÚf
 ;
 
-114 
+120 
 	s_gisuÆšk_Ãtmªag”_ev’t
  {
 
-115 
+121 
 ušt8
  
 id
 ;
 
-116 *
+122 *
 ·¿m
 ;
 
-117 (*
+123 (*
 ·¿m_ä“
 )(*
 ·¿m
 );
 
-118 } 
+124 } 
 	tgisuÆšk_Ãtmªag”_ev’t
 ;
 
-120 
+126 
 	s_gisuÆšk_u¬t_ev’t
  {
 
-121 
+127 
 ušt32
  
 æow_id
 ;
 
-122 
+128 
 ušt8
  
 cmd
 ;
 
-123 
+129 
 ušt8
  *
 d©a
 ;
 
-124 
+130 
 ušt16
  
 d©a_Ën
 ;
 
-125 } 
+131 } 
 	tgisuÆšk_u¬t_ev’t
 ;
 
-127 
+133 
 	s_gisuÆšk_fœmw¬e_dowÆßd
  {
 
-128 
+134 
 ušt8
  *
 ·th
 ;
 
-129 
+135 
 ušt16
  
 ·th_Ën
 ;
 
-130 
+136 
 ušt8
  *
 md5
 ;
 
-131 
+137 
 ušt8
  
 md5_Ën
 ;
 
-132 
+138 
 ušt32
  
 size
 ;
 
-133 
+139 
 ušt32
  
 v”
 ;
 
-134 
+140 
 ušt8
  
 dowÆßd_ov”
 ;
 
-135 } 
+141 } 
 	tgisuÆšk_fœmw¬e_dowÆßd
 ;
 
-137 
+143 
 	s_gisuÆšk_fœmw¬e_upd©e
  {
 
-138 
+144 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 dowÆßd
 ;
 
-139 
+145 
 boÞ
  
 Œªsãr_ov”
 ;
 
-140 } 
+146 } 
 	tgisuÆšk_fœmw¬e_upd©e
 ;
 
-142 #ifdeà
+148 #ifdeà
 __ýlu¥lus
 
 
@@ -26993,153 +27035,153 @@ boÞ
 	~<sys/¡©.h
 >
 
-23 
+18 
 	~"rom/md5_hash.h
 "
 
-24 
+19 
 	~"mbedŽs/ba£64.h
 "
 
-26 
+21 
 	~"ä“¹os/F»eRTOS.h
 "
 
-27 
+22 
 	~"ä“¹os/sk.h
 "
 
-28 
+23 
 	~"ä“¹os/queue.h
 "
 
-29 
+24 
 	~"ä“¹os/£mphr.h
 "
 
-30 
+25 
 	~"e¥_sy¡em.h
 "
 
-31 
+26 
 	~"e¥_h‰p_þ›Á.h
 "
 
-33 
+28 
 	~"fúŽ.h
 "
 
-34 
+29 
 	~"uni¡d.h
 "
 
-35 
+30 
 	~"cJSON.h
 "
 
-37 
+32 
 	~"gisuÆšk_cÚfig.h
 "
 
-38 
+33 
 	~"gisuÆšk_©omic.h
 "
 
-39 
+34 
 	~"gisuÆšk_upd©efœmw¬e.h
 "
 
-41 
+36 
 	#DOWNLOAD_NUM
  5
 
 	)
 
-42 
+37 
 	#MD5_MAX_LEN
  (33)
 
 	)
 
-43 
+38 
 	#MAX_RESPOND_SIZE
  1024
 
 	)
 
-44 
+39 
 	#GISUNLINK_MAX_QUEUE_NUM
  10
 
 	)
 
-46 
+41 
 	#SEND_FIRMWARE_SIZE
  256
 
 	)
 
-48 
+43 
 	#UPD_FILE_PATH
  "/¥iffs/dowÆßd.bš"
 
 	)
 
-49 
+44 
 	#FW_FILE_PATH
  "/¥iffs/fœmw¬e.bš"
 
 	)
 
-51 
+46 
 	s_gisuÆšk_upd©efœmw¬e_ù¾
  {
 
-52 
+47 
 FILE
  *
 	mfže
 ;
 
-53 
+48 
 ušt32
  
 	mdowÆßd_´oûss
 ;
 
-54 
+49 
 boÞ
  
 	m¡¬t_dowÆßd
 ;
 
-55 
+50 
 ušt32
  
 	mdowÆßd_ruÁime
 ;
 
-56 *
+51 *
 	mth»ad_£m
 ;
 
-57 
+52 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 	mdowÆßd
 ;
 
-58 
+53 
 gisuÆšk_fœmw¬e_upd©e_hook
  *
 	mhook
 ;
 
-59 } 
+54 } 
 	tgisuÆšk_upd©efœmw¬e_ù¾
 ;
 
-61 
+56 
 gisuÆšk_upd©efœmw¬e_ù¾
  *
 	gupd©eCŒl
@@ -27147,7 +27189,7 @@ gisuÆšk_upd©efœmw¬e_ù¾
 NULL
 ;
 
-63 
+58 
 	$gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 gisuÆšk_fœmw¬e_dowÆßd
@@ -27155,14 +27197,36 @@ gisuÆšk_fœmw¬e_dowÆßd
 dowÆßd
 ) {
 
-64 if(
+59 if(
 dowÆßd
 ) {
+
+60 if(
+dowÆßd
+->
+·th
+) {
+
+61 
+	`gisuÆšk_ä“
+(
+dowÆßd
+->
+·th
+);
+
+62 
+dowÆßd
+->
+·th
+ = 
+NULL
+;
 
 65 if(
 dowÆßd
 ->
-·th
+md5
 ) {
 
 66 
@@ -27170,56 +27234,34 @@ dowÆßd
 (
 dowÆßd
 ->
-·th
+md5
 );
 
 67 
 dowÆßd
 ->
-·th
+md5
  = 
 NULL
 ;
 
-70 if(
+70 
+	`gisuÆšk_ä“
+(
 dowÆßd
-->
-md5
-) {
+);
 
 71 
-	`gisuÆšk_ä“
-(
-dowÆßd
-->
-md5
-);
-
-72 
-dowÆßd
-->
-md5
- = 
-NULL
-;
-
-75 
-	`gisuÆšk_ä“
-(
-dowÆßd
-);
-
-76 
 dowÆßd
  = 
 NULL
 ;
 
-78 
+73 
 	}
 }
 
-80 
+75 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 	$gisuÆšk_upd©efœmw¬e_jsÚ_´oc
@@ -27231,7 +27273,7 @@ ušt16
 jsÚ_Ën
 ) {
 
-81 
+76 
 cJSON
  *
 pJsÚ
@@ -27239,7 +27281,7 @@ pJsÚ
 NULL
 ;
 
-82 
+77 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 dowÆßd
@@ -27247,7 +27289,7 @@ dowÆßd
 NULL
 ;
 
-83 
+78 
 cJSON_Hooks
  
 js_hook
@@ -27257,19 +27299,19 @@ gisuÆšk_m®loc
 gisuÆšk_ä“
 };
 
-84 if(
+79 if(
 jsÚD©a
  && 
 jsÚ_Ën
 ) {
 
-85 
+80 
 	`cJSON_In™Hooks
 (&
 js_hook
 );
 
-86 
+81 
 dowÆßd
  = (
 gisuÆšk_fœmw¬e_dowÆßd
@@ -27277,7 +27319,7 @@ gisuÆšk_fœmw¬e_dowÆßd
 	`gisuÆšk_m®loc
 ((gisunlink_firmware_download));
 
-87 
+82 
 dowÆßd
 ->
 dowÆßd_ov”
@@ -27285,7 +27327,7 @@ dowÆßd_ov”
 çl£
 ;
 
-88 if((
+83 if((
 pJsÚ
  = 
 	`cJSON_P¬£
@@ -27295,7 +27337,7 @@ jsÚD©a
 dowÆßd
 ) {
 
-89 
+84 
 cJSON
  *
 ™em
@@ -27303,7 +27345,7 @@ cJSON
 NULL
 ;
 
-90 if((
+85 if((
 ™em
  = 
 	`cJSON_G‘ObjeùI‹m
@@ -27315,7 +27357,7 @@ ty³
 cJSON_SŒšg
 )) {
 
-91 
+86 
 	`a¥rštf
 ((**)&
 dowÆßd
@@ -27327,7 +27369,7 @@ dowÆßd
 v®ue¡ršg
 );
 
-92 
+87 
 dowÆßd
 ->
 ·th_Ën
@@ -27339,11 +27381,11 @@ dowÆßd
 v®ue¡ršg
 );
 
-94 
+89 
 ”rÜ_ex™
 ;
 
-97 if((
+92 if((
 ™em
  = 
 	`cJSON_G‘ObjeùI‹m
@@ -27355,7 +27397,7 @@ ty³
 cJSON_SŒšg
 )) {
 
-98 
+93 
 	`a¥rštf
 ((**)&
 dowÆßd
@@ -27367,7 +27409,7 @@ md5
 v®ue¡ršg
 );
 
-99 
+94 
 dowÆßd
 ->
 md5_Ën
@@ -27379,11 +27421,11 @@ md5_Ën
 v®ue¡ršg
 );
 
-101 
+96 
 ”rÜ_ex™
 ;
 
-103 if((
+98 if((
 ™em
  = 
 	`cJSON_G‘ObjeùI‹m
@@ -27395,7 +27437,7 @@ ty³
 cJSON_Numb”
 )) {
 
-104 
+99 
 dowÆßd
 ->
 size
@@ -27405,11 +27447,11 @@ size
 v®uešt
 ;
 
-106 
+101 
 ”rÜ_ex™
 ;
 
-108 if((
+103 if((
 ™em
  = 
 	`cJSON_G‘ObjeùI‹m
@@ -27421,7 +27463,7 @@ ty³
 cJSON_Numb”
 )) {
 
-109 
+104 
 dowÆßd
 ->
 v”
@@ -27431,69 +27473,69 @@ v”
 v®uešt
 ;
 
-111 
+106 
 ”rÜ_ex™
 ;
 
-113 
+108 
 nÜm®_ex™
 ;
 
-116 
+111 
 ”rÜ_ex™
 :
 
-117 if(
+112 if(
 dowÆßd
 ) {
 
-118 
+113 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 dowÆßd
 );
 
-119 
+114 
 dowÆßd
  = 
 NULL
 ;
 
-121 
+116 
 nÜm®_ex™
 :
 
-122 if(
+117 if(
 pJsÚ
 ) {
 
-123 
+118 
 	`cJSON_D–‘e
 (
 pJsÚ
 );
 
-124 
+119 
 pJsÚ
  = 
 NULL
 ;
 
-126  
+121  
 dowÆßd
 ;
 
-127 
+122 
 	}
 }
 
-129 
+124 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 	$gisuÆšk_g‘_dowÆßd_sk
 () {
 
-130 
+125 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 dowÆßd
@@ -27501,7 +27543,7 @@ dowÆßd
 NULL
 ;
 
-131 if((
+126 if((
 dowÆßd
  = (
 gisuÆšk_fœmw¬e_dowÆßd
@@ -27509,7 +27551,7 @@ gisuÆšk_fœmw¬e_dowÆßd
 	`gisuÆšk_m®loc
 ((gisunlink_firmware_download)))) {
 
-132 
+127 
 dowÆßd
 ->
 ·th_Ën
@@ -27517,7 +27559,7 @@ dowÆßd
 md5_Ën
  = 64;
 
-133 
+128 
 dowÆßd
 ->
 ·th
@@ -27529,7 +27571,7 @@ ušt8
 ·th_Ën
 );
 
-134 
+129 
 dowÆßd
 ->
 md5
@@ -27541,7 +27583,7 @@ ušt8
 md5_Ën
 );
 
-135 if(
+130 if(
 dowÆßd
 ->
 ·th
@@ -27549,7 +27591,7 @@ dowÆßd
 md5
 ) {
 
-136 
+131 
 	`gisuÆšk_cÚfig_g‘
 (
 DOWNLOAD
@@ -27557,7 +27599,7 @@ DOWNLOAD
 dowÆßd
 );
 
-137 if(
+132 if(
 dowÆßd
 ->
 ·th_Ën
@@ -27567,39 +27609,39 @@ v”
 md5_Ën
  == 0) {
 
-138 
+133 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 dowÆßd
 );
 
-139 
+134 
 dowÆßd
  = 
 NULL
+;
+
+137 
+	`gisuÆšk_fœmw¬e_dowÆßd_ä“
+(
+dowÆßd
+);
+
+138 
+dowÆßd
+ = 
+NULL
+;
+
+141  
+dowÆßd
 ;
 
 142 
-	`gisuÆšk_fœmw¬e_dowÆßd_ä“
-(
-dowÆßd
-);
-
-143 
-dowÆßd
- = 
-NULL
-;
-
-146  
-dowÆßd
-;
-
-147 
 	}
 }
 
-149 
+144 
 	$gisuÆšk_upd©efœmw¬e_dowÆßd_Ãw_fœmw¬e
 (cÚ¡ *
 jsÚD©a
@@ -27609,7 +27651,7 @@ ušt16
 jsÚ_Ën
 ) {
 
-150 
+145 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 dowÆßd
@@ -27621,11 +27663,11 @@ jsÚD©a
 jsÚ_Ën
 );
 
-152 if(
+147 if(
 dowÆßd
 ) {
 
-153 
+148 
 boÞ
  
 isDowÆßd
@@ -27633,25 +27675,25 @@ isDowÆßd
 çl£
 ;
 
-155 if(
+150 if(
 dowÆßd
 ->
 size
  <= 0) {
 
-156 
+151 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 dowÆßd
 );
 
-157 
+152 
 dowÆßd
  = 
 NULL
 ;
 
-160 
+155 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 Ï¡_dowÆßd_sk
@@ -27659,13 +27701,13 @@ gisuÆšk_fœmw¬e_dowÆßd
 	`gisuÆšk_g‘_dowÆßd_sk
 ();
 
-162 if(
+157 if(
 Ï¡_dowÆßd_sk
  !ð
 NULL
 ) {
 
-164 if(
+159 if(
 	`¡ºcmp
 ((cÚ¡ *)
 Ï¡_dowÆßd_sk
@@ -27677,7 +27719,7 @@ dowÆßd
 md5_Ën
 ) != 0) {
 
-166 if(
+161 if(
 dowÆßd
 ->
 v”
@@ -27685,35 +27727,35 @@ v”
 Ï¡_dowÆßd_sk
 ->ver) {
 
-167 
+162 
 isDowÆßd
  = 
 Œue
 ;
 
-170 
+165 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 Ï¡_dowÆßd_sk
 );
 
-171 
+166 
 Ï¡_dowÆßd_sk
  = 
 NULL
 ;
 
-173 
+168 
 isDowÆßd
  = 
 Œue
 ;
 
-176 if(
+171 if(
 isDowÆßd
 ) {
 
-178 
+173 
 	`gisuÆšk_cÚfig_£t
 (
 DOWNLOAD
@@ -27721,7 +27763,7 @@ DOWNLOAD
 dowÆßd
 );
 
-179 
+174 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
@@ -27733,7 +27775,7 @@ dowÆßd
 size
 );
 
-180 if(
+175 if(
 upd©eCŒl
  && upd©eCŒl->
 ¡¬t_dowÆßd
@@ -27741,7 +27783,7 @@ upd©eCŒl
 çl£
 ) {
 
-181 
+176 
 upd©eCŒl
 ->
 ¡¬t_dowÆßd
@@ -27749,13 +27791,13 @@ upd©eCŒl
 Œue
 ;
 
-182 
+177 
 upd©eCŒl
 ->
 dowÆßd
  = download;
 
-183 
+178 
 	`gisuÆšk_put_£m
 (
 upd©eCŒl
@@ -27763,17 +27805,17 @@ upd©eCŒl
 th»ad_£m
 );
 
-187 
+182 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 dowÆßd
 );
 
-189 
+184 
 	}
 }
 
-191 
+186 
 	$gisuÆšk_upd©efœmw¬e_þo£_fže
 (
 FILE
@@ -27781,39 +27823,39 @@ FILE
 fže
 ) {
 
-192 if(
+187 if(
 fže
 ) {
 
-193 
+188 
 	`fþo£
 (
 fže
 );
 
-194 
+189 
 fže
  = 
 NULL
 ;
 
-196 
+191 
 	}
 }
 
-198 
+193 
 	$gisuÆšk_upd©efœmw¬e_»move_fže
 (cÚ¡ *
 ·th
 ) {
 
-199 
+194 
 ¡©
  
 ¡
 ;
 
-200 if(
+195 if(
 	`¡©
 (
 ·th
@@ -27821,17 +27863,17 @@ NULL
 ¡
 ) == 0) {
 
-201 
+196 
 	`uÆšk
 (
 ·th
 );
 
-203 
+198 
 	}
 }
 
-205 
+200 
 	$gisuÆšk_upd©efœmw¬e_»Çme_fže
 (cÚ¡ *
 ·th
@@ -27839,17 +27881,17 @@ NULL
 Ãw·th
 ) {
 
-206 
+201 
 »t
  = -1;
 
-207 
+202 
 ¡©
  
 ¡
 ;
 
-208 if(
+203 if(
 	`¡©
 (
 ·th
@@ -27857,7 +27899,7 @@ NULL
 ¡
 ) == 0) {
 
-209 
+204 
 »t
  = 
 	`»Çme
@@ -27867,15 +27909,15 @@ NULL
 Ãw·th
 );
 
-211  
+206  
 »t
 ;
 
-212 
+207 
 	}
 }
 
-214 
+209 
 FILE
  *
 	$gisuÆšk_upd©efœmw¬e_Ý’_fže
@@ -27885,7 +27927,7 @@ FILE
 mode
 ) {
 
-215 
+210 
 FILE
  *
 fže
@@ -27897,13 +27939,13 @@ fže
 mode
 );
 
-216 if(
+211 if(
 fže
  =ð
 NULL
 ) {
 
-217 
+212 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
@@ -27911,19 +27953,19 @@ GISUNLINK_PRINT_ERROR
 ·th
 );
 
-218  
+213  
 NULL
 ;
 
-220  
+215  
 fže
 ;
 
-221 
+216 
 	}
 }
 
-223 
+218 
 e¥_”r_t
  
 	$_h‰p_ev’t_hªdËr
@@ -27933,13 +27975,13 @@ e¥_h‰p_þ›Á_ev’t_t
 evt
 ) {
 
-224 
+219 
 ušt32
  
 ´oûss
  = 0;
 
-225 
+220 
 gisuÆšk_upd©efœmw¬e_ù¾
  *
 ufw_ù¾
@@ -27949,51 +27991,51 @@ evt
 u£r_d©a
 ;
 
-226 
+221 
 evt
 ->
 ev’t_id
 ) {
 
-227 
+222 
 HTTP_EVENT_ERROR
 :
 
-228 
+223 
 HTTP_EVENT_ON_CONNECTED
 :
 
-229 
+224 
 HTTP_EVENT_HEADER_SENT
 :
 
-230 
+225 
 HTTP_EVENT_ON_HEADER
 :
 
-231 
+226 
 HTTP_EVENT_ON_FINISH
 :
 
-232 
+227 
 HTTP_EVENT_DISCONNECTED
 :
 
-234 
+229 
 HTTP_EVENT_ON_DATA
 :
 
-235 if(
+230 if(
 ufw_ù¾
 ->
 dowÆßd_´oûss
  == 0) {
 
-236 
+231 
 ´oûss
  = 1;
 
-239 if(
+234 if(
 ufw_ù¾
 ->
 dowÆßd_´oûss
@@ -28001,11 +28043,11 @@ dowÆßd_´oûss
 ´oûss
  * 10240)) {
 
-240 ++
+235 ++
 ´oûss
 ;
 
-241 
+236 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_WARN
@@ -28019,7 +28061,7 @@ size
 dowÆßd_´oûss
 );
 
-244 if(
+239 if(
 ufw_ù¾
  && ufw_ù¾->
 dowÆßd_´oûss
@@ -28029,13 +28071,13 @@ dowÆßd
 size
 ) {
 
-245 if(
+240 if(
 ufw_ù¾
 ->
 fže
 ) {
 
-246 
+241 
 	`fwr™e
 (
 evt
@@ -28049,7 +28091,7 @@ ufw_ù¾
 fže
 );
 
-249 
+244 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
@@ -28063,7 +28105,7 @@ size
 dowÆßd_´oûss
 );
 
-251 
+246 
 ufw_ù¾
 ->
 dowÆßd_´oûss
@@ -28073,15 +28115,15 @@ evt
 d©a_Ën
 ;
 
-254  
+249  
 ESP_OK
 ;
 
-255 
+250 
 	}
 }
 
-257 
+252 
 	$gisuÆšk_upd©efœmw¬e_h‰p
 (
 gisuÆšk_upd©efœmw¬e_ù¾
@@ -28089,13 +28131,13 @@ gisuÆšk_upd©efœmw¬e_ù¾
 ufw_ù¾
 ) {
 
-258 
+253 
 ušt32
  
 dowÆßd_size
  = 0;
 
-259 
+254 
 ušt8
  
 dowÆßd_num
@@ -28103,13 +28145,13 @@ dowÆßd_num
 DOWNLOAD_NUM
 ;
 
-260 
+255 
 e¥_h‰p_þ›Á_cÚfig_t
  
 cÚfig
  = {
 
-261 .
+256 .
 u¾
  = (cÚ¡ *)
 ufw_ù¾
@@ -28119,19 +28161,19 @@ dowÆßd
 ·th
 ,
 
-262 .
+257 .
 ev’t_hªdËr
  = 
 _h‰p_ev’t_hªdËr
 ,
 
-263 .
+258 .
 u£r_d©a
  = 
 ufw_ù¾
 ,
 
-266 
+261 
 e¥_h‰p_þ›Á_hªdË_t
  
 þ›Á
@@ -28141,13 +28183,13 @@ e¥_h‰p_þ›Á_hªdË_t
 cÚfig
 );
 
-267 
+262 
 	`e¥_h‰p_þ›Á_£t_h—d”
 (
 þ›Á
 ,"User-Agent", "gisunLink_iot");
 
-268 if(
+263 if(
 ufw_ù¾
 ->
 dowÆßd
@@ -28157,23 +28199,23 @@ dowÆßd
 ·th_Ën
 ) {
 
-269 
+264 
 dowÆßd_num
 --) {
 
-270 
+265 
 	`gisuÆšk_upd©efœmw¬e_»move_fže
 (
 UPD_FILE_PATH
 );
 
-271 
+266 
 ufw_ù¾
 ->
 dowÆßd_´oûss
  = 0;
 
-272 
+267 
 ufw_ù¾
 ->
 fže
@@ -28183,7 +28225,7 @@ fže
 UPD_FILE_PATH
 ,"w");
 
-273 
+268 
 e¥_”r_t
  
 ”r
@@ -28193,7 +28235,7 @@ e¥_”r_t
 þ›Á
 );
 
-274 
+269 
 	`gisuÆšk_upd©efœmw¬e_þo£_fže
 (
 ufw_ù¾
@@ -28201,13 +28243,13 @@ ufw_ù¾
 fže
 );
 
-275 if(
+270 if(
 ”r
  =ð
 ESP_OK
 ) {
 
-276 if(
+271 if(
 	`e¥_h‰p_þ›Á_g‘_¡©us_code
 (
 þ›Á
@@ -28215,7 +28257,7 @@ ESP_OK
 	`e¥_h‰p_þ›Á_g‘_cÚ‹Á_Ëngth
 (client)) {
 
-277 
+272 
 dowÆßd_size
  = 
 	`e¥_h‰p_þ›Á_g‘_cÚ‹Á_Ëngth
@@ -28223,7 +28265,7 @@ dowÆßd_size
 þ›Á
 );
 
-278 if(
+273 if(
 dowÆßd_size
  =ð
 ufw_ù¾
@@ -28235,7 +28277,7 @@ size
 dowÆßd_´oûss
 ) {
 
-279 
+274 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_WARN
@@ -28253,7 +28295,7 @@ dowÆßd_size
 dowÆßd_´oûss
 );
 
-282 
+277 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
@@ -28269,7 +28311,7 @@ dowÆßd_size
 dowÆßd_num
 );
 
-286 
+281 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
@@ -28287,21 +28329,21 @@ dowÆßd_num
 ”r
 );
 
-290 
+285 
 	`e¥_h‰p_þ›Á_þ—nup
 (
 þ›Á
 );
 
-291  
+286  
 dowÆßd_size
 ;
 
-292 
+287 
 	}
 }
 
-294 
+289 
 boÞ
  
 	$gisuÆšk_upd©efœmw¬e_check_md5
@@ -28315,13 +28357,13 @@ ušt8
 md5_Ën
 ) {
 
-295 
+290 
 št16
  
 »ad_size
 ;
 
-296 
+291 
 boÞ
  
 md5_ok
@@ -28329,13 +28371,13 @@ md5_ok
 çl£
 ;
 
-297 
+292 
 MD5CÚ‹xt
  
 md5_ùx
 ;
 
-298 
+293 
 ušt8
  
 d©a_buf
@@ -28343,19 +28385,19 @@ d©a_buf
 SEND_FIRMWARE_SIZE
 ] = {0};
 
-299 
+294 
 md5_v®ue
 [
 MD5_MAX_LEN
 ] = {0};
 
-300 
+295 
 dige¡
 [
 MD5_MAX_LEN
 ];
 
-302 
+297 
 FILE
  *
 fže
@@ -28365,17 +28407,17 @@ fže
 fže_·th
 ,"r");
 
-304 if(
+299 if(
 fže
 ) {
 
-305 
+300 
 	`MD5In™
 (&
 md5_ùx
 );
 
-306 (
+301 (
 »ad_size
  = 
 	`ä—d
@@ -28387,7 +28429,7 @@ SEND_FIRMWARE_SIZE
 fže
 )) > 0) {
 
-307 
+302 
 	`MD5Upd©e
 (&
 md5_ùx
@@ -28399,7 +28441,7 @@ d©a_buf
 »ad_size
 );
 
-310 
+305 
 	`MD5Fš®
 (
 dige¡
@@ -28407,11 +28449,11 @@ dige¡
 md5_ùx
 );
 
-311 
+306 
 i
  = 0; i < 16; ++i) {
 
-312 
+307 
 	`¥rštf
 (&
 md5_v®ue
@@ -28421,7 +28463,7 @@ i
 dige¡
 [i]);
 
-315 if(
+310 if(
 	`¡ºcmp
 (
 md5_v®ue
@@ -28431,7 +28473,7 @@ md5
 md5_Ën
 ) != 0) {
 
-316 
+311 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
@@ -28441,33 +28483,33 @@ md5_v®ue
 md5
 );
 
-317 
+312 
 md5_ok
  = 
 çl£
 ;
 
-319 
+314 
 md5_ok
  = 
 Œue
 ;
 
-321 
+316 
 	`gisuÆšk_upd©efœmw¬e_þo£_fže
 (
 fže
 );
 
-324  
+319  
 md5_ok
 ;
 
-325 
+320 
 	}
 }
 
-327 
+322 
 	$gisuÆšk_upd©efœmw¬e_§ve_Ãw_fœmw¬e
 (
 gisuÆšk_fœmw¬e_dowÆßd
@@ -28475,7 +28517,7 @@ gisuÆšk_fœmw¬e_dowÆßd
 dowÆßd
 ) {
 
-328 
+323 
 gisuÆšk_fœmw¬e_upd©e
  *
 fœmw¬e
@@ -28483,17 +28525,17 @@ fœmw¬e
 	`gisuÆšk_m®loc
 ((gisunlink_firmware_update));
 
-329 if(
+324 if(
 fœmw¬e
 ) {
 
-330 
+325 
 fœmw¬e
 ->
 dowÆßd
  = download;
 
-331 
+326 
 fœmw¬e
 ->
 Œªsãr_ov”
@@ -28501,7 +28543,7 @@ fœmw¬e
 çl£
 ;
 
-332 
+327 
 	`gisuÆšk_cÚfig_£t
 (
 FIRMWARE
@@ -28509,23 +28551,23 @@ FIRMWARE
 fœmw¬e
 );
 
-333 
+328 
 	`gisuÆšk_ä“
 (
 fœmw¬e
 );
 
-334 
+329 
 fœmw¬e
  = 
 NULL
 ;
 
-336 
+331 
 	}
 }
 
-338 
+333 
 	$gisuÆšk_upd©efœmw¬e_dowÆßd
 (
 gisuÆšk_upd©efœmw¬e_ù¾
@@ -28533,19 +28575,19 @@ gisuÆšk_upd©efœmw¬e_ù¾
 ufw_ù¾
 ) {
 
-339 if(
+334 if(
 ufw_ù¾
  !ð
 NULL
 ) {
 
-340 
+335 
 ufw_ù¾
 ->
 ¡¬t_dowÆßd
 ) {
 
-341 
+336 
 boÞ
  
 chk_md5_ok
@@ -28553,11 +28595,11 @@ chk_md5_ok
 çl£
 ;
 
-342 
+337 
 dowÆßd_size
  = 0;
 
-343 if((
+338 if((
 dowÆßd_size
  = 
 	`gisuÆšk_upd©efœmw¬e_h‰p
@@ -28565,7 +28607,7 @@ dowÆßd_size
 ufw_ù¾
 ))) {
 
-344 if(
+339 if(
 dowÆßd_size
  =ð
 ufw_ù¾
@@ -28575,7 +28617,7 @@ dowÆßd
 size
 ) {
 
-345 
+340 
 chk_md5_ok
  = 
 	`gisuÆšk_upd©efœmw¬e_check_md5
@@ -28591,7 +28633,7 @@ md5
 md5_Ën
 );
 
-347 
+342 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
@@ -28605,7 +28647,7 @@ size
 dowÆßd_size
 );
 
-351 
+346 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 Ãw_dowÆßd_sk
@@ -28613,7 +28655,7 @@ gisuÆšk_fœmw¬e_dowÆßd
 	`gisuÆšk_g‘_dowÆßd_sk
 ();
 
-352 if(
+347 if(
 	`¡ºcmp
 ((cÚ¡ *)
 ufw_ù¾
@@ -28627,17 +28669,17 @@ md5
 md5_Ën
 ) == 0) {
 
-353 if(
+348 if(
 chk_md5_ok
 ) {
 
-354 
+349 
 	`gisuÆšk_upd©efœmw¬e_»move_fže
 (
 FW_FILE_PATH
 );
 
-355 
+350 
 »t
  = 
 	`gisuÆšk_upd©efœmw¬e_»Çme_fže
@@ -28647,17 +28689,17 @@ UPD_FILE_PATH
 FW_FILE_PATH
 );
 
-356 if(
+351 if(
 »t
  == 0) {
 
-357 
+352 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_WARN
 ,"md5 company ok");
 
-358 
+353 
 	`gisuÆšk_upd©efœmw¬e_§ve_Ãw_fœmw¬e
 (
 ufw_ù¾
@@ -28665,7 +28707,7 @@ ufw_ù¾
 dowÆßd
 );
 
-360 
+355 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_WARN
@@ -28673,7 +28715,7 @@ GISUNLINK_PRINT_WARN
 »t
 );
 
-363 
+358 
 ufw_ù¾
 ->
 dowÆßd
@@ -28683,7 +28725,7 @@ dowÆßd_ov”
 Œue
 ;
 
-364 
+359 
 	`gisuÆšk_cÚfig_£t
 (
 DOWNLOAD
@@ -28693,7 +28735,7 @@ ufw_ù¾
 dowÆßd
 );
 
-365 
+360 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 ufw_ù¾
@@ -28701,7 +28743,7 @@ ufw_ù¾
 dowÆßd
 );
 
-366 
+361 
 ufw_ù¾
 ->
 dowÆßd
@@ -28709,19 +28751,19 @@ dowÆßd
 NULL
 ;
 
-367 
+362 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 Ãw_dowÆßd_sk
 );
 
-368 
+363 
 Ãw_dowÆßd_sk
  = 
 NULL
 ;
 
-369 
+364 
 ufw_ù¾
 ->
 ¡¬t_dowÆßd
@@ -28729,7 +28771,7 @@ ufw_ù¾
 çl£
 ;
 
-371 
+366 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 ufw_ù¾
@@ -28737,7 +28779,7 @@ ufw_ù¾
 dowÆßd
 );
 
-372 
+367 
 ufw_ù¾
 ->
 dowÆßd
@@ -28745,7 +28787,7 @@ dowÆßd
 NULL
 ;
 
-373 
+368 
 ufw_ù¾
 ->
 dowÆßd
@@ -28753,17 +28795,17 @@ dowÆßd
 Ãw_dowÆßd_sk
 ;
 
-374 
+369 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
 ,"break current downloadask, because has‡‚ew version come in");
 
-378 
+373 
 	}
 }
 
-380 
+375 
 boÞ
  
 	$gisuÆšk_upd©efœmw¬e_dowÆßd_check
@@ -28773,7 +28815,7 @@ gisuÆšk_fœmw¬e_dowÆßd
 dowÆßd
 ) {
 
-381 
+376 
 boÞ
  
 dowÆßd_ov”
@@ -28781,11 +28823,11 @@ dowÆßd_ov”
 Œue
 ;
 
-382 if(
+377 if(
 dowÆßd
 ) {
 
-383 if(
+378 if(
 dowÆßd
 ->
 dowÆßd_ov”
@@ -28793,21 +28835,21 @@ dowÆßd_ov”
 Œue
 ) {
 
-384 
+379 
 dowÆßd_ov”
  = 
 çl£
 ;
 
-388  
+383  
 dowÆßd_ov”
 ;
 
-389 
+384 
 	}
 }
 
-391 
+386 
 ušt32
  
 	$gisuÆšk_upd©efœmw¬e_£nd_fœmw¬e
@@ -28819,13 +28861,13 @@ gisuÆšk_fœmw¬e_upd©e_hook
 upd©e_hook
 ) {
 
-392 
+387 
 št16
  
 »ad_size
 ;
 
-393 
+388 
 ušt8
  
 d©a_buf
@@ -28833,7 +28875,7 @@ d©a_buf
 SEND_FIRMWARE_SIZE
 ] = {0};
 
-395 if(
+390 if(
 upd©e_hook
  =ð
 NULL
@@ -28841,7 +28883,7 @@ NULL
 Œªsãr
  == NULL) {
 
-399 
+394 
 FILE
  *
 fže
@@ -28851,17 +28893,17 @@ fže
 fže_·th
 ,"r");
 
-400 if(
+395 if(
 fže
 ) {
 
-401 
+396 
 ušt16
  
 off£t
  = 0;
 
-402 (
+397 (
 »ad_size
  = 
 	`ä—d
@@ -28873,7 +28915,7 @@ SEND_FIRMWARE_SIZE
 fže
 )) > 0) {
 
-403 if(
+398 if(
 upd©e_hook
 ->
 	`Œªsãr
@@ -28885,7 +28927,7 @@ d©a_buf
 »ad_size
 )) {
 
-404 
+399 
 upd©e_hook
 ->
 £nd_size
@@ -28893,23 +28935,23 @@ upd©e_hook
 »ad_size
 ;
 
-409 
+404 
 	`gisuÆšk_upd©efœmw¬e_þo£_fže
 (
 fže
 );
 
-411  
+406  
 upd©e_hook
 ->
 £nd_size
 ;
 
-412 
+407 
 	}
 }
 
-414 
+409 
 	$gisuÆšk_upd©efœmw¬e_upd©e
 (
 gisuÆšk_fœmw¬e_upd©e_hook
@@ -28917,7 +28959,7 @@ gisuÆšk_fœmw¬e_upd©e_hook
 upd©e_hook
 ) {
 
-415 if(
+410 if(
 upd©e_hook
  =ð
 NULL
@@ -28929,13 +28971,13 @@ qu”y
 check
  == NULL) {
 
-416 
+411 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
 ,"update_hook isƒmpty!!!");
 
-420 
+415 
 gisuÆšk_fœmw¬e_upd©e
  *
 fœmw¬e
@@ -28943,11 +28985,11 @@ fœmw¬e
 	`gisuÆšk_m®loc
 ((gisunlink_firmware_update));
 
-422 if(
+417 if(
 fœmw¬e
 ) {
 
-423 if((
+418 if((
 fœmw¬e
 ->
 dowÆßd
@@ -28957,7 +28999,7 @@ gisuÆšk_fœmw¬e_dowÆßd
 	`gisuÆšk_m®loc
 ((gisunlink_firmware_download)))) {
 
-424 
+419 
 fœmw¬e
 ->
 dowÆßd
@@ -28967,7 +29009,7 @@ dowÆßd
 md5_Ën
  = 64;
 
-425 
+420 
 fœmw¬e
 ->
 dowÆßd
@@ -28981,7 +29023,7 @@ ušt8
 ·th_Ën
 );
 
-426 
+421 
 fœmw¬e
 ->
 dowÆßd
@@ -28995,11 +29037,11 @@ ušt8
 md5_Ën
 );
 
-428 
+423 
 ”rÜ_ex™
 ;
 
-432 
+427 
 	`gisuÆšk_cÚfig_g‘
 (
 FIRMWARE
@@ -29007,7 +29049,7 @@ FIRMWARE
 fœmw¬e
 );
 
-434 if(
+429 if(
 fœmw¬e
 ->
 Œªsãr_ov”
@@ -29021,7 +29063,7 @@ size
 v”
  > 0) {
 
-435 
+430 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_WARN
@@ -29037,7 +29079,7 @@ md5
 size
 );
 
-436 
+431 
 boÞ
  
 Œªsãr_ov”
@@ -29045,7 +29087,7 @@ boÞ
 çl£
 ;
 
-437 
+432 
 boÞ
  
 þ—n_v”siÚ
@@ -29053,7 +29095,7 @@ boÞ
 çl£
 ;
 
-438 
+433 
 upd©e_hook
 ->
 upd©e_»Œy
@@ -29061,13 +29103,13 @@ upd©e_»Œy
 çl£
 ;
 
-439 
+434 
 upd©e_hook
 ->
 upd©e_»Œy_tick
  = 0;
 
-440 
+435 
 upd©e_hook
 ->
 	`qu”y
@@ -29075,11 +29117,11 @@ upd©e_hook
 fœmw¬e
 )) {
 
-441 
+436 
 GISUNLINK_NEED_UPGRADE
 :
 
-443 
+438 
 upd©e_hook
 ->
 upd©e
@@ -29087,7 +29129,7 @@ upd©e
 Œue
 ;
 
-444 
+439 
 upd©e_hook
 ->
 v”siÚ
@@ -29099,7 +29141,7 @@ dowÆßd
 v”
 ;
 
-445 
+440 
 upd©e_hook
 ->
 fže_size
@@ -29111,7 +29153,7 @@ dowÆßd
 size
 ;
 
-446 if(
+441 if(
 	`gisuÆšk_upd©efœmw¬e_£nd_fœmw¬e
 (
 FW_FILE_PATH
@@ -29125,18 +29167,36 @@ dowÆßd
 size
 ) {
 
-447 
+442 
 Œªsãr_ov”
  = 
 Œue
 ;
 
-451 
+446 
 GISUNLINK_NO_NEED_UPGRADE
 :
 
-452 
+447 
 þ—n_v”siÚ
+ = 
+Œue
+;
+
+448 
+	`gisuÆšk_´št
+(
+GISUNLINK_PRINT_ERROR
+,"device‚o‚eedo update firmware");
+
+450 
+GISUNLINK_DEVICE_TIMEOUT
+:
+
+452 
+upd©e_hook
+->
+upd©e_»Œy
  = 
 Œue
 ;
@@ -29145,95 +29205,77 @@ GISUNLINK_NO_NEED_UPGRADE
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
-,"device‚o‚eedo update firmware");
-
-455 
-GISUNLINK_DEVICE_TIMEOUT
-:
-
-457 
-upd©e_hook
-->
-upd©e_»Œy
- = 
-Œue
-;
-
-458 
-	`gisuÆšk_´št
-(
-GISUNLINK_PRINT_ERROR
 ,"device is off-line");
 
-463 if(
+458 if(
 Œªsãr_ov”
 ) {
 
-464 
+459 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_WARN
 ,"firmwareransfer finish");
 
-465 
+460 
 upd©e_hook
 ->
 	`check
 ()) {
 
-466 
+461 
 GISUNLINK_FIRMWARE_CHK_OK
 :
 
-467 
+462 
 þ—n_v”siÚ
  = 
 Œue
 ;
 
-469 
+464 
 GISUNLINK_DEVICE_TIMEOUT
 :
 
-470 
+465 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
 ,"device is off-line");
 
-472 
+467 
 GISUNLINK_FIRMWARE_CHK_NO_OK
 :
 
-474 
+469 
 þ—n_v”siÚ
  = 
 çl£
 ;
 
-475 
+470 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
 ,"device check dataƒrror!");
 
-479 
+474 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
 ,"firmwareransfer unfinished");
 
-482 if(
+477 if(
 þ—n_v”siÚ
 ) {
 
-483 
+478 
 	`gisuÆšk_upd©efœmw¬e_»move_fže
 (
 FW_FILE_PATH
 );
 
-484 
+479 
 fœmw¬e
 ->
 Œªsãr_ov”
@@ -29241,7 +29283,7 @@ fœmw¬e
 Œue
 ;
 
-485 
+480 
 	`gisuÆšk_cÚfig_£t
 (
 FIRMWARE
@@ -29249,23 +29291,23 @@ FIRMWARE
 fœmw¬e
 );
 
-486 if(
+481 if(
 Œªsãr_ov”
 ) {
 
-487 
+482 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_WARN
 ,"device succeed„eceive data!");
 
-491 
+486 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
 ,"nohinko do");
 
-494 
+489 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
 fœmw¬e
@@ -29273,7 +29315,7 @@ fœmw¬e
 dowÆßd
 );
 
-495 
+490 
 fœmw¬e
 ->
 dowÆßd
@@ -29281,23 +29323,23 @@ dowÆßd
 NULL
 ;
 
-496 
+491 
 ”rÜ_ex™
 :
 
-497 
+492 
 	`gisuÆšk_ä“
 (
 fœmw¬e
 );
 
-498 
+493 
 fœmw¬e
  = 
 NULL
 ;
 
-499 
+494 
 upd©e_hook
 ->
 upd©e
@@ -29305,35 +29347,35 @@ upd©e
 çl£
 ;
 
-500 
+495 
 upd©e_hook
 ->
 fže_size
  = 0;
 
-501 
+496 
 upd©e_hook
 ->
 £nd_size
  = 0;
 
-502 
+497 
 upd©e_hook
 ->
 v”siÚ
  = 0;
 
-503 
+498 
 	}
 }
 
-505 
+500 
 	$gisuÆšk_upd©efœmw¬e_sk
 (*
 ·¿m
 ) {
 
-506 
+501 
 gisuÆšk_upd©efœmw¬e_ù¾
  *
 ufw_ù¾
@@ -29341,7 +29383,7 @@ ufw_ù¾
 ·¿m
 ;
 
-508 
+503 
 	`gisuÆšk_g‘_£m
 (
 ufw_ù¾
@@ -29349,13 +29391,13 @@ ufw_ù¾
 th»ad_£m
 );
 
-510 
+505 
 	`gisuÆšk_upd©efœmw¬e_dowÆßd
 (
 ufw_ù¾
 );
 
-512 
+507 
 gisuÆšk_fœmw¬e_dowÆßd
  *
 Ï¡_dowÆßd_sk
@@ -29363,33 +29405,33 @@ gisuÆšk_fœmw¬e_dowÆßd
 	`gisuÆšk_g‘_dowÆßd_sk
 ();
 
-513 if(
+508 if(
 	`gisuÆšk_upd©efœmw¬e_dowÆßd_check
 (
 Ï¡_dowÆßd_sk
 )) {
 
+509 
+	`gisuÆšk_fœmw¬e_dowÆßd_ä“
+(
+Ï¡_dowÆßd_sk
+);
+
+510 
+Ï¡_dowÆßd_sk
+ = 
+NULL
+;
+
 514 
 	`gisuÆšk_fœmw¬e_dowÆßd_ä“
 (
-Ï¡_dowÆßd_sk
+ufw_ù¾
+->
+dowÆßd
 );
 
 515 
-Ï¡_dowÆßd_sk
- = 
-NULL
-;
-
-519 
-	`gisuÆšk_fœmw¬e_dowÆßd_ä“
-(
-ufw_ù¾
-->
-dowÆßd
-);
-
-520 
 ufw_ù¾
 ->
 dowÆßd
@@ -29397,7 +29439,7 @@ dowÆßd
 NULL
 ;
 
-521 
+516 
 ufw_ù¾
 ->
 dowÆßd
@@ -29405,7 +29447,7 @@ dowÆßd
 Ï¡_dowÆßd_sk
 ;
 
-522 
+517 
 ufw_ù¾
 ->
 ¡¬t_dowÆßd
@@ -29413,7 +29455,7 @@ ufw_ù¾
 Œue
 ;
 
-523 
+518 
 	`gisuÆšk_´št
 (
 GISUNLINK_PRINT_ERROR
@@ -29423,7 +29465,7 @@ GISUNLINK_PRINT_ERROR
 md5
 );
 
-527 
+522 
 	`gisuÆšk_upd©efœmw¬e_upd©e
 (
 ufw_ù¾
@@ -29431,25 +29473,25 @@ ufw_ù¾
 hook
 );
 
-529 
+524 
 	`gisuÆšk_de¡roy_sk
 (
 NULL
 );
 
-530 
+525 
 	}
 }
 
-532 
+527 
 	$gisuÆšk_upd©efœmw¬e_š™
 () {
 
-533 if(
+528 if(
 upd©eCŒl
 ) {
 
-537 if((
+532 if((
 upd©eCŒl
  = (
 gisuÆšk_upd©efœmw¬e_ù¾
@@ -29457,7 +29499,7 @@ gisuÆšk_upd©efœmw¬e_ù¾
 	`gisuÆšk_m®loc
 ((gisunlink_updatefirmware_ctrl)))) {
 
-538 
+533 
 upd©eCŒl
 ->
 ¡¬t_dowÆßd
@@ -29465,13 +29507,13 @@ upd©eCŒl
 çl£
 ;
 
-539 
+534 
 upd©eCŒl
 ->
 dowÆßd_ruÁime
  = 0;
 
-540 
+535 
 upd©eCŒl
 ->
 th»ad_£m
@@ -29481,7 +29523,7 @@ th»ad_£m
 GISUNLINK_MAX_QUEUE_NUM
 ,0);
 
-541 
+536 
 	`gisuÆšk_ü—‹_sk_w™h_PriÜ™y
 (
 gisuÆšk_upd©efœmw¬e_sk
@@ -29489,15 +29531,15 @@ gisuÆšk_upd©efœmw¬e_sk
 upd©eCŒl
 , 2048,8);
 
-543 
+538 
 	}
 }
 
-545 
+540 
 	$gisuÆšk_upd©efœmw¬e_¡¬t_sigÇl
 () {
 
-546 if(
+541 if(
 upd©eCŒl
  && upd©eCŒl->
 ¡¬t_dowÆßd
@@ -29505,7 +29547,7 @@ upd©eCŒl
 çl£
 ) {
 
-547 
+542 
 	`gisuÆšk_put_£m
 (
 upd©eCŒl
@@ -29513,11 +29555,11 @@ upd©eCŒl
 th»ad_£m
 );
 
-549 
+544 
 	}
 }
 
-551 
+546 
 	$gisuÆšk_upd©efœmw¬e_»gi¡”_hook
 (
 gisuÆšk_fœmw¬e_upd©e_hook
@@ -29525,17 +29567,17 @@ gisuÆšk_fœmw¬e_upd©e_hook
 hook
 ) {
 
-552 if(
+547 if(
 upd©eCŒl
 ) {
 
-553 
+548 
 upd©eCŒl
 ->
 hook
  = hook;
 
-555 
+550 
 	}
 }
 
