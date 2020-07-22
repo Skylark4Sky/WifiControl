@@ -42,3 +42,6 @@ Icon?
 ehthumbs.db
 Thumbs.db
 build/
+cscope.out
+cscope.in.out
+cscope.po.out
