@@ -142,44 +142,52 @@ static gisunlink_firmware_download *gisunlink_get_download_task(void) {
 }
 
 void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16 json_len) {
-	gisunlink_firmware_download *download = gisunlink_updatefirmware_json_proc(jsonData,json_len);
+	gisunlink_firmware_download *newDownloadTask = gisunlink_updatefirmware_json_proc(jsonData,json_len);
 
-	if(download) {
-		bool isDownload = false;
-		//检查固件大小
-		if(download->size <= 0) {
-			gisunlink_firmware_download_free(download);
-			download = NULL;
+	if(newDownloadTask) {
+		bool downloadStart = false;
+		if(newDownloadTask->size <= 0) {
+			gisunlink_firmware_download_free(newDownloadTask);
+			newDownloadTask = NULL;
 			return;
 		} 
-		gisunlink_firmware_download *last_download_task = gisunlink_get_download_task(); 
-		// 之前有保存过固件信息
-		if(last_download_task != NULL) {
-			//比较md5值
-			if(strncmp((const char *)last_download_task->md5,(const char *)download->md5,last_download_task->md5_len) != 0) { //相等则不处理了
-				//不考虑版本号小的情况
-				if(download->ver >= last_download_task->ver) {
-					isDownload = true;
-				} 
+
+		gisunlink_firmware_download *lastDownloadTask = gisunlink_get_download_task(); 
+
+		if(lastDownloadTask == NULL) {
+			downloadStart = true;
+		} else {
+			//md5不等即可执行任务
+			if(strncmp((const char *)lastDownloadTask->md5,(const char *)newDownloadTask->md5,lastDownloadTask->md5_len) != 0) {
+				downloadStart = true;
+			} else {
+				char msg[128] = {0}; 
+				if(lastDownloadTask->download_over) {
+					updateCtrl->hook->state(false,"the md5 are the smae");
+				} else if (!lastDownloadTask->download_over && updateCtrl->start_download) {
+					sprintf(msg, "wait the %s download finished",lastDownloadTask->md5);
+					updateCtrl->hook->state(false,msg);
+				} else if (!lastDownloadTask->download_over && !updateCtrl->start_download) {
+					sprintf(msg, "restart download the %s",lastDownloadTask->md5);
+					updateCtrl->hook->state(false,msg);
+					downloadStart = true;
+				}
 			}
-			gisunlink_firmware_download_free(last_download_task);
-			last_download_task = NULL;
-		} else { //没有直接下载
-			isDownload = true;
+			gisunlink_firmware_download_free(lastDownloadTask);
+			lastDownloadTask = NULL;
 		}
 
-		if(isDownload) {
+		if(downloadStart) {
 			//先把需要更新的固件写入系统 防止再下载的时候漏掉多接收的新版本号,固件缓存后，需再次读出md5值 进行对比
-			gisunlink_config_set(DOWNLOAD,download);
-			gisunlink_print(GISUNLINK_PRINT_ERROR,"has new version come %s:%d",download->path,download->size);
+			gisunlink_config_set(DOWNLOAD,newDownloadTask);
+			gisunlink_print(GISUNLINK_PRINT_ERROR,"has new version come %s:%d",newDownloadTask->path,newDownloadTask->size);
 			if(updateCtrl && updateCtrl->start_download == false) {
 				updateCtrl->start_download = true;
-				updateCtrl->download = download;
+				updateCtrl->download = newDownloadTask;
 				gisunlink_put_sem(updateCtrl->thread_sem);
-				return;
 			} 
 		}
-		gisunlink_firmware_download_free(download);
+		gisunlink_firmware_download_free(newDownloadTask);
 	} 
 } 
 
@@ -201,7 +209,7 @@ static int gisunlink_updatefirmware_rename_file(const char *path,const char *new
 	int ret = -1;
 	struct stat st;
 	if(stat(path, &st) == 0) {
-      ret = rename(path, newpath);
+		ret = rename(path, newpath);
 	}
 	return ret;
 }
@@ -504,18 +512,18 @@ static void gisunlink_updatefirmware_task(void *param) {
 		while(1) {
 			gisunlink_updatefirmware_download(ufw_ctrl);
 			//取下载配置
-			gisunlink_firmware_download *last_download_task = gisunlink_get_download_task();
-			if(gisunlink_updatefirmware_download_check(last_download_task)) {
-				gisunlink_firmware_download_free(last_download_task);
-				last_download_task = NULL;
+			gisunlink_firmware_download *lastDownloadTask = gisunlink_get_download_task();
+			if(gisunlink_updatefirmware_download_check(lastDownloadTask)) {
+				gisunlink_firmware_download_free(lastDownloadTask);
+				lastDownloadTask = NULL;
 				break;
 			} else {
 				//从新下载	
 				gisunlink_firmware_download_free(ufw_ctrl->download);
 				ufw_ctrl->download = NULL;
-				ufw_ctrl->download = last_download_task;
+				ufw_ctrl->download = lastDownloadTask;
 				ufw_ctrl->start_download = true;
-				gisunlink_print(GISUNLINK_PRINT_ERROR,"the file:%s download unfinished now go continue download it",last_download_task->md5);
+				gisunlink_print(GISUNLINK_PRINT_ERROR,"the file:%s download unfinished now go continue download it",lastDownloadTask->md5);
 			}
 		}
 		//检测固件升级

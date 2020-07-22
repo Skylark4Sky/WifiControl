@@ -23,6 +23,7 @@ extern "C"
 typedef uint8 GISUNLINK_FIRMWARE_QUERY(gisunlink_firmware_update *firmware);
 typedef bool GISUNLINK_FIRMWARE_TRANSFER(uint16 offset,uint8 *data,uint16 len);
 typedef uint8 GISUNLINK_FIRMWARE_CHK(void);
+typedef void GISUNLINK_FIRMWARE_STATE(bool state,const char *msg);
 
 typedef struct _gisunlink_firmware_update_hook {
 	bool update;
@@ -34,6 +35,7 @@ typedef struct _gisunlink_firmware_update_hook {
 	GISUNLINK_FIRMWARE_QUERY *query;
 	GISUNLINK_FIRMWARE_TRANSFER *transfer;
 	GISUNLINK_FIRMWARE_CHK *check;
+	GISUNLINK_FIRMWARE_STATE *state;
 } gisunlink_firmware_update_hook;
 
 /*! @brief 固件下载检查

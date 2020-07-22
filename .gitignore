@@ -18,8 +18,6 @@
 *.so
 # swp file
 .*.swp
-*.out 
-*.*.out 
 # compression file
 *.7z
 *.dmg
