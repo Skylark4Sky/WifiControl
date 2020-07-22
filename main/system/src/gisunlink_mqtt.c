@@ -302,6 +302,10 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 
 	Version = gisunlink_get_firmware_version();
 
+	gisunlink_get_mac_with_string()
+
+		//local urlHost = "http://power.fuxiangjf.com/device/mqtt_connect_info?"..clientID.."&timeStamp"..os.time().."&requestCount="..requestConut.."&errorString="..errorString
+
 	int post_len = asprintf(&post_data,"{\"flag_number\":\"%s\",\"version\":\"%s\",\"device_sn\":\"%s\"}",clientID,Version,gisunlink_mqtt->DeviceHWSn);
 	esp_http_client_handle_t client = esp_http_client_init(&config);
 	esp_http_client_set_method(client, HTTP_METHOD_POST);

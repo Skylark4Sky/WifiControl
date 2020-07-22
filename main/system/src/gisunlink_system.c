@@ -116,13 +116,9 @@ static void gisunlink_system_uart_event(void *message, void *param) {
 
 static void gisunlink_system_setparm(gisunlink_system_ctrl *gisunlink_system) {
 	gisunlink_system->time_sync = false;
-	//gisunlink_system->heapSize = esp_get_free_heap_size; 
-	//gisunlink_system->apRssi = gisunlink_system_chk_ap_rssi;
 	gisunlink_system->isConnectAp = gisunlink_netmanager_is_connected_ap; 
 	gisunlink_system->uartHandle = gisunlink_system_uart_event;
 	gisunlink_system->routeHandle = gisunlink_system_netmanager_event;
-//	gisunlink_system->getSec = gisunlink_system_get_sec;
-//	gisunlink_system->getUsec = gisunlink_system_get_usec;
 }
 
 gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {

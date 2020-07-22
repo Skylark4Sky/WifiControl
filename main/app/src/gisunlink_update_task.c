@@ -40,6 +40,7 @@ uint8 firmwareQuery(gisunlink_firmware_update *firmware) {
 		*(data_offset++) = ((firmware->download->ver >> 8) & 0xFF);
 		*(data_offset++) = ((firmware->download->ver >> 16) & 0xFF);
 		*(data_offset++) = ((firmware->download->ver >> 24) & 0xFF);
+
 		*(data_offset++) = (firmware->download->size & 0xFF);
 		*(data_offset++) = ((firmware->download->size >> 8) & 0xFF);
 		*(data_offset++) = ((firmware->download->size >> 16) & 0xFF);
@@ -103,6 +104,7 @@ bool firmwareTransfer(uint16 offset,uint8 *data,uint16 len) {
 		uint8 *data_offset = uart_data;
 		*(data_offset++) = (offset & 0xFF);
 		*(data_offset++) = ((offset >> 8) & 0xFF);
+
 		*(data_offset++) = (len & 0xFF);
 		*(data_offset++) = ((len >> 8) & 0xFF);
 
