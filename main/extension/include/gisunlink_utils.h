@@ -40,6 +40,8 @@ void firmwareDownloadTaskFree(gisunlink_firmware_download *download);
 
 gisunlink_firmware_download *analysisFirmwareDownloadTaskJSON(const char *jsonData, uint16 json_len);
 
+gisunlink_firmware_download *getLocalDownloadTaskConf(void);
+
 #ifdef __cplusplus
 }
 #endif

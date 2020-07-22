@@ -245,7 +245,6 @@ static bool gisunlink_updatefirmware_check_md5(const char *file_path,const char 
 static void gisunlink_updatefirmware_save_new_firmware(gisunlink_firmware_download *download) {
 	gisunlink_firmware_update *firmware = (gisunlink_firmware_update *)gisunlink_malloc(sizeof(gisunlink_firmware_update));
 	if(firmware) {
-		download->download_over = true;
 		firmware->download = download;
 		firmware->transfer_over = false;
 		gisunlink_config_set(FIRMWARE,firmware);
@@ -273,6 +272,31 @@ static void gisunlink_updatefirmware_download(gisunlink_updatefirmware_ctrl *ufw
 
 			//检查是否有新的下载任务进来
 			gisunlink_firmware_download *new_download_task = getLocalDownloadTaskConf();
+
+			local task = update_ctr.firmware
+			--检查md5校验是否成功
+			if chk_md5_ok then
+				os.remove(FW_FILE_PATH)
+				os.rename(UPD_FILE_PATH,FW_FILE_PATH)
+				local firmware = {}
+				firmware.md5 = update_ctr.firmware.md5
+				firmware.size = update_ctr.firmware.size
+				firmware.ver = update_ctr.firmware.ver
+				firmware.path = FW_FILE_PATH 
+				firmware.transfer_over = false
+				log.error("new_firmware_download_proc","save firmware info")
+				nvm.set("firmware",firmware)
+				task.download_over = true
+				download_ok = true
+			else 
+				task.download_over = false
+			end
+			log.error("exit download and save download_task")
+			nvm.set("download_task",task)
+			--退出下载
+			update_ctr.enable = false
+
+
 			if(strncmp((const char *)ufw_ctrl->download->md5,(const char *)new_download_task->md5,new_download_task->md5_len) == 0) {
 				if(chk_md5_ok) {
 					gisunlink_updatefirmware_remove_file(FW_FILE_PATH);
@@ -283,8 +307,9 @@ static void gisunlink_updatefirmware_download(gisunlink_updatefirmware_ctrl *ufw
 					} else {
 						gisunlink_print(GISUNLINK_PRINT_WARN,"rename failed:%d",ret);
 					}
+					ufw_ctrl->download->download_over = true;
 				} else {
-					ufw_ctrl->download->download_over = false;
+
 				}
 				gisunlink_config_set(DOWNLOAD,ufw_ctrl->download);
 				firmwareDownloadTaskFree(ufw_ctrl->download);

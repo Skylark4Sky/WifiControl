@@ -19,6 +19,7 @@
 
 #include "cJSON.h"
 #include "gisunlink_utils.h"
+#include "gisunlink_config.h"
 #include "gisunlink_atomic.h"
 #include "gisunlink_netmanager.h"
 #include "gisunlink_peripheral.h"
@@ -178,6 +179,26 @@ normal_exit:
 	if(pJson) {
 		cJSON_Delete(pJson);
 		pJson = NULL;
+	}
+	return download;
+}
+
+gisunlink_firmware_download *getLocalDownloadTaskConf(void) {
+	gisunlink_firmware_download *download = NULL;
+	if((download = (gisunlink_firmware_download *)gisunlink_malloc(sizeof(gisunlink_firmware_download)))) {
+		download->path_len = 256; download->md5_len = 64;
+		download->path = (uint8 *)gisunlink_malloc(download->path_len);
+		download->md5 = (uint8 *)gisunlink_malloc(download->md5_len);
+		if(download->path && download->md5) {
+			gisunlink_config_get(DOWNLOAD,download);
+			if(download->path_len == 0 || download->ver == 0 || download->md5_len == 0) {
+				firmwareDownloadTaskFree(download);
+				download = NULL;
+			}
+		} else {
+			firmwareDownloadTaskFree(download);
+			download = NULL;
+		}
 	}
 	return download;
 }
