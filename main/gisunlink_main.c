@@ -121,6 +121,7 @@ void app_main(void) {
 				}
 			}
 		}
+
 		gisunlink_print(GISUNLINK_PRINT_INFO,"heap_size:%d rssi:%d time:%d - %d (us)",getHeapSize(),(signed char)getApRssi(),getNowTimeBySec(),getNowTimeByUSec());
 		gisunlink_task_delay(1000 / portTICK_PERIOD_MS);
 	}
