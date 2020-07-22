@@ -362,30 +362,43 @@ static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *upda
 		bool clean_version = false;
 		update_hook->update_retry = false;
 		update_hook->update_retry_tick = 0;
+		update_hook->state(true,"send firmware update query");
 		switch(update_hook->query(firmware)) {
+			case GISUNLINK_DEVICE_TIMEOUT: 
+				{
+					update_hook->update_retry = true;
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"device is buys");
+					update_hook->state(false,"device is buys");
+					break;
+				}
+			case GISUNLINK_NO_NEED_UPGRADE:
+				{
+					clean_version = true;
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"device no need to update firmware");
+					update_hook->state(false,"device no need to update firmware");
+					break;
+				}
+			case GISUNLINK_TRANSFER_FAILED:
+				{
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"device is off-line");
+					update_hook->state(false,"device is off-line");
+					break;
+				}
 			case GISUNLINK_NEED_UPGRADE:
 				{
 					update_hook->update = true;
 					update_hook->version = firmware->download->ver;
 					update_hook->file_size = firmware->download->size;
+					update_hook->state(true,"start send firmware data to device");
 					if(gisunlink_updatefirmware_send_firmware(FW_FILE_PATH,update_hook) == firmware->download->size) {
 						transfer_over = true;
 					}
 				}
 				break;
-			case GISUNLINK_NO_NEED_UPGRADE:
-				clean_version = true;
-				gisunlink_print(GISUNLINK_PRINT_ERROR,"device no need to update firmware");
-				break;
-			case GISUNLINK_DEVICE_TIMEOUT: 
-				{
-					update_hook->update_retry = true;
-					gisunlink_print(GISUNLINK_PRINT_ERROR,"device is off-line");
-					break;
-				}
 		}
 
 		if(transfer_over) {
+			update_hook->state(true,"firmware transfer finish");
 			gisunlink_print(GISUNLINK_PRINT_WARN,"firmware transfer finish");
 			switch(update_hook->check()) {
 				case GISUNLINK_FIRMWARE_CHK_OK:
@@ -393,23 +406,25 @@ static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *upda
 					break;
 				case GISUNLINK_DEVICE_TIMEOUT:
 					gisunlink_print(GISUNLINK_PRINT_ERROR,"device is off-line");
+					update_hook->state(false,"device is off-line");
 					break;
 				case GISUNLINK_FIRMWARE_CHK_NO_OK:
-				default:
 					clean_version = false;
 					gisunlink_print(GISUNLINK_PRINT_ERROR,"device check data error!");
+					update_hook->state(false,"device check data error!");
 					break;
 			}
 		} else {
 			gisunlink_print(GISUNLINK_PRINT_ERROR,"firmware transfer unfinished");
+			update_hook->state(false,"firmware transfer unfinished");
 		}
-
 		if(clean_version) {
 			gisunlink_updatefirmware_remove_file(FW_FILE_PATH);
 			firmware->transfer_over = true;
 			gisunlink_config_set(FIRMWARE,firmware);
 			if(transfer_over) {
 				gisunlink_print(GISUNLINK_PRINT_WARN,"device succeed receive data!");
+				update_hook->state(true,"device succeed receive data!");
 			}
 		} 
 	} else {
