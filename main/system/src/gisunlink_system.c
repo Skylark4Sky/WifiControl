@@ -142,7 +142,7 @@ gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 		//初始化外围模块
 		gisunlink_peripheral_init();
 		//初始化MQTT
-		gisunlink_mqtt_init(gisunlink_system->deviceHWSn);
+		gisunlink_mqtt_init(gisunlink_system->deviceHWSn,gisunlink_system->deviceFWVersion);
 		//初始化固件下载
 		gisunlink_updatefirmware_init();
 	}

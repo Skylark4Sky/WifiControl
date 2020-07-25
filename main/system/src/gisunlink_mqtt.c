@@ -40,6 +40,7 @@
 #define GISUNLINK_FIRST_WAIT_TIME 3000
 #define GISUNLINK_SECOND_WAIT_TIME 5000
 #define GISUNLINK_RETRY_NUM		3	
+#define GISUNLINK_GET_TIMEOUT	8000	
 
 #define GISUNLINK_WAIT_TASK_DELAY 10
 
@@ -50,11 +51,14 @@ typedef struct _gisunlink_mqtt_ctrl {
 	bool is_connecting;
 	bool is_connected;
 	uint32 httpcode;
+	uint32 requestConut;
+	uint32 errorString;
 	char *broker;
 	char *username;
 	char *password;
 	int port;
 	char *clientID;
+	char *FirmwareVersion; 
 	char *DeviceHWSn;
 	void *queue;
 	void *wait_ack_queue;
@@ -291,22 +295,21 @@ static esp_err_t _http_event_handler(esp_http_client_event_t *evt) {
 
 static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, uint32 timeout_ms) {
 	char *post_data = NULL;
-	char *Version = NULL;
+	char *post_url = NULL;
+
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+
+	asprintf(&post_url,"%s?%s&timeStamp=%ld&requestCount=%ld&errorString=%ld",host,gisunlink_mqtt->clientID,tv.tv_sec,++gisunlink_mqtt->requestConut,gisunlink_mqtt->errorString);
 
 	esp_http_client_config_t config = {
-		.url = host,
+		.url = post_url,
 		.event_handler = _http_event_handler,
 		.user_data = gisunlink_mqtt,
 		.timeout_ms = timeout_ms,
 	};
 
-	Version = gisunlink_get_firmware_version();
-
-	gisunlink_get_mac_with_string()
-
-		//local urlHost = "http://power.fuxiangjf.com/device/mqtt_connect_info?"..clientID.."&timeStamp"..os.time().."&requestCount="..requestConut.."&errorString="..errorString
-
-	int post_len = asprintf(&post_data,"{\"flag_number\":\"%s\",\"version\":\"%s\",\"device_sn\":\"%s\"}",clientID,Version,gisunlink_mqtt->DeviceHWSn);
+	int post_len = asprintf(&post_data,"{\"flag_number\":\"%s\",\"version\":\"%s\",\"device_sn\":\"%s\"}",clientID,gisunlink_mqtt->FirmwareVersion,gisunlink_mqtt->DeviceHWSn);
 	esp_http_client_handle_t client = esp_http_client_init(&config);
 	esp_http_client_set_method(client, HTTP_METHOD_POST);
 	esp_http_client_set_header(client,"Content-Type", "application/json");
@@ -315,10 +318,11 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 
 	esp_err_t err = esp_http_client_perform(client);
 
-	if(Version) {
-		gisunlink_free(Version);
-		Version = NULL;
-	}
+	if(post_url) {
+		gisunlink_print(GISUNLINK_PRINT_WARN,"URL:%s",post_url);
+		gisunlink_free(post_url);
+		post_url = NULL;
+	}	
 
 	if(post_data) {
 		gisunlink_print(GISUNLINK_PRINT_WARN,"POST:%s",post_data);
@@ -328,10 +332,14 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 
 	if(err == ESP_OK) {
 		if(esp_http_client_get_status_code(client) == 200 && esp_http_client_get_content_length(client)) {
+			gisunlink_mqtt->requestConut = 0;
+			gisunlink_mqtt->errorString = 0;
 		} else {
+			gisunlink_mqtt->errorString = esp_http_client_get_status_code(client);
 			gisunlink_print(GISUNLINK_PRINT_WARN,"HTTP POST Status = %d, content_length = %d", esp_http_client_get_status_code(client), esp_http_client_get_content_length(client));
 		}
 	} else {
+		gisunlink_mqtt->errorString = err;
 		gisunlink_print(GISUNLINK_PRINT_ERROR,"HTTP POST request failed: %d", err);
 	}
 
@@ -421,7 +429,7 @@ static void gisunlink_mqtt_connect_server(gisunlink_mqtt_ctrl *mqtt) {
 
 	while(1) {
 		gisunlink_mqtt_info_reset(mqtt);
-		if(gisunlink_mqtt_get_server(MQTT_INFO_SERV,mqtt->clientID,5000)) {
+		if(gisunlink_mqtt_get_server(MQTT_INFO_SERV,mqtt->clientID,GISUNLINK_GET_TIMEOUT)) {
 			break;
 		} 
 		gisunlink_task_delay(10000 / portTICK_PERIOD_MS);
@@ -459,11 +467,11 @@ static void gisunlink_mqtt_thread(void *param) {
 				} else {
 					if(mqtt->client) {
 						gisunlink_mqtt_info_reset(mqtt);
-						if(gisunlink_mqtt_get_server(MQTT_INFO_SERV,mqtt->clientID,5000)) {
-							//esp_mqtt_client_reset_username(mqtt->client,mqtt->username);
-							//esp_mqtt_client_reset_password(mqtt->client,mqtt->password);
-							//esp_mqtt_client_reset_host(mqtt->client,mqtt->broker);
-							//esp_mqtt_client_reset_port(mqtt->client,mqtt->port);
+						if(gisunlink_mqtt_get_server(MQTT_INFO_SERV,mqtt->clientID,GISUNLINK_GET_TIMEOUT)) {
+							//	esp_mqtt_client_reset_username(mqtt->client,mqtt->username);
+							//	esp_mqtt_client_reset_password(mqtt->client,mqtt->password);
+							//	esp_mqtt_client_reset_host(mqtt->client,mqtt->broker);
+							//	esp_mqtt_client_reset_port(mqtt->client,mqtt->port);
 							gisunlink_mqtt_info_reset(mqtt);
 						}
 					}
@@ -557,10 +565,10 @@ static void gisunlink_mqtt_wait_ack_thread(void *param) {
 	gisunlink_destroy_task(NULL);
 }
 
-
-void gisunlink_mqtt_init(char *DeviceHWSn_addr) {
+void gisunlink_mqtt_init(char *DeviceHWSn_addr,char *FirmwareVersion) {
 	if(gisunlink_mqtt) {
 		gisunlink_mqtt->DeviceHWSn = DeviceHWSn_addr;
+		gisunlink_mqtt->FirmwareVersion = FirmwareVersion;
 		return;
 	}
 
@@ -568,12 +576,14 @@ void gisunlink_mqtt_init(char *DeviceHWSn_addr) {
 		gisunlink_mqtt->is_connecting = false;
 		gisunlink_mqtt->is_connected = false;
 		gisunlink_mqtt->DeviceHWSn = DeviceHWSn_addr; //引用设备串号地址
+		gisunlink_mqtt->FirmwareVersion = FirmwareVersion;
 		gisunlink_mqtt->queue = gisunlink_queue_init(GISUNLINK_MAX_QUEUE_NUM);
 		gisunlink_mqtt->wait_ack_queue = gisunlink_queue_init(GISUNLINK_MAX_WAIT_QUEUE_NUM);
 		gisunlink_mqtt->wait_ack_sem = gisunlink_create_sem(GISUNLINK_MAX_WAIT_QUEUE_NUM,0);
 		gisunlink_mqtt->connect_sem = gisunlink_create_sem(GISUNLINK_MAX_QUEUE_NUM,0);
 		gisunlink_mqtt->message_sem = gisunlink_create_sem(GISUNLINK_MAX_QUEUE_NUM,0);
 		gisunlink_mqtt->clientID = gisunlink_get_mac_with_string("gsl_");
+		gisunlink_mqtt->requestConut = 0;	
 		gisunlink_create_task_with_Priority(gisunlink_mqtt_thread, "mqtt_opt", gisunlink_mqtt, 2048,8); //3072 // 2048 // 2650
 		gisunlink_create_task_with_Priority(gisunlink_mqtt_wait_ack_thread, "mqtt_wait", gisunlink_mqtt,1536,7); //3072 // 2048 // 2650
 	}

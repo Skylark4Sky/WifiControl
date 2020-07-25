@@ -56,7 +56,7 @@ typedef void GISUNLINK_MQTT_MESSAGE(gisunlink_mqtt_message *message);
  * @param void 
  * @return void
  */
-void gisunlink_mqtt_init(char *DeviceHWSn_addr);
+void gisunlink_mqtt_init(char *DeviceHWSn_addr,char *FirmwareVersion);
 
 /*! @brief 连接MQTT服务器
  * @param 连接回调
