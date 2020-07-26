@@ -32,11 +32,9 @@ static void gisunlink_sntp_respond(SNTP_RESPOND repsond,void *param) {
 	if(param) {
 		gisunlink_system_ctrl *gisunlink_system = (gisunlink_system_ctrl *)param;
 		if(GISUNLINK_SNTP_SUCCEED == repsond) {
-			gisunlink_print(GISUNLINK_PRINT_WARN,"system time sync ok");
 			gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_TIME_SUCCEED);
 			gisunlink_system->time_sync = true;
 		} else {
-			gisunlink_print(GISUNLINK_PRINT_WARN,"system time sync failed");
 			gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_TIME_FAILED);
 			gisunlink_system->time_sync = false;
 		}
@@ -72,6 +70,7 @@ static void gisunlink_system_netmanager_event(void *message, void *param) {
 static void gisunlink_system_uart_event(void *message, void *param) {
 	gisunlink_uart_event *uart = (gisunlink_uart_event *)message;
 	if(uart) {
+		gisunlink_print(GISUNLINK_PRINT_WARN,"Recv ID:%d CMD:0x%02X",uart->flow_id,uart->cmd);
 		switch(uart->cmd) {
 			case GISUNLINK_NETWORK_RESET: //网络重设
 				{
@@ -135,12 +134,12 @@ gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 		}
 		//初始化配置
 		gisunlink_config_init();
+		//初始化外围模块
+		gisunlink_peripheral_init();
 		//初始化网络管理模块
 		gisunlink_netmanager_init();
 		//初始化设备授权模块
 		//gisunlink_authorization_init(gisunlink_system->conf);
-		//初始化外围模块
-		gisunlink_peripheral_init();
 		//初始化MQTT
 		gisunlink_mqtt_init(gisunlink_system->deviceHWSn,gisunlink_system->deviceFWVersion);
 		//初始化固件下载
@@ -170,6 +169,8 @@ void gisunlink_system_set_state(gisunlink_system_ctrl *gisunlink_system,uint8 st
 			.respond = UART_NO_RESPOND,
 			.respondCb = NULL,
 		};
+
+		gisunlink_print(GISUNLINK_PRINT_ERROR,"current netWork state:0x%02X",state);
 
 		if(gisunlink_system_pairing() == false) {
 			switch(state) {

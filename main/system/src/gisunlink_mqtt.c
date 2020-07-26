@@ -429,12 +429,15 @@ static void gisunlink_mqtt_connect_server(gisunlink_mqtt_ctrl *mqtt) {
 	}
 
 	while(1) {
-		gisunlink_mqtt_info_reset(mqtt);
-		if(gisunlink_mqtt_get_server(MQTT_INFO_SERV,mqtt->clientID,GISUNLINK_GET_TIMEOUT)) {
-			break;
-		} 
+		if(gisunlink_netmanager_is_connected_ap()) {
+			gisunlink_mqtt_info_reset(mqtt);
+			if(gisunlink_mqtt_get_server(MQTT_INFO_SERV,mqtt->clientID,GISUNLINK_GET_TIMEOUT)) {
+				break;
+			} 
+		}
 		gisunlink_task_delay(10000 / portTICK_PERIOD_MS);
 	}
+
 	mqtt_cfg.host = mqtt->broker;
 	mqtt_cfg.port = mqtt->port;
 	mqtt_cfg.client_id = mqtt->clientID;
@@ -444,7 +447,6 @@ static void gisunlink_mqtt_connect_server(gisunlink_mqtt_ctrl *mqtt) {
 	if(mqtt->client == NULL) {
 		mqtt->client = esp_mqtt_client_init(&mqtt_cfg);
 		esp_mqtt_client_start(mqtt->client);
-		gisunlink_print(GISUNLINK_PRINT_ERROR,"gisunlink_mqtt_connect_server");
 	} 
 	gisunlink_mqtt_info_reset(mqtt);
 }
@@ -467,14 +469,18 @@ static void gisunlink_mqtt_thread(void *param) {
 					break;
 				} else {
 					if(mqtt->client) {
-						gisunlink_mqtt_info_reset(mqtt);
-						if(gisunlink_mqtt_get_server(MQTT_INFO_SERV,mqtt->clientID,GISUNLINK_GET_TIMEOUT)) {
-							//	esp_mqtt_client_reset_username(mqtt->client,mqtt->username);
-							//	esp_mqtt_client_reset_password(mqtt->client,mqtt->password);
-							//	esp_mqtt_client_reset_host(mqtt->client,mqtt->broker);
-							//	esp_mqtt_client_reset_port(mqtt->client,mqtt->port);
-							gisunlink_mqtt_info_reset(mqtt);
-						}
+						esp_mqtt_client_destroy(mqtt->client);
+						mqtt->client = NULL;
+						mqtt->is_connecting = false;
+						break;
+						//			gisunlink_mqtt_info_reset(mqtt);
+						//			if(gisunlink_mqtt_get_server(MQTT_INFO_SERV,mqtt->clientID,GISUNLINK_GET_TIMEOUT)) {
+						//				//	esp_mqtt_client_reset_username(mqtt->client,mqtt->username);
+						//				//	esp_mqtt_client_reset_password(mqtt->client,mqtt->password);
+						//				//	esp_mqtt_client_reset_host(mqtt->client,mqtt->broker);
+						//				//	esp_mqtt_client_reset_port(mqtt->client,mqtt->port);
+						//				gisunlink_mqtt_info_reset(mqtt);
+						//			}
 					}
 				}
 			}

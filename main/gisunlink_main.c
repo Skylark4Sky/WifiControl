@@ -71,14 +71,10 @@ static void gisunlink_mqtt_connectCb(MQTT_CONNECT_STATUS status) {
 		snprintf(gisunlink_system->deviceFWVersion,DEVICEFIRMWARENOSIZE,"%02x%02x%02x%02x%02x%02x",
 				0x21,0x20,0x06,0x07,0x21,0x50);
 #endif
-
 		gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_CONNECTED_SER);
-		gisunlink_print(GISUNLINK_PRINT_INFO,"MQ connect succeed");
 		sprintf(task_topic, "%s/%s",TASK_TRANSFER,gisunlink_system->deviceHWSn);
 		sprintf(prv_upgrade_topic, "%s/%s",FIRMWARE_UPDATE,gisunlink_system->deviceHWSn);
-
 		sprintf(upgrade_topic, "%s",FIRMWARE_UPDATE);
-
 		gisunlink_mqtt_subscribe(task_topic,0);
 		gisunlink_mqtt_subscribe(upgrade_topic,0);
 		gisunlink_mqtt_subscribe(prv_upgrade_topic,0);

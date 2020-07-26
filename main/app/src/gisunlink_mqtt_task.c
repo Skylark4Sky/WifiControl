@@ -26,7 +26,7 @@
 
 #define PUBLISH_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"behavior\":%d,\"data\":\"%s\",\"ctime\":%ld}"
 #define RESPOND_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"behavior\":%d,\"data\":{\"req_id\":%ld,\"success\":%s,\"msg\":\"%s\"}}"
-#define DEVICE_INFO_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"info\":{\"version\":%s,\"device_sn\":%s\"}}"
+#define DEVICE_INFO_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"info\":{\"version\":%s,\"device_sn\":%s\",\"wifi_version\":\"%s\"}}"
 
 static void mattTransferTaskRespond(gisunlink_respond_message *message) {
 	char *msg = NULL;
@@ -147,7 +147,7 @@ static void transferHandle(gisunlink_mqtt_message *message) {
 static void deviceInfoHandle(gisunlink_system_ctrl *gisunlink_system,gisunlink_mqtt_message *message) {
 	char *resp_buf = NULL;
 	uint32 requestID = getRequestID();
-	asprintf(&resp_buf,DEVICE_INFO_FORMAT,requestID,message->act,gisunlink_system->deviceFWVersion,gisunlink_system->deviceHWSn);
+	asprintf(&resp_buf,DEVICE_INFO_FORMAT,requestID,message->act,gisunlink_system->deviceFWVersion,gisunlink_system->deviceHWSn,WIFI_FIRMWARE_VERSION);
 	gisunlink_mqtt_publish(GETDEVICEINFO,resp_buf,0,requestID,MQTT_PUBLISH_NOACK);
 
 	if(resp_buf) {

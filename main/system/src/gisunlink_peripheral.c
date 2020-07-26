@@ -311,6 +311,9 @@ static void gisunlink_peripheral_post_message(uint32 flow_id, uint8 cmd, uint8 *
 
 static void gisunlink_peripheral_process_uart_packet(gisunlink_uart_read_ctrl *uart_recv) {
 	if(uart_recv) {
+
+		gisunlink_print(GISUNLINK_PRINT_ERROR,"uart_recv:0x%02X",uart_recv->cmd);
+
 		//如果是请求包马上回复ack
 		if(uart_recv->dir == GISUNLINK_COMM_REQ) {
 			gisunlink_peripheral_respond(uart_recv->flow_id,uart_recv->cmd,NULL,0); 
@@ -368,6 +371,7 @@ static void gisunlink_peripheral_uart_read(void *param) {
 	uint8 *buffer = NULL;
 	gisunlink_uart_read_ctrl *uart_recv = (gisunlink_uart_read_ctrl *)param;
 	uart_recv->data_offset = 0;
+	gisunlink_print(GISUNLINK_PRINT_ERROR,"gisunlink_peripheral_uart_read");
 	while(1) {
 		buffer = uart_recv->data + uart_recv->data_offset; 
 		switch(uart_recv->mode) {
@@ -616,13 +620,16 @@ void gisunlink_peripheral_init(void) {
 	//注册写回复队列任务
 	gisunlink_uart_write->respond_thread = gisunlink_create_task(gisunlink_peripheral_uart_write_respond, "uart_respond", gisunlink_uart_write, GISUNLINK_RESPOND_TASK_SIZE);
 	//注册读任务
-	gisunlink_create_task(gisunlink_peripheral_uart_read, "uart_read", gisunlink_uart_read, GISUNLINK_READ_TASK_SIZE);
+	gisunlink_create_task(gisunlink_peripheral_uart_read, "uart_read", gisunlink_uart_read, GISUNLINK_READ_TASK_SIZE * 2);
 }
 
 gisunlink_respond_message *gisunlink_peripheral_send_message(gisunlink_peripheral_message *message) {
 	gisunlink_respond_message *respond = NULL;
 	if(gisunlink_uart_write && message) {
 		message->id = gisunlink_uart_write->flow_id++;
+
+		gisunlink_print(GISUNLINK_PRINT_ERROR,"Send ID:%d CMD:0x%02X BEHAVIOR:0x%02X",message->id,message->cmd,message->behavior);
+
 		gisunlink_raw_packet *raw_packet = gisunlink_peripheral_create_raw_packet(message->id,GISUNLINK_COMM_REQ,message->cmd,message->data,message->data_len);
 		if(raw_packet) {
 			if(UART_RESPOND == message->respond) { //需要回复 

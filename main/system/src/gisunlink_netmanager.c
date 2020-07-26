@@ -148,7 +148,7 @@ static void gisunlink_netmanager_smartconfig_task(void * parm) {
 }
 
 static esp_err_t esp_net_event_handler(void *ctx, system_event_t *event) {
-	gisunlink_print(GISUNLINK_PRINT_ERROR,"WIFI EventID:%d",(uint8)event->event_id);
+	//gisunlink_print(GISUNLINK_PRINT_ERROR,"WIFI EventID:%d",(uint8)event->event_id);
 	switch((uint8)event->event_id) {
 		case SYSTEM_EVENT_WIFI_READY:
 			break;

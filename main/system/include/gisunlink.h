@@ -27,6 +27,7 @@
 #define FIRMWARE_UPDATE			"/point_common"
 #define	TASK_TRANSFER			"/point_switch"
 #define FIRMWARE_UPDATE_STATE	"/firmware_update"
+#define WIFI_FIRMWARE_VERSION	"GSL_V1.0.0"
 
 #define MACMAXLEN					 6
 #define SSIDMAXLEN					32
