@@ -24,7 +24,7 @@
 #include "gisunlink_update_task.h"
 #include "gisunlink_updatefirmware.h"
 
-#define FIRMWARE_UPDATE_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"data\":{\"success\":%s,\"msg\":%s\"}}"
+#define FIRMWARE_UPDATE_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"data\":{\"success\":%s,\"msg\":\"%s\"}}"
 
 uint8 firmwareQuery(gisunlink_firmware_update *firmware) {
 	uint8 ret = GISUNLINK_DEVICE_TIMEOUT;

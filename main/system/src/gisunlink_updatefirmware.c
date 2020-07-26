@@ -73,6 +73,7 @@ void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16
 		} else {
 			//md5不等即可执行任务
 			if(strncmp((const char *)lastDownloadTask->md5,(const char *)newDownloadTask->md5,lastDownloadTask->md5_len) != 0) {
+				gisunlink_print(GISUNLINK_PRINT_WARN,"lastTask %s newTask:%s",lastDownloadTask->md5,newDownloadTask->md5);
 				downloadStart = true;
 			} else {
 				//否则上报当前固件下载状态
@@ -87,7 +88,13 @@ void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16
 					updateCtrl->hook->state(false,msg);
 					downloadStart = true;
 				}
+
+				if(updateCtrl && updateCtrl->start_download == false && lastDownloadTask->transfer_over == false) {
+					gisunlink_put_sem(updateCtrl->thread_sem);
+				}
+
 			}
+
 			firmwareDownloadTaskFree(lastDownloadTask);
 			lastDownloadTask = NULL;
 		}
@@ -98,11 +105,16 @@ void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16
 			gisunlink_print(GISUNLINK_PRINT_ERROR,"has new version come %s:%d",newDownloadTask->path,newDownloadTask->size);
 			if(updateCtrl && updateCtrl->start_download == false) {
 				updateCtrl->start_download = true;
+				if(updateCtrl->download) {
+					firmwareDownloadTaskFree(updateCtrl->download);
+					updateCtrl->download = NULL;
+				}
 				updateCtrl->download = newDownloadTask;
 				gisunlink_put_sem(updateCtrl->thread_sem);
 			} 
+		} else {
+			firmwareDownloadTaskFree(newDownloadTask);
 		}
-		firmwareDownloadTaskFree(newDownloadTask);
 	} 
 } 
 
@@ -164,7 +176,7 @@ static esp_err_t _http_event_handler(esp_http_client_event_t *evt) {
 					fwrite(evt->data,1,evt->data_len,ufw_ctrl->file);
 				} 
 			} else {
-				gisunlink_print(GISUNLINK_PRINT_ERROR,"overflow file_size %d -->%d",ufw_ctrl->download->size,ufw_ctrl->download_process);
+				//gisunlink_print(GISUNLINK_PRINT_ERROR,"overflow file_size %d -->%d",ufw_ctrl->download->size,ufw_ctrl->download_process);
 			}
 			ufw_ctrl->download_process += evt->data_len;
 			break;
@@ -175,6 +187,7 @@ static esp_err_t _http_event_handler(esp_http_client_event_t *evt) {
 static int gisunlink_updatefirmware_http(gisunlink_updatefirmware_ctrl *ufw_ctrl) {
 	uint32 download_size = 0;
 	uint8 download_num = DOWNLOAD_NUM;
+
 	esp_http_client_config_t config = {
 		.url = (const char *)ufw_ctrl->download->path,
 		.event_handler = _http_event_handler,
@@ -246,6 +259,10 @@ static void gisunlink_updatefirmware_save_new_firmware(gisunlink_firmware_downlo
 	gisunlink_firmware_update *firmware = (gisunlink_firmware_update *)gisunlink_malloc(sizeof(gisunlink_firmware_update));
 	if(firmware) {
 		download->download_over = true;
+		if(firmware->download) {
+			firmwareDownloadTaskFree(firmware->download);
+			firmware->download = NULL;
+		}
 		firmware->download = download;
 		firmware->transfer_over = false;
 		gisunlink_config_set(FIRMWARE,firmware);

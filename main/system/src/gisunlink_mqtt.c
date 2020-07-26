@@ -23,6 +23,7 @@
 #include "mqtt_client.h"
 
 #include "gisunlink.h"
+#include "gisunlink_sntp.h"
 #include "gisunlink_mqtt.h"
 #include "gisunlink_config.h"
 #include "gisunlink_queue.h"
@@ -297,10 +298,7 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 	char *post_data = NULL;
 	char *post_url = NULL;
 
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-
-	asprintf(&post_url,"%s?%s&timeStamp=%ld&requestCount=%ld&errorString=%ld",host,gisunlink_mqtt->clientID,tv.tv_sec,++gisunlink_mqtt->requestConut,gisunlink_mqtt->errorString);
+	asprintf(&post_url,"%s?%s&timeStamp=%d&requestCount=%ld&errorString=%ld",host,gisunlink_mqtt->clientID,gisunlink_sntp_get_timestamp(),++gisunlink_mqtt->requestConut,gisunlink_mqtt->errorString);
 
 	esp_http_client_config_t config = {
 		.url = post_url,
@@ -332,12 +330,10 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 
 	if(err == ESP_OK) {
 		if(esp_http_client_get_status_code(client) == 200 && esp_http_client_get_content_length(client)) {
-			gisunlink_mqtt->requestConut = 0;
-			gisunlink_mqtt->errorString = 0;
 		} else {
 			gisunlink_mqtt->errorString = esp_http_client_get_status_code(client);
-			gisunlink_print(GISUNLINK_PRINT_WARN,"HTTP POST Status = %d, content_length = %d", esp_http_client_get_status_code(client), esp_http_client_get_content_length(client));
 		}
+		gisunlink_print(GISUNLINK_PRINT_WARN,"HTTP POST Status = %d, content_length = %d", esp_http_client_get_status_code(client), esp_http_client_get_content_length(client));
 	} else {
 		gisunlink_mqtt->errorString = err;
 		gisunlink_print(GISUNLINK_PRINT_ERROR,"HTTP POST request failed: %d", err);
@@ -346,11 +342,16 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 	esp_http_client_cleanup(client);
 
 	if(gisunlink_mqtt->httpcode != 20000) {
+		if(err == ESP_OK) {
+			gisunlink_print(GISUNLINK_PRINT_ERROR,"HTTP POST request failed service_code: %d", gisunlink_mqtt->httpcode);
+		}
 		return false;
 	}
 
 	if(gisunlink_mqtt->broker && gisunlink_mqtt->port && gisunlink_mqtt->username && gisunlink_mqtt->password) {
 		gisunlink_print(GISUNLINK_PRINT_WARN,"broker:%s port:%d username:%s password:%s",gisunlink_mqtt->broker,gisunlink_mqtt->port,gisunlink_mqtt->username,gisunlink_mqtt->password);
+		gisunlink_mqtt->requestConut = 0;
+		gisunlink_mqtt->errorString = 0;
 		return true;
 	} else {
 		return false;
@@ -484,16 +485,18 @@ static void gisunlink_mqtt_thread(void *param) {
 					switch(packet->type) {
 						case GISUNLINK_TOPIC_SUB:
 							msg_err = gisunlink_mqtt_thread_subscribe(mqtt,packet);
+							gisunlink_print(GISUNLINK_PRINT_WARN,"subscribe:%s",packet->topic);
 							break;
 						case GISUNLINK_TOPIC_PUB:
 							msg_err = gisunlink_mqtt_thread_publish(mqtt,packet);
+							gisunlink_print(GISUNLINK_PRINT_WARN,"publish:{topic:%s payload:%s}",packet->topic,packet->payload);
 							break;
 					}
 
 					if(msg_err == false) {
 						if(gisunlink_mqtt_isconnected() && packet->ackstatus == MQTT_PUBLISH_NEEDACK) {
 							//如果发送错误，重新压回队列头						
-							//gisunlink_print(GISUNLINK_PRINT_ERROR,"MQTT packet handle error repush stack");
+							gisunlink_print(GISUNLINK_PRINT_ERROR,"MQTT packet handle error repush stack");
 							//gisunlink_queue_push_head(mqtt->queue,packet);
 							if(gisunlink_queue_push(mqtt->wait_ack_queue, packet)) {
 								clear_packet = false;

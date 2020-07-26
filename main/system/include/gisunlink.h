@@ -28,13 +28,14 @@
 #define	TASK_TRANSFER			"/point_switch"
 #define FIRMWARE_UPDATE_STATE	"/firmware_update"
 
-#define MACMAXLEN           6
-#define SSIDMAXLEN          32
-#define PSWDMAXLEN          64
-#define TOKENMAXLEN			32
-#define DEVICEINFOSIZE		25
-#define FIRMWARE_SEND_RETRY 5
-#define STM32_UNIQUE_ID_SIZE 12
+#define MACMAXLEN					 6
+#define SSIDMAXLEN					32
+#define PSWDMAXLEN					64
+#define TOKENMAXLEN					32
+#define DEVICEINFOSIZE				25
+#define DEVICEFIRMWARENOSIZE		13
+#define FIRMWARE_SEND_RETRY			5
+#define STM32_UNIQUE_ID_SIZE		12
 
 #ifdef __cplusplus
 extern "C"

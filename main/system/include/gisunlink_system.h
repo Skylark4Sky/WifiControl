@@ -30,7 +30,7 @@ typedef struct _gisunlink_system_ctrl {
 	bool time_sync;
 	uint8 state;
 	char deviceHWSn[DEVICEINFOSIZE];
-	char deviceFWVersion[DEVICEINFOSIZE];
+	char deviceFWVersion[DEVICEFIRMWARENOSIZE];
 	GISUNLINK_HEAP_SIZE *heapSize;
 	GISUNLINK_IS_CONNECT_AP *isConnectAp;
 	GISUNLINK_MESSAGE_EVENT *uartHandle;

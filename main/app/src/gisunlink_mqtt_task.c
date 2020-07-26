@@ -59,7 +59,6 @@ void mqttMessagePublish(gisunlink_system_ctrl *gisunlink_system, const char *act
 	}
 
 	if(uart->cmd == GISUNLINK_TASK_CONTROL && gisunlink_mqtt_isconnected()) {
-		gisunlink_print(GISUNLINK_PRINT_ERROR,"gisunlink_mqtt_message_publish cmd:0x%02x data_len:%d",uart->cmd,uart->data_len);
 		char *publish_topic = NULL;
 		char *publish_data = NULL;
 		uint8 *base64Str = (uint8 *)" ";
@@ -127,7 +126,6 @@ static void transferHandle(gisunlink_mqtt_message *message) {
 		size_t dec_len = 0;
 		uint8 *dec_buf = uart_buf + 1;
 		if((ret = mbedtls_base64_decode(dec_buf, data_len, &dec_len, (const uint8 *)message->data, data_len)) == 0) {
-			gisunlink_print(GISUNLINK_PRINT_WARN,"message->data_len:%d :%s",message->data_len%4,message->data);
 			uart_buf[0] = message->behavior;
 			gisunlink_peripheral_message uart_message = {
 				.behavior = message->behavior,
