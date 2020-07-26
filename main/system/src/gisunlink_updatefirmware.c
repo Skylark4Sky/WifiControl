@@ -55,69 +55,6 @@ typedef struct _gisunlink_updatefirmware_ctrl {
 
 static gisunlink_updatefirmware_ctrl *updateCtrl = NULL;
 
-void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16 json_len) {
-	gisunlink_firmware_download *newDownloadTask = analysisFirmwareDownloadTaskJSON(jsonData,json_len);
-
-	if(newDownloadTask) {
-		bool downloadStart = false;
-		if(newDownloadTask->size <= 0) {
-			firmwareDownloadTaskFree(newDownloadTask);
-			newDownloadTask = NULL;
-			return;
-		} 
-
-		gisunlink_firmware_download *lastDownloadTask = getLocalDownloadTaskConf(); 
-
-		if(lastDownloadTask == NULL) {
-			downloadStart = true;
-		} else {
-			//md5不等即可执行任务
-			if(strncmp((const char *)lastDownloadTask->md5,(const char *)newDownloadTask->md5,lastDownloadTask->md5_len) != 0) {
-				gisunlink_print(GISUNLINK_PRINT_WARN,"lastTask %s newTask:%s",lastDownloadTask->md5,newDownloadTask->md5);
-				downloadStart = true;
-			} else {
-				//否则上报当前固件下载状态
-				char msg[128] = {0}; 
-				if(lastDownloadTask->download_over) {
-					updateCtrl->hook->state(false,"the md5 are the smae");
-				} else if (!lastDownloadTask->download_over && updateCtrl->start_download) {
-					sprintf(msg, "wait the %s download finished",lastDownloadTask->md5);
-					updateCtrl->hook->state(false,msg);
-				} else if (!lastDownloadTask->download_over && !updateCtrl->start_download) {
-					sprintf(msg, "restart download the %s",lastDownloadTask->md5);
-					updateCtrl->hook->state(false,msg);
-					downloadStart = true;
-				}
-
-				if(updateCtrl && updateCtrl->start_download == false && lastDownloadTask->transfer_over == false) {
-					gisunlink_put_sem(updateCtrl->thread_sem);
-				}
-
-			}
-
-			firmwareDownloadTaskFree(lastDownloadTask);
-			lastDownloadTask = NULL;
-		}
-
-		if(downloadStart) {
-			//先把需要更新的固件写入系统 防止再下载的时候漏掉多接收的新版本号,固件缓存后，需再次读出md5值 进行对比
-			gisunlink_config_set(DOWNLOAD,newDownloadTask);
-			gisunlink_print(GISUNLINK_PRINT_ERROR,"has new version come %s:%d",newDownloadTask->path,newDownloadTask->size);
-			if(updateCtrl && updateCtrl->start_download == false) {
-				updateCtrl->start_download = true;
-				if(updateCtrl->download) {
-					firmwareDownloadTaskFree(updateCtrl->download);
-					updateCtrl->download = NULL;
-				}
-				updateCtrl->download = newDownloadTask;
-				gisunlink_put_sem(updateCtrl->thread_sem);
-			} 
-		} else {
-			firmwareDownloadTaskFree(newDownloadTask);
-		}
-	} 
-} 
-
 static void gisunlink_updatefirmware_close_file(FILE *file) {
 	if(file) {
 		fclose(file);
@@ -353,13 +290,9 @@ static uint32 gisunlink_updatefirmware_send_firmware(const char *file_path,gisun
 	return update_hook->send_size;
 }
 
-static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *update_hook) {
-	if(update_hook == NULL || update_hook->query == NULL || update_hook->transfer == NULL || update_hook->check == NULL) {
-		gisunlink_print(GISUNLINK_PRINT_ERROR,"update_hook is empty!!!");
-		return;
-	}
-
-	gisunlink_firmware_update *firmware = (gisunlink_firmware_update *)gisunlink_malloc(sizeof(gisunlink_firmware_update));
+static gisunlink_firmware_update *createFirmwareUpdateStruct(void) {
+	gisunlink_firmware_update *firmware = NULL;
+	firmware = (gisunlink_firmware_update *)gisunlink_malloc(sizeof(gisunlink_firmware_update));
 
 	if(firmware) {
 		if((firmware->download = (gisunlink_firmware_download *)gisunlink_malloc(sizeof(gisunlink_firmware_download)))) {
@@ -367,11 +300,28 @@ static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *upda
 			firmware->download->path = (uint8 *)gisunlink_malloc(firmware->download->path_len);
 			firmware->download->md5 = (uint8 *)gisunlink_malloc(firmware->download->md5_len);
 		} else {
-			goto error_exit;
+			gisunlink_free(firmware);
+			firmware = NULL;
+		}
+		if(firmware->download) {
+			gisunlink_config_get(FIRMWARE,firmware);
 		}
 	}
+	return firmware;
+}
 
-	gisunlink_config_get(FIRMWARE,firmware);
+static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *update_hook) {
+	if(update_hook == NULL || update_hook->query == NULL || update_hook->transfer == NULL || update_hook->check == NULL) {
+		gisunlink_print(GISUNLINK_PRINT_ERROR,"update_hook is empty!!!");
+		return;
+	}
+
+	gisunlink_firmware_update *firmware = createFirmwareUpdateStruct();
+
+	if(firmware == NULL) {
+		gisunlink_print(GISUNLINK_PRINT_ERROR,"firmware empty!!!");
+		goto error_exit;
+	}
 
 	if(firmware->transfer_over == false && firmware->download->size > 0 && firmware->download->ver > 0) {
 		gisunlink_print(GISUNLINK_PRINT_WARN,"firmware:%s md5:%s size:%d",firmware->download->path,firmware->download->md5,firmware->download->size);
@@ -485,6 +435,76 @@ static void gisunlink_updatefirmware_task(void *param) {
 	}
 	gisunlink_destroy_task(NULL);
 }
+
+void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16 json_len) {
+	gisunlink_firmware_download *newDownloadTask = analysisFirmwareDownloadTaskJSON(jsonData,json_len);
+
+	if(newDownloadTask) {
+		bool downloadStart = false;
+		if(newDownloadTask->size <= 0) {
+			firmwareDownloadTaskFree(newDownloadTask);
+			newDownloadTask = NULL;
+			return;
+		} 
+
+		gisunlink_firmware_download *lastDownloadTask = getLocalDownloadTaskConf(); 
+
+		if(lastDownloadTask == NULL) {
+			downloadStart = true;
+		} else {
+			//md5不等即可执行任务
+			if(strncmp((const char *)lastDownloadTask->md5,(const char *)newDownloadTask->md5,lastDownloadTask->md5_len) != 0) {
+				gisunlink_print(GISUNLINK_PRINT_WARN,"lastTask %s newTask:%s",lastDownloadTask->md5,newDownloadTask->md5);
+				downloadStart = true;
+			} else {
+				//否则上报当前固件下载状态
+				char msg[128] = {0}; 
+				if(lastDownloadTask->download_over) {
+					gisunlink_firmware_update *firmware = createFirmwareUpdateStruct();
+					if(firmware && (strncmp((const char *)lastDownloadTask->md5,(const char *)firmware->download->md5,lastDownloadTask->md5_len) == 0)) {
+						if(firmware->transfer_over == false) {
+							updateCtrl->hook->state(true,"reTransfer cur firmware");
+							gisunlink_put_sem(updateCtrl->thread_sem);
+						} else {
+							updateCtrl->hook->state(false,"the md5 are the smae");
+						}
+					}
+					firmwareDownloadTaskFree(firmware->download);
+					firmware->download = NULL;
+					gisunlink_free(firmware);
+					firmware = NULL;
+				} else if (!lastDownloadTask->download_over && updateCtrl->start_download) {
+					sprintf(msg, "wait the %s download finished",lastDownloadTask->md5);
+					updateCtrl->hook->state(false,msg);
+				} else if (!lastDownloadTask->download_over && !updateCtrl->start_download) {
+					sprintf(msg, "restart download the %s",lastDownloadTask->md5);
+					updateCtrl->hook->state(false,msg);
+					downloadStart = true;
+				}
+			}
+
+			firmwareDownloadTaskFree(lastDownloadTask);
+			lastDownloadTask = NULL;
+		}
+
+		if(downloadStart) {
+			//先把需要更新的固件写入系统 防止再下载的时候漏掉多接收的新版本号,固件缓存后，需再次读出md5值 进行对比
+			gisunlink_config_set(DOWNLOAD,newDownloadTask);
+			gisunlink_print(GISUNLINK_PRINT_ERROR,"has new version come %s:%d",newDownloadTask->path,newDownloadTask->size);
+			if(updateCtrl && updateCtrl->start_download == false) {
+				updateCtrl->start_download = true;
+				if(updateCtrl->download) {
+					firmwareDownloadTaskFree(updateCtrl->download);
+					updateCtrl->download = NULL;
+				}
+				updateCtrl->download = newDownloadTask;
+				gisunlink_put_sem(updateCtrl->thread_sem);
+			} 
+		} else {
+			firmwareDownloadTaskFree(newDownloadTask);
+		}
+	} 
+} 
 
 void gisunlink_updatefirmware_init(void) {
 	if(updateCtrl) {

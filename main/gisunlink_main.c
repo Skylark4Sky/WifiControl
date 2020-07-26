@@ -64,10 +64,13 @@ static void gisunlink_mqtt_connectCb(MQTT_CONNECT_STATUS status) {
 		char prv_upgrade_topic[64] = {0}; 
 		char upgrade_topic[32] = {0};
 
+#if NOWAITDEVICE
+
 		snprintf(gisunlink_system->deviceHWSn,DEVICEINFOSIZE,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
 				0x17,0xff,0x69,0x06,0x78,0x78,0x49,0x51,0x48,0x24,0x09,0x67);
 		snprintf(gisunlink_system->deviceFWVersion,DEVICEFIRMWARENOSIZE,"%02x%02x%02x%02x%02x%02x",
 				0x21,0x20,0x06,0x07,0x21,0x50);
+#endif
 
 		gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_CONNECTED_SER);
 		gisunlink_print(GISUNLINK_PRINT_INFO,"MQ connect succeed");
@@ -145,7 +148,7 @@ void app_main(void) {
 			}
 		}
 
-		gisunlink_print(GISUNLINK_PRINT_INFO,"heap_size:%d rssi:%d time:%d - %d (us)",getHeapSize(),(signed char)getApRssi(),getNowTimeBySec(),getNowTimeByUSec());
+		gisunlink_print(GISUNLINK_PRINT_INFO,"heap_size:%d rssi:%d time:%d - %d (us) update_retry:%d retry_tick:%d",getHeapSize(),(signed char)getApRssi(),getNowTimeBySec(),getNowTimeByUSec(),update_hook.update_retry,update_hook.update_retry_tick);
 		gisunlink_task_delay(1000 / portTICK_PERIOD_MS);
 	}
 }
