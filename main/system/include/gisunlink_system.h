@@ -37,7 +37,7 @@ typedef struct _gisunlink_system_ctrl {
 	GISUNLINK_MESSAGE_EVENT *routeHandle;
 } gisunlink_system_ctrl;
 
-typedef uint8 GISUNLINK_MESSAGE_CB(gisunlink_system_ctrl *gisunlink_system, void *message);
+typedef uint8 GISUNLINK_MESSAGE_CB(void *message);
 
 /*! @brief 系统初始化
  * @param void 

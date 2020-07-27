@@ -39,7 +39,7 @@ static gisunlink_firmware_update_hook update_hook = {
 	.send_size = 0,
 };
 
-static uint8 gisunlink_message_callback(gisunlink_system_ctrl *gisunlink_system, void *message_data) {
+static uint8 gisunlink_message_callback(void *message_data) {
 	if(message_data && gisunlink_system) {
 		gisunlink_message *message = (gisunlink_message *)message_data;
 		switch(message->src_id) {

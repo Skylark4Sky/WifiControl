@@ -76,7 +76,6 @@ static void gisunlink_netmanager_package_message(gisunlink_message *message,gisu
 static void gisunlink_netmanager_post_state_message(GISUNLINK_NETMANAGER_WORK_STATE id,void *data,void (*data_free)(void *param)) {
 	if(netmanager) {
 		gisunlink_message message = {0}; 
-
 		gisunlink_netmanager_event *event = (gisunlink_netmanager_event *)gisunlink_malloc(sizeof(gisunlink_netmanager_event));
 		event->id = netmanager->net_state = id;
 		event->param = data;
