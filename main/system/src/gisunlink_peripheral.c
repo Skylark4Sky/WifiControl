@@ -311,9 +311,6 @@ static void gisunlink_peripheral_post_message(uint32 flow_id, uint8 cmd, uint8 *
 
 static void gisunlink_peripheral_process_uart_packet(gisunlink_uart_read_ctrl *uart_recv) {
 	if(uart_recv) {
-
-		gisunlink_print(GISUNLINK_PRINT_ERROR,"uart_recv:0x%02X",uart_recv->cmd);
-
 		//如果是请求包马上回复ack
 		if(uart_recv->dir == GISUNLINK_COMM_REQ) {
 			gisunlink_peripheral_respond(uart_recv->flow_id,uart_recv->cmd,NULL,0); 

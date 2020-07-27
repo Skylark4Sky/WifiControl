@@ -64,13 +64,6 @@ static void gisunlink_mqtt_connectCb(MQTT_CONNECT_STATUS status) {
 		char prv_upgrade_topic[64] = {0}; 
 		char upgrade_topic[32] = {0};
 
-#if NOWAITDEVICE
-
-		snprintf(gisunlink_system->deviceHWSn,DEVICEINFOSIZE,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-				0x17,0xff,0x69,0x06,0x78,0x78,0x49,0x51,0x48,0x24,0x09,0x67);
-		snprintf(gisunlink_system->deviceFWVersion,DEVICEFIRMWARENOSIZE,"%02x%02x%02x%02x%02x%02x",
-				0x21,0x20,0x06,0x07,0x21,0x50);
-#endif
 		gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_CONNECTED_SER);
 		sprintf(task_topic, "%s/%s",TASK_TRANSFER,gisunlink_system->deviceHWSn);
 		sprintf(prv_upgrade_topic, "%s/%s",FIRMWARE_UPDATE,gisunlink_system->deviceHWSn);
@@ -114,16 +107,6 @@ void app_main(void) {
 	while(1) {
 		if(gisunlink_system->isConnectAp()) {
 			gisunlink_system_time_ok(gisunlink_system);
-#if NOWAITDEVICE 
-			snprintf(gisunlink_system->deviceHWSn,DEVICEINFOSIZE,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-					0x57,0xff,0x69,0x06,0x78,0x78,0x49,0x51,0x48,0x24,0x09,0x67);
-			gisunlink_system->waitHWSn = true;
-
-			snprintf(gisunlink_system->deviceFWVersion,DEVICEFIRMWARENOSIZE,"%02x%02x%02x%02x%02x%02x",
-					0x20,0x20,0x06,0x07,0x21,0x50);
-			gisunlink_system->waitFirmwareVersion = true;
-
-#else
 			if(gisunlink_system->waitHWSn == false) {
 				gisunlink_system->waitHWSn = getDeviceHWSnOrFirmwareVersion(GISUNLINK_HW_SN,gisunlink_system->deviceHWSn);
 			}
@@ -131,7 +114,6 @@ void app_main(void) {
 			if(gisunlink_system->waitFirmwareVersion == false) {
 				gisunlink_system->waitFirmwareVersion = getDeviceHWSnOrFirmwareVersion(GISUNLINK_FIRMWARE_VERSION,gisunlink_system->deviceFWVersion);
 			}
-#endif
 
 			if(gisunlink_system->waitHWSn && gisunlink_system->waitFirmwareVersion) {
 				gisunlink_mqtt_connect(gisunlink_mqtt_connectCb,gisunlink_mqtt_messageCb);
