@@ -100,7 +100,7 @@ bool getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter) {
 			if(respond->reason == GISUNLINK_SEND_SUCCEED) {
 				if(respond->data_len == STM32_UNIQUE_ID_SIZE) {
 					if(GISUNLINK_FIRMWARE_VERSION == cmd) {
-						snprintf(buffter,DEVICEFIRMWARENOSIZE,"%d%d%d%d%d%d%d%d%d%d%d%d",
+						snprintf(buffter,DEVICEFIRMWARENOSIZE,"%c%c%c%c%c%c%c%c%c%c%c%c",
 								respond->data[0],respond->data[1],respond->data[2],respond->data[3],respond->data[4],respond->data[5],
 								respond->data[6],respond->data[7],respond->data[8],respond->data[9],respond->data[10],respond->data[11]);
 						gisunlink_print(GISUNLINK_PRINT_ERROR,"firmware version:%s",buffter);

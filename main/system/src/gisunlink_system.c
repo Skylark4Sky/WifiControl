@@ -32,6 +32,7 @@ static void gisunlink_sntp_respond(SNTP_RESPOND repsond,void *param) {
 	if(param) {
 		gisunlink_system_ctrl *gisunlink_system = (gisunlink_system_ctrl *)param;
 		if(GISUNLINK_SNTP_SUCCEED == repsond) {
+			gisunlink_print(GISUNLINK_PRINT_ERROR,"GISUNLINK_NETMANAGER_TIME_SUCCEED");
 			gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_TIME_SUCCEED);
 			gisunlink_system->time_sync = true;
 		} else {
@@ -56,8 +57,8 @@ static void gisunlink_system_netmanager_event(void *message, void *param) {
 				break;
 			case GISUNLINK_NETMANAGER_CONNECTED:
 				//时间同步完成后，先给固件模块一个信号
-				gisunlink_updatefirmware_start_signal();
 				gisunlink_sntp_initialize(gisunlink_sntp_respond,param);
+				gisunlink_updatefirmware_start_signal();
 				//gisunlink_authorization_check();
 				break;
 			case GISUNLINK_NETMANAGER_DISCONNECTED:
@@ -82,7 +83,7 @@ static void gisunlink_system_uart_event(void *message, void *param) {
 				break;
 			case GISUNLINK_DEV_SN:		//设备SN号
 				{
-					char *device_sn = gisunlink_get_mac_with_string(NULL);
+					char *device_sn = gisunlink_get_mac_with_string("GSL");
 					gisunlink_peripheral_message uart_message = {
 						.cmd = GISUNLINK_DEV_SN,
 						.data = (uint8 *)device_sn,
