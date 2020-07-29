@@ -148,6 +148,13 @@ typedef struct _gisunlink_firmware_update {
 	bool transfer_over;
 } gisunlink_firmware_update;
 
+typedef struct _gisunlink_transfer_packect {
+	uint8 behavior; 
+	uint8 ack;
+	uint8 signal;
+	uint8 total;
+} gisunlink_transfer_packect;
+
 #ifdef __cplusplus
 }
 #endif

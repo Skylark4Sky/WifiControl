@@ -245,15 +245,14 @@ void gisunlink_netmanager_init(void) {
 
 	if(netmanager == NULL) {
 		if((netmanager = (gisunlink_netmanager_ctrl *)gisunlink_malloc(sizeof(gisunlink_netmanager_ctrl)))) {
+			gisunlink_message_register(GISUNLINK_NETMANAGER_MODULE,gisunlink_netmanager_message_callback);
+			gisunlink_netmanager_post_state_message(GISUNLINK_NETMANAGER_IDLE,NULL,NULL);
 			netmanager->enter_pairing = false;
 			netmanager->connected = false;
 			netmanager->lost_connect = false;
 			netmanager->connected_bit = BIT0;
 			netmanager->airkiss_done_bit = BIT1;
 			gisunlink_netmanager_init_sta_wifi();
-			gisunlink_message_register(GISUNLINK_NETMANAGER_MODULE,gisunlink_netmanager_message_callback);
-			gisunlink_netmanager_post_state_message(GISUNLINK_NETMANAGER_IDLE,NULL,NULL);
-
 			gisunlink_config_get(POWERON_CONFIG,&poweron);
 
 			//设备设置过网络

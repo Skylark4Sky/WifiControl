@@ -33,10 +33,10 @@ static void gisunlink_sntp_respond(SNTP_RESPOND repsond,void *param) {
 		gisunlink_system_ctrl *gisunlink_system = (gisunlink_system_ctrl *)param;
 		if(GISUNLINK_SNTP_SUCCEED == repsond) {
 			gisunlink_print(GISUNLINK_PRINT_ERROR,"GISUNLINK_NETMANAGER_TIME_SUCCEED");
-			gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_TIME_SUCCEED);
+			//gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_TIME_SUCCEED);
 			gisunlink_system->time_sync = true;
 		} else {
-			gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_TIME_FAILED);
+			//gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_TIME_FAILED);
 			gisunlink_system->time_sync = false;
 		}
 	}

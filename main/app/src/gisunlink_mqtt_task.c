@@ -51,6 +51,14 @@ static void mattTransferTaskRespond(gisunlink_respond_message *message) {
 	mqttMessageRespond("transfer",message->behavior,message->heading,send_status,msg);
 }
 
+void transferPacketEncode(gisunlink_transfer_packect *transferInfo, uint8 *comStart, uint8 *comData, uint16 dataLen)  {
+	if(transferInfo && comStart && comData && dataLen) {
+		if(transferInfo->total) {
+
+		}
+	}
+} 
+
 void mqttMessagePublish(gisunlink_system_ctrl *gisunlink_system, const char *act,void *message) {
 	gisunlink_uart_event *uart = (gisunlink_uart_event *)message;
 
@@ -59,6 +67,18 @@ void mqttMessagePublish(gisunlink_system_ctrl *gisunlink_system, const char *act
 	}
 
 	if(uart->cmd == GISUNLINK_TASK_CONTROL && gisunlink_mqtt_isconnected()) {
+
+		gisunlink_transfer_packect transferInfo;
+
+		uint8 *transferData = (uint8)(*uart->data);
+
+		transferInfo.behavior = *transferData++;
+		transferInfo.ack = *transferData++;
+		transferInfo.signal = *transferData++;
+		transferInfo.total = *transferData++;
+
+		transferPacketEncode(&transferInfo,transferData,transferData + transferInfo.total,uart->data_len - 2);
+
 		char *publish_topic = NULL;
 		char *publish_data = NULL;
 		uint8 *base64Str = (uint8 *)" ";
@@ -78,11 +98,12 @@ void mqttMessagePublish(gisunlink_system_ctrl *gisunlink_system, const char *act
 				if((ret = mbedtls_base64_encode(base64Str, base64_len, &base64_len, data, data_len)) == 0) { 
 					asprintf(&publish_data,PUBLISH_FORMAT,requestID,act,behavior,base64Str,getNowTimeBySec());
 					asprintf(&publish_topic,"%s%s",STATUS_POST,gisunlink_system->deviceHWSn); 
-					gisunlink_print(GISUNLINK_PRINT_ERROR,"%s ->data:%s",publish_topic,publish_data);
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"%s ->data:%s - %d",publish_topic,publish_data,strlen(publish_data));
 					if(publish_ack == MQTT_PUBLISH_NEEDACK) {
 						gisunlink_mqtt_publish(publish_topic,publish_data,2,requestID,publish_ack);
 					} else {
-						gisunlink_mqtt_publish(publish_topic,publish_data,0,requestID,publish_ack);
+						//gisunlink_mqtt_publish(publish_topic,publish_data,0,requestID,publish_ack);
+						gisunlink_mqtt_publish(publish_topic,(const char *)base64Str,0,requestID,publish_ack);
 					}
 				} else {
 					gisunlink_print(GISUNLINK_PRINT_ERROR,"mbedtls_base64_encode failed %d",ret);

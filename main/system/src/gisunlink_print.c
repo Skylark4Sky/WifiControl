@@ -18,7 +18,7 @@
 #include "gisunlink_print.h"
 
 #define GISUNLINK_TAG "GISUNLINK_LOG"
-#define LOG_BUF_MAX 512
+#define LOG_BUF_MAX 768
 
 void gisunlink_print(PRINTMODE mode,int8* fmt, ...) {
     char buf[LOG_BUF_MAX];
