@@ -153,6 +153,12 @@ typedef struct _gisunlink_transfer_packect {
 	uint8 ack;
 	uint8 signal;
 	uint8 total;
+	uint8 shardingNum;
+	uint16 shardingSize;
+	uint16 dataLen;
+	char *act;
+	uint8 *comList;
+	uint8 *comData;
 } gisunlink_transfer_packect;
 
 #ifdef __cplusplus

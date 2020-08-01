@@ -15,6 +15,8 @@
 
 #include "gisunlink.h"
 
+#define SPLIT_PACKET_SIZE 5
+
 #ifdef __cplusplus
 extern "C"
 {

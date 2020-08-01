@@ -28,7 +28,7 @@ extern "C"
  * @param 消息 
  * @return void
  */
-void mqttMessagePublish(gisunlink_system_ctrl *gisunlink_system, const char *act,void *message);
+void mqttMessagePublish(gisunlink_system_ctrl *gisunlink_system, char *act,void *message);
 
 /*! @brief MQ消息回复
  * @param 动作 
