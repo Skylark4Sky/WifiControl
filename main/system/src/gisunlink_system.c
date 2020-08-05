@@ -79,8 +79,8 @@ static void gisunlink_system_uart_event(void *message, void *param) {
 						gisunlink_print(GISUNLINK_PRINT_ERROR,"GISUNLINK_RESETNET_CMD");
 						gisunlink_netmanager_enter_pairing(GISUNLINK_MAIN_MODULE);
 					}
+					break;
 				}
-				break;
 			case GISUNLINK_DEV_SN:		//设备SN号
 				{
 					char *device_sn = gisunlink_get_mac_with_string("GSL");
@@ -95,8 +95,8 @@ static void gisunlink_system_uart_event(void *message, void *param) {
 
 					gisunlink_free(device_sn);
 					device_sn = NULL;
+					break;
 				}
-				break;
 			case GISUNLINK_NETWORK_STATUS: //获取设备网络状态
 				{
 					uint8 state = ((gisunlink_system_ctrl *)param)->state; 
@@ -108,8 +108,13 @@ static void gisunlink_system_uart_event(void *message, void *param) {
 						.respondCb = NULL,
 					};
 					gisunlink_peripheral_send_message(&uart_message);
+					break;
 				}
-				break;
+			case GISUNLINK_RESET_NET_MODULE: //重置网络模组
+				{
+					esp_restart();
+					break;
+				}
 		}
 	}
 }

@@ -66,6 +66,7 @@ typedef enum {
 	GISUNLINK_TASK_CONTROL = 0x0C,							//网络数据透传
 	GISUNLINK_HW_SN = 0x0D,									//获取硬件SN号
 	GISUNLINK_FIRMWARE_VERSION = 0x0E,						//获取设备版本号
+	GISUNLINK_RESET_NET_MODULE = 0x0F,						//重启网络模组
 } GISUNLINK_UART_CMD;
 
 typedef enum {
