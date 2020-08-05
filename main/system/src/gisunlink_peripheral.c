@@ -426,6 +426,7 @@ static void gisunlink_peripheral_uart_read(void *param) {
 					case GISUNLINK_TASK_CONTROL:
 					case GISUNLINK_HW_SN:
 					case GISUNLINK_FIRMWARE_VERSION:
+					case GISUNLINK_RESET_NET_MODULE:
 						uart_recv->cmd = cmd;
 						uart_recv->data_offset += GISUNLINK_PACKET_CMD_SIZE;
 						uart_recv->mode = GISUNLINK_RECV_DATA;
