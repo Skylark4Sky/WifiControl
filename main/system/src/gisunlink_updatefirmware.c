@@ -65,7 +65,10 @@ static void gisunlink_updatefirmware_close_file(FILE *file) {
 static void gisunlink_updatefirmware_remove_file(const char *path) {
 	struct stat st;
 	if(stat(path, &st) == 0) {
+		gisunlink_print(GISUNLINK_PRINT_ERROR,"remove file:%s",path);
 		unlink(path);
+	} else {
+		gisunlink_print(GISUNLINK_PRINT_ERROR,"failed remove file:%s",path);
 	}
 }
 
@@ -133,6 +136,7 @@ static int gisunlink_updatefirmware_http(gisunlink_updatefirmware_ctrl *ufw_ctrl
 
 	esp_http_client_handle_t client = esp_http_client_init(&config);
 	esp_http_client_set_header(client,"User-Agent", "gisunLink_iot");
+
 	if(ufw_ctrl->download && ufw_ctrl->download->path && ufw_ctrl->download->path_len) {
 		while(download_num--) {
 			gisunlink_updatefirmware_remove_file(UPD_FILE_PATH);
@@ -213,45 +217,54 @@ static void gisunlink_updatefirmware_download(gisunlink_updatefirmware_ctrl *ufw
 		while(ufw_ctrl->start_download) {
 			bool chk_md5_ok = false;
 			int download_size = 0;
-
 			if((download_size = gisunlink_updatefirmware_http(ufw_ctrl))) {
 				if(download_size == ufw_ctrl->download->size) { 
+					ufw_ctrl->download->download_over = true;
 					chk_md5_ok = gisunlink_updatefirmware_check_md5(UPD_FILE_PATH,(const char *)ufw_ctrl->download->md5,ufw_ctrl->download->md5_len);
 				} else {
+					ufw_ctrl->download->download_over = false;
 					gisunlink_print(GISUNLINK_PRINT_ERROR,"download failed file_size:%d download_size:%d",ufw_ctrl->download->size,download_size);
 				}
 			} else {
+				ufw_ctrl->download->download_over = false;
 				gisunlink_print(GISUNLINK_PRINT_ERROR,"download failed file_size:%d download_size:%d",ufw_ctrl->download->size,download_size);
 				ufw_ctrl->hook->state(false,"download failed");
 			}
 
 			//检查是否有新的下载任务进来
 			gisunlink_firmware_download *new_download_task = getLocalDownloadTaskConf();
-			if(strncmp((const char *)ufw_ctrl->download->md5,(const char *)new_download_task->md5,new_download_task->md5_len) == 0) {
-				if(chk_md5_ok) {
-					gisunlink_updatefirmware_remove_file(FW_FILE_PATH);
-					int ret = gisunlink_updatefirmware_rename_file(UPD_FILE_PATH,FW_FILE_PATH);
-					if(ret == 0) {
-						gisunlink_print(GISUNLINK_PRINT_WARN,"md5 company ok");
-						gisunlink_updatefirmware_save_new_firmware(ufw_ctrl->download);
-					} else {
-						gisunlink_print(GISUNLINK_PRINT_WARN,"rename failed:%d",ret);
+			if(new_download_task) {
+				if(strncmp((const char *)ufw_ctrl->download->md5,(const char *)new_download_task->md5,new_download_task->md5_len) == 0) {
+					if(chk_md5_ok) {
+						gisunlink_updatefirmware_remove_file(FW_FILE_PATH);
+						int ret = gisunlink_updatefirmware_rename_file(UPD_FILE_PATH,FW_FILE_PATH);
+						if(ret == 0) {
+							gisunlink_print(GISUNLINK_PRINT_WARN,"md5 company ok");
+							gisunlink_updatefirmware_save_new_firmware(ufw_ctrl->download);
+						} else {
+							gisunlink_print(GISUNLINK_PRINT_WARN,"rename failed:%d",ret);
+						}
 					}
+
+					firmwareDownloadTaskFree(new_download_task);
+					new_download_task = NULL;
+
+					gisunlink_config_set(DOWNLOAD,ufw_ctrl->download);
+					firmwareDownloadTaskFree(ufw_ctrl->download);
+					ufw_ctrl->download = NULL;
 				} else {
-					ufw_ctrl->download->download_over = false;
+					firmwareDownloadTaskFree(ufw_ctrl->download);
+					ufw_ctrl->download = NULL;
+					ufw_ctrl->download = new_download_task;
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"break current download task, because has a new version come in");
 				}
+			} else {
 				gisunlink_config_set(DOWNLOAD,ufw_ctrl->download);
 				firmwareDownloadTaskFree(ufw_ctrl->download);
 				ufw_ctrl->download = NULL;
-				firmwareDownloadTaskFree(new_download_task);
-				new_download_task = NULL;
-				ufw_ctrl->start_download = false;
-			} else {
-				firmwareDownloadTaskFree(ufw_ctrl->download);
-				ufw_ctrl->download = NULL;
-				ufw_ctrl->download = new_download_task;
-				gisunlink_print(GISUNLINK_PRINT_ERROR,"break current download task, because has a new version come in");
 			}
+
+			ufw_ctrl->start_download = false;
 		}
 	}
 }
@@ -331,7 +344,13 @@ static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *upda
 		update_hook->update_retry_tick = 0;
 		update_hook->state(true,"send firmware update query");
 		switch(update_hook->query(firmware)) {
-			case GISUNLINK_DEVICE_TIMEOUT: 
+			case GISUNLINK_TRANSFER_FAILED:
+				{
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"device is off-line");
+					update_hook->state(false,"device is off-line");
+					break;
+				}
+			case GISUNLINK_DEVICE_BUSY: 
 				{
 					update_hook->update_retry = true;
 					gisunlink_print(GISUNLINK_PRINT_ERROR,"device is buys");
@@ -343,12 +362,6 @@ static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *upda
 					clean_version = true;
 					gisunlink_print(GISUNLINK_PRINT_ERROR,"device no need to update firmware");
 					update_hook->state(false,"device no need to update firmware");
-					break;
-				}
-			case GISUNLINK_TRANSFER_FAILED:
-				{
-					gisunlink_print(GISUNLINK_PRINT_ERROR,"device is off-line");
-					update_hook->state(false,"device is off-line");
 					break;
 				}
 			case GISUNLINK_NEED_UPGRADE:
@@ -368,12 +381,12 @@ static void gisunlink_updatefirmware_update(gisunlink_firmware_update_hook *upda
 			update_hook->state(true,"firmware transfer finish");
 			gisunlink_print(GISUNLINK_PRINT_WARN,"firmware transfer finish");
 			switch(update_hook->check()) {
-				case GISUNLINK_FIRMWARE_CHK_OK:
-					clean_version = true;
-					break;
-				case GISUNLINK_DEVICE_TIMEOUT:
+				case GISUNLINK_TRANSFER_FAILED:
 					gisunlink_print(GISUNLINK_PRINT_ERROR,"device is off-line");
 					update_hook->state(false,"device is off-line");
+					break;
+				case GISUNLINK_FIRMWARE_CHK_OK:
+					clean_version = true;
 					break;
 				case GISUNLINK_FIRMWARE_CHK_NO_OK:
 					clean_version = false;
@@ -409,33 +422,6 @@ error_exit:
 	update_hook->version = 0;
 }
 
-static void gisunlink_updatefirmware_task(void *param) {
-	gisunlink_updatefirmware_ctrl *ufw_ctrl = (gisunlink_updatefirmware_ctrl *)param;
-	while(1) {
-		gisunlink_get_sem(ufw_ctrl->thread_sem);
-		while(1) {
-			gisunlink_updatefirmware_download(ufw_ctrl);
-			//取下载配置
-			gisunlink_firmware_download *lastDownloadTask = getLocalDownloadTaskConf();
-			if(gisunlink_updatefirmware_download_check(lastDownloadTask)) {
-				firmwareDownloadTaskFree(lastDownloadTask);
-				lastDownloadTask = NULL;
-				break;
-			} else {
-				//从新下载	
-				firmwareDownloadTaskFree(ufw_ctrl->download);
-				ufw_ctrl->download = NULL;
-				ufw_ctrl->download = lastDownloadTask;
-				ufw_ctrl->start_download = true;
-				gisunlink_print(GISUNLINK_PRINT_ERROR,"the file:%s download unfinished now go continue download it",lastDownloadTask->md5);
-			}
-		}
-		//检测固件升级
-		gisunlink_updatefirmware_update(ufw_ctrl->hook);
-	}
-	gisunlink_destroy_task(NULL);
-}
-
 void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16 json_len) {
 	gisunlink_firmware_download *newDownloadTask = analysisFirmwareDownloadTaskJSON(jsonData,json_len);
 
@@ -449,6 +435,7 @@ void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16
 
 		gisunlink_firmware_download *lastDownloadTask = getLocalDownloadTaskConf(); 
 
+		//本地不存在配置
 		if(lastDownloadTask == NULL) {
 			downloadStart = true;
 		} else {
@@ -459,21 +446,7 @@ void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16
 			} else {
 				//否则上报当前固件下载状态
 				char msg[128] = {0}; 
-				if(lastDownloadTask->download_over) {
-					gisunlink_firmware_update *firmware = createFirmwareUpdateStruct();
-					if(firmware && (strncmp((const char *)lastDownloadTask->md5,(const char *)firmware->download->md5,lastDownloadTask->md5_len) == 0)) {
-						if(firmware->transfer_over == false) {
-							updateCtrl->hook->state(true,"reTransfer cur firmware");
-							gisunlink_put_sem(updateCtrl->thread_sem);
-						} else {
-							updateCtrl->hook->state(false,"the md5 are the smae");
-						}
-					}
-					firmwareDownloadTaskFree(firmware->download);
-					firmware->download = NULL;
-					gisunlink_free(firmware);
-					firmware = NULL;
-				} else if (!lastDownloadTask->download_over && updateCtrl->start_download) {
+				if (!lastDownloadTask->download_over && updateCtrl->start_download) {
 					sprintf(msg, "wait the %s download finished",lastDownloadTask->md5);
 					updateCtrl->hook->state(false,msg);
 				} else if (!lastDownloadTask->download_over && !updateCtrl->start_download) {
@@ -506,6 +479,36 @@ void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16
 	} 
 } 
 
+static void gisunlink_updatefirmware_task(void *param) {
+	gisunlink_updatefirmware_ctrl *ufw_ctrl = (gisunlink_updatefirmware_ctrl *)param;
+	while(1) {
+		gisunlink_get_sem(ufw_ctrl->thread_sem);
+		while(1) {
+			gisunlink_updatefirmware_download(ufw_ctrl);
+			//取下载配置
+			gisunlink_firmware_download *lastDownloadTask = getLocalDownloadTaskConf();
+
+			if(gisunlink_updatefirmware_download_check(lastDownloadTask)) {
+				firmwareDownloadTaskFree(lastDownloadTask);
+				lastDownloadTask = NULL;
+				break;
+			} else {
+				//从新下载	
+				if(ufw_ctrl->download) {
+					firmwareDownloadTaskFree(ufw_ctrl->download);
+					ufw_ctrl->download = NULL;
+				}
+				ufw_ctrl->download = lastDownloadTask;
+				ufw_ctrl->start_download = true;
+				gisunlink_print(GISUNLINK_PRINT_ERROR,"the path:%s md5:%s download unfinished now go continue download it",lastDownloadTask->path,lastDownloadTask->md5);
+			}
+		}
+		//检测固件升级
+		gisunlink_updatefirmware_update(ufw_ctrl->hook);
+	}
+	gisunlink_destroy_task(NULL);
+}
+
 void gisunlink_updatefirmware_init(void) {
 	if(updateCtrl) {
 		return;
@@ -515,7 +518,7 @@ void gisunlink_updatefirmware_init(void) {
 		updateCtrl->start_download = false;
 		updateCtrl->download_runtime = 0;
 		updateCtrl->thread_sem = gisunlink_create_sem(GISUNLINK_MAX_QUEUE_NUM,0);
-		gisunlink_create_task_with_Priority(gisunlink_updatefirmware_task, "fw_task", updateCtrl, 2048,8); //3072 // 2048 // 2650
+		gisunlink_create_task_with_Priority(gisunlink_updatefirmware_task, "fw_task", updateCtrl, 3072,8); //3072 // 2048 // 2650
 	}
 }
 

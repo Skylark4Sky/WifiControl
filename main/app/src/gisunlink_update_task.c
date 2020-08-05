@@ -27,7 +27,7 @@
 #define FIRMWARE_UPDATE_FORMAT "{\"id\":%lu,\"act\":\"%s\",\"data\":{\"success\":%s,\"msg\":\"%s\"}}"
 
 uint8 firmwareQuery(gisunlink_firmware_update *firmware) {
-	uint8 ret = GISUNLINK_DEVICE_TIMEOUT;
+	uint8 ret = GISUNLINK_TRANSFER_FAILED;
 	if(firmware == NULL) {
 		return ret;
 	}
@@ -63,11 +63,14 @@ uint8 firmwareQuery(gisunlink_firmware_update *firmware) {
 				if(respond->reason == GISUNLINK_SEND_SUCCEED) {
 					if(respond->data_len) {
 						uint8 status = respond->data[0];
-						if(status == GISUNLINK_NEED_UPGRADE) {
-							gisunlink_print(GISUNLINK_PRINT_WARN,"status %d device need upgrade!",status);
+						if(status == GISUNLINK_DEVICE_BUSY) {
+							gisunlink_print(GISUNLINK_PRINT_WARN,"status 0x%x device busy!",status);
+							ret = GISUNLINK_DEVICE_BUSY;
+						} else if(status == GISUNLINK_NEED_UPGRADE) {
+							gisunlink_print(GISUNLINK_PRINT_WARN,"status 0x%x device need upgrade!",status);
 							ret = GISUNLINK_NEED_UPGRADE;
-						} else {
-							gisunlink_print(GISUNLINK_PRINT_WARN,"status %d device no need upgrade!",status);
+						} else if(status == GISUNLINK_NO_NEED_UPGRADE) {
+							gisunlink_print(GISUNLINK_PRINT_WARN,"status 0x%x device no need upgrade!",status);
 							ret = GISUNLINK_NO_NEED_UPGRADE;
 						}
 					} else {
@@ -148,7 +151,7 @@ bool firmwareTransfer(uint16 offset,uint8 *data,uint16 len) {
 } 
 
 uint8 firmwareChk(void) {
-	uint8 ret = GISUNLINK_DEVICE_TIMEOUT;
+	uint8 ret = GISUNLINK_TRANSFER_FAILED;
 	gisunlink_peripheral_message uart_message = {
 		.cmd = GISUNLINK_DEV_FW_READY,
 		.respond = UART_RESPOND,

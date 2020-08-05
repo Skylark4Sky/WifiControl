@@ -265,12 +265,20 @@ void gisunlink_netmanager_init(void) {
 				memcpy(wifi_config.sta.ssid, sys_wifi_conf.ssid, sys_wifi_conf.ssid_len);
 				memcpy(wifi_config.sta.password, sys_wifi_conf.pswd, sys_wifi_conf.pswd_len);
 				ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
-				ESP_ERROR_CHECK(esp_wifi_start());
 				gisunlink_print(GISUNLINK_PRINT_INFO,"statr connect Wifi SSID:%s PSWD:%s",wifi_config.sta.ssid, wifi_config.sta.password);
 			} else {
-				netmanager->enter_pairing = true;
-				ESP_ERROR_CHECK(esp_wifi_start());
+				//不直接进入配网模式
+				//netmanager->enter_pairing = true;
+				wifi_config_t wifi_config = {
+					.sta = {
+						.ssid = "ylpower",
+						.password = "yununion2020!" 
+					},
+				};
+				ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
+				gisunlink_print(GISUNLINK_PRINT_INFO,"statr connect Wifi SSID:%s PSWD:%s",wifi_config.sta.ssid, wifi_config.sta.password);
 			}
+			ESP_ERROR_CHECK(esp_wifi_start());
 		}
 	}
 	return;

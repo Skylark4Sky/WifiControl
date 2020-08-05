@@ -32,6 +32,7 @@
 #include "gisunlink_netmanager.h"
 
 #define MQTT_INFO_SERV "http://power.fuxiangjf.com/device/mqtt_connect_info"
+//#define MQTT_INFO_SERV "http://go.sky6.cn:8888/api/device"
 
 #define CONFIG_MQTT_PAYLOAD_BUFFER 1460
 #define GISUNLINK_MAX_SEND_QUEUE 20
@@ -299,7 +300,6 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 	char *post_url = NULL;
 
 	asprintf(&post_url,"%s?%s&timeStamp=%d&requestCount=%ld&errorString=%ld",host,gisunlink_mqtt->clientID,gisunlink_sntp_get_timestamp(),++gisunlink_mqtt->requestConut,gisunlink_mqtt->errorString);
-
 	esp_http_client_config_t config = {
 		.url = post_url,
 		.event_handler = _http_event_handler,
@@ -340,6 +340,7 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 	}
 
 	esp_http_client_cleanup(client);
+	client = NULL;
 
 	if(gisunlink_mqtt->httpcode != 20000) {
 		if(err == ESP_OK) {
@@ -354,6 +355,7 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 		gisunlink_mqtt->errorString = 0;
 		return true;
 	} else {
+		gisunlink_print(GISUNLINK_PRINT_ERROR,"HTTP POST JSON failed");
 		return false;
 	}
 
@@ -435,7 +437,7 @@ static void gisunlink_mqtt_connect_server(gisunlink_mqtt_ctrl *mqtt) {
 				break;
 			} 
 		}
-		gisunlink_task_delay(10000 / portTICK_PERIOD_MS);
+		gisunlink_task_delay(15000 / portTICK_PERIOD_MS);
 	}
 
 	mqtt_cfg.host = mqtt->broker;
@@ -594,6 +596,7 @@ void gisunlink_mqtt_init(char *DeviceHWSn_addr,char *FirmwareVersion) {
 		gisunlink_mqtt->clientID = gisunlink_get_mac_with_string("gsl_");
 		gisunlink_mqtt->requestConut = 0;	
 		gisunlink_create_task_with_Priority(gisunlink_mqtt_thread, "mqtt_opt", gisunlink_mqtt, 2048,8); //3072 // 2048 // 2650
+		//gisunlink_create_task_with_Priority(gisunlink_mqtt_thread, "mqtt_opt", gisunlink_mqtt, 3072,8); //3072 // 2048 // 2650
 		gisunlink_create_task_with_Priority(gisunlink_mqtt_wait_ack_thread, "mqtt_wait", gisunlink_mqtt,1536,7); //3072 // 2048 // 2650
 	}
 }
