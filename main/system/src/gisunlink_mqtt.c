@@ -233,47 +233,48 @@ static bool gisunlink_mqtt_thread_publish(gisunlink_mqtt_ctrl *mqtt,gisunlink_mq
 	return ret;
 }
 
+static void gisunlink_cloudunion(cJSON *root) {
+	if(root) { 
+		cJSON *code =  cJSON_GetObjectItem(root, "code");
+		if(code && (code->type == cJSON_True || code->type == cJSON_Number)) {
+			gisunlink_mqtt->httpcode = code->valueint;
+		}
+
+		cJSON *data = cJSON_GetObjectItem(root, "data");
+		if(data && data->type == cJSON_Object) {
+			cJSON *mqtt_host = cJSON_GetObjectItem(data, "mqtt_host");
+			if(mqtt_host && mqtt_host->type == cJSON_String) {
+				asprintf(&gisunlink_mqtt->broker, "%s",mqtt_host->valuestring);
+			}
+
+			cJSON *mqtt_port = cJSON_GetObjectItem(data, "mqtt_port");
+			if(mqtt_port && mqtt_port->type == cJSON_Number) {
+				gisunlink_mqtt->port = mqtt_port->valueint;
+			} 
+
+			cJSON *username = cJSON_GetObjectItem(data, "username");
+			if(username && username->type == cJSON_String) {
+				asprintf(&gisunlink_mqtt->username, "%s",username->valuestring);
+			}
+
+			cJSON *password = cJSON_GetObjectItem(data, "password");
+			if(password && password->type == cJSON_String) {
+				asprintf(&gisunlink_mqtt->password, "%s",password->valuestring);
+			}
+		}
+	} 
+}
+
 static void gisunlink_http_message(int status_code, const char *data, int data_len, void *param) {
 	if(status_code == 200) {
-		const char *jsonData = data;
 		struct cJSON_Hooks js_hook = {gisunlink_malloc, &gisunlink_free};
 		cJSON_InitHooks(&js_hook);
-		cJSON *pJson = cJSON_Parse(jsonData);
-		if(pJson) { 
-			cJSON *item = NULL;
-			if((item = cJSON_GetObjectItem(pJson, "code"))) {
-				if(item->type == cJSON_True || item->type == cJSON_Number) {	
-					gisunlink_mqtt->httpcode = item->valueint;
-					cJSON *data_item = NULL;
-					if((data_item = cJSON_GetObjectItem(pJson, "data"))) {
-						if(data_item) {
-							if((item = cJSON_GetObjectItem(data_item, "mqtt_host"))) {
-								if(item->type == cJSON_String) {
-									asprintf(&gisunlink_mqtt->broker, "%s",item->valuestring);
-								}
-							}
-							if((item = cJSON_GetObjectItem(data_item, "mqtt_port"))) {
-								if(item->type == cJSON_Number) {
-									gisunlink_mqtt->port = item->valueint;
-								}
-							}
-							if((item = cJSON_GetObjectItem(data_item, "username"))) {
-								if(item->type == cJSON_String) {
-									asprintf(&gisunlink_mqtt->username, "%s",item->valuestring);
-								}
-							}
-							if((item = cJSON_GetObjectItem(data_item, "password"))) {
-								if(item->type == cJSON_String) {
-									asprintf(&gisunlink_mqtt->password, "%s",item->valuestring);
-								}
-							}
-						}
-					}
-				}
-			}
-		} 
-		cJSON_Delete(pJson);
-		pJson = NULL;
+		cJSON *root = cJSON_Parse(data);
+		if(root && root->type == cJSON_Object) {
+			gisunlink_cloudunion(root);
+		}
+		cJSON_Delete(root);
+		root = NULL;
 	}
 }
 
@@ -532,7 +533,6 @@ static void gisunlink_mqtt_thread(void *param) {
 static int gisunlink_matching_package_timeout(void *src, void *item) {
 	uint32 *src_data = (uint32 *)src;
 	gisunlink_mqtt_packet *packet = (gisunlink_mqtt_packet *)item;
-	///aws_iot/port/timer.c
 	if((*src_data - packet->start_ticks) >= packet->timeout_ticks/portTICK_PERIOD_MS) {
 		return 0;
 	} else {

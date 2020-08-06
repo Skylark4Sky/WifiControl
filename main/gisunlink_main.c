@@ -29,7 +29,7 @@
 #include "gisunlink_updatefirmware.h"
 #include "gisunlink_update_task.h"
 
-#define NOWAITDEVICE 1
+#define NOWAITDEVICE 0
 
 static gisunlink_system_ctrl *gisunlink_system = NULL;
 static gisunlink_firmware_update_hook update_hook = {
