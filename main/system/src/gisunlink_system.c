@@ -109,6 +109,7 @@ static void gisunlink_system_uart_event(void *message, void *param) {
 				}
 			case GISUNLINK_RESET_NET_MODULE: //重置网络模组
 				{
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"----------recv esp_restart----------");
 					esp_restart();
 					break;
 				}

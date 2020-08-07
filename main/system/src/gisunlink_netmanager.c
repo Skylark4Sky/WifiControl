@@ -148,6 +148,7 @@ static void gisunlink_netmanager_smartconfig_task(void * parm) {
 
 static esp_err_t esp_net_event_handler(void *ctx, system_event_t *event) {
 	//gisunlink_print(GISUNLINK_PRINT_ERROR,"WIFI EventID:%d",(uint8)event->event_id);
+	system_event_info_t *info = &event->event_info;
 	switch((uint8)event->event_id) {
 		case SYSTEM_EVENT_WIFI_READY:
 			break;
@@ -194,6 +195,11 @@ static esp_err_t esp_net_event_handler(void *ctx, system_event_t *event) {
 						gisunlink_netmanager_post_state_message(GISUNLINK_NETMANAGER_CONNECTING,NULL,NULL);
 					}
 				}
+			}
+
+			if(info->disconnected.reason == WIFI_REASON_BASIC_RATE_NOT_SUPPORT) {
+				/*Switch to 802.11 bgn mode */
+				esp_wifi_set_protocol(ESP_IF_WIFI_STA, WIFI_PROTOCOL_11B | WIFI_PROTOCOL_11G | WIFI_PROTOCOL_11N);
 			}
 			esp_wifi_connect();
 			xEventGroupClearBits(netmanager->wifi_event_group, netmanager->connected_bit);

@@ -20,6 +20,7 @@
 #include "gisunlink.h"
 #include "gisunlink_mqtt.h"
 #include "gisunlink_mqtt_task.h"
+#include "gisunlink_netmanager.h"
 #include "gisunlink_utils.h"
 #include "gisunlink_atomic.h"
 #include "gisunlink_config.h"
@@ -71,7 +72,6 @@ static void gisunlink_mqtt_connectCb(MQTT_CONNECT_STATUS status) {
 					0x20,0x20,0x06,0x07,0x21,0x50);
 
 #endif
-
 		gisunlink_system_set_state(gisunlink_system,GISUNLINK_NETMANAGER_CONNECTED_SER);
 		sprintf(task_topic, "%s/%s",TASK_TRANSFER,gisunlink_system->deviceHWSn);
 		sprintf(prv_upgrade_topic, "%s/%s",FIRMWARE_UPDATE,gisunlink_system->deviceHWSn);
@@ -112,6 +112,8 @@ void app_main(void) {
 		gisunlink_updatefirmware_register_hook(&update_hook);
 	}
 
+	uint32 runTime = 0; 
+
 	while(1) {
 		if(gisunlink_system->isConnectAp()) {
 			gisunlink_system_time_ok(gisunlink_system);
@@ -146,7 +148,16 @@ void app_main(void) {
 			}
 		}
 
-		gisunlink_print(GISUNLINK_PRINT_INFO,"heap_size:%d rssi:%d time:%d - %d (us) update_retry:%d retry_tick:%d",getHeapSize(),(signed char)getApRssi(),getNowTimeBySec(),getNowTimeByUSec(),update_hook.update_retry,update_hook.update_retry_tick);
+		if(gisunlink_system->state != GISUNLINK_NETMANAGER_CONNECTED_SER) {
+			if(runTime++ >= 900) {
+				gisunlink_print(GISUNLINK_PRINT_ERROR,"----------esp_restart----------");
+				esp_restart();
+			}
+		} else {
+			runTime = 0;
+		}
+
+		gisunlink_print(GISUNLINK_PRINT_INFO,"heap_size:%d Netstate:0x%02X-(0x%02X) rssi:%d time:%d-(%d) update_retry:%d retry_tick:%d runtime:%d",getHeapSize(),gisunlink_netmanager_get_state(),gisunlink_system->state ,(signed char)getApRssi(),getNowTimeBySec(),getNowTimeByUSec(),update_hook.update_retry,update_hook.update_retry_tick,runTime);
 		gisunlink_task_delay(1000 / portTICK_PERIOD_MS);
 	}
 }
