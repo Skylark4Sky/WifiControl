@@ -143,7 +143,7 @@ static void gisunlink_netmanager_smartconfig_task(void * parm) {
 			break;
 		}
 	}
-	vTaskDelete(NULL);
+	gisunlink_destroy_task(NULL);
 }
 
 static esp_err_t esp_net_event_handler(void *ctx, system_event_t *event) {

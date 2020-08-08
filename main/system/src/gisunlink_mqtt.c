@@ -32,7 +32,6 @@
 #include "gisunlink_netmanager.h"
 
 #define MQTT_INFO_SERV "http://power.fuxiangjf.com/device/mqtt_connect_info"
-//#define MQTT_INFO_SERV "http://go.sky6.cn:8888/api/device"
 
 #define CONFIG_MQTT_PAYLOAD_BUFFER 1460
 #define GISUNLINK_MAX_SEND_QUEUE 20

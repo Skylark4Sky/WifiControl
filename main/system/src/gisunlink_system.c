@@ -25,7 +25,7 @@
 #include "gisunlink_message.h"
 #include "gisunlink_netmanager.h"
 #include "gisunlink_peripheral.h"
-//#include "gisunlink_authorization.h"
+#include "gisunlink_authorization.h"
 #include "gisunlink_updatefirmware.h"
 
 static void gisunlink_sntp_respond(SNTP_RESPOND repsond,void *param) {
@@ -56,7 +56,7 @@ static void gisunlink_system_netmanager_event(void *message, void *param) {
 				//时间同步完成后，先给固件模块一个信号
 				gisunlink_sntp_initialize(gisunlink_sntp_respond,param);
 				gisunlink_updatefirmware_start_signal();
-				//gisunlink_authorization_check();
+				gisunlink_authorization_start_task();
 				break;
 			case GISUNLINK_NETMANAGER_DISCONNECTED:
 				((gisunlink_system_ctrl *)param)->time_sync = false;
@@ -143,7 +143,7 @@ gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 		//初始化网络管理模块
 		gisunlink_netmanager_init();
 		//初始化设备授权模块
-		//gisunlink_authorization_init(gisunlink_system->conf);
+		gisunlink_authorization_init();
 		//初始化MQTT
 		gisunlink_mqtt_init(gisunlink_system->deviceHWSn,gisunlink_system->deviceFWVersion);
 		//初始化固件下载

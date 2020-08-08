@@ -176,7 +176,7 @@ static void gisunlink_airlink_task(void * param) {
 	airlink->task_run = false;
 	close(airlink->sockfd);
 	gisunlink_free(airlink);
-	vTaskDelete(NULL);
+	gisunlink_destroy_task(NULL);
 }
 
 void gisunlink_airlink_init(void) {
