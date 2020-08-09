@@ -13,6 +13,8 @@
 #ifndef __GISUNLINK_AUTHORIZATION_H__
 #define __GISUNLINK_AUTHORIZATION_H__
 
+#include "gisunlink_system.h"
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -21,7 +23,7 @@ extern "C"
 /*! @brief 加载认证模块 
  * @return void
  */
-void gisunlink_authorization_init(void);
+void gisunlink_authorization_init(gisunlink_system_ctrl *gisunlink_system);
 
 /*! @brief 启动认证线程 
  * @return void

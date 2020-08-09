@@ -142,6 +142,12 @@ unsigned int gisunlink_get_tick_count(void);
  */
 unsigned int gisunlink_set_interva_ms(unsigned int time);
 
+/*! @brief 长度对齐
+ * @param 原来长度
+ * @return 对齐大小
+ */
+unsigned int gisunlink_bytes_align(unsigned int n,unsigned align);
+
 #ifdef __cplusplus
 }
 #endif

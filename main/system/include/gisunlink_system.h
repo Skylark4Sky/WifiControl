@@ -28,6 +28,7 @@ typedef struct _gisunlink_system_ctrl {
 	bool waitHWSn;
 	bool waitFirmwareVersion;
 	bool time_sync;
+	bool authorization; 
 	uint8 state;
 	char deviceHWSn[DEVICEINFOSIZE];
 	char deviceFWVersion[DEVICEFIRMWARENOSIZE];

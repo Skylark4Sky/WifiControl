@@ -330,6 +330,21 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 
 	if(err == ESP_OK) {
 		if(esp_http_client_get_status_code(client) == 200 && esp_http_client_get_content_length(client)) {
+			if(gisunlink_mqtt->httpcode != 20000) {
+				gisunlink_print(GISUNLINK_PRINT_ERROR,"HTTP POST request failed service_code: %d", gisunlink_mqtt->httpcode);
+				gisunlink_mqtt->errorString = 20000;
+			} else {
+				if(gisunlink_mqtt->broker && gisunlink_mqtt->port && gisunlink_mqtt->username && gisunlink_mqtt->password) {
+					gisunlink_print(GISUNLINK_PRINT_WARN,"broker:%s port:%d username:%s password:%s",gisunlink_mqtt->broker,gisunlink_mqtt->port,gisunlink_mqtt->username,gisunlink_mqtt->password);
+					gisunlink_mqtt->requestConut = 0;
+					gisunlink_mqtt->errorString = 0;
+					return true;
+				} else {
+					gisunlink_print(GISUNLINK_PRINT_ERROR,"HTTP POST JSON failed");
+					gisunlink_mqtt->errorString = 99999;
+				}
+			}
+
 		} else {
 			gisunlink_mqtt->errorString = esp_http_client_get_status_code(client);
 		}
@@ -342,24 +357,7 @@ static bool gisunlink_mqtt_get_server(const char *host, const char *clientID, ui
 	esp_http_client_cleanup(client);
 	client = NULL;
 
-	if(gisunlink_mqtt->httpcode != 20000) {
-		if(err == ESP_OK) {
-			gisunlink_print(GISUNLINK_PRINT_ERROR,"HTTP POST request failed service_code: %d", gisunlink_mqtt->httpcode);
-		}
-		return false;
-	}
-
-	if(gisunlink_mqtt->broker && gisunlink_mqtt->port && gisunlink_mqtt->username && gisunlink_mqtt->password) {
-		gisunlink_print(GISUNLINK_PRINT_WARN,"broker:%s port:%d username:%s password:%s",gisunlink_mqtt->broker,gisunlink_mqtt->port,gisunlink_mqtt->username,gisunlink_mqtt->password);
-		gisunlink_mqtt->requestConut = 0;
-		gisunlink_mqtt->errorString = 0;
-		return true;
-	} else {
-		gisunlink_print(GISUNLINK_PRINT_ERROR,"HTTP POST JSON failed");
-		return false;
-	}
-
-	return true;
+	return false;
 }
 
 static void gisunlink_mqtt_info_reset(gisunlink_mqtt_ctrl *mqtt) {

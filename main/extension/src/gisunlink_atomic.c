@@ -60,23 +60,20 @@ void *gisunlink_malloc(size_t sz) {
 	if(memory) {
 		memset(memory,0x00,sz);
 	}
-	return memory;// calloc(1,sz);
+	return memory;
 }
 
 void gisunlink_free(void *ptr) {
 	if(ptr) {
 		heap_caps_free(ptr); 
 		ptr = (void *)0;
-//		free(ptr);ptr = NULL;
 	}
 	return;
 } 
 
 void *gisunlink_malloc_dbg(size_t sz,int line) {
 	void *ptr = gisunlink_malloc(sz);
-
 	gisunlink_print(GISUNLINK_PRINT_DEBUG,"Malloc addr:%p size:%d ----------->Line:%d",ptr,sz,line);
-
 	return ptr;
 }
 
@@ -120,4 +117,8 @@ unsigned int gisunlink_get_tick_count(void) {
 unsigned int gisunlink_set_interva_ms(unsigned int time) {
 	return (time/portTICK_RATE_MS);
 }
+
+unsigned int gisunlink_bytes_align(unsigned int n,unsigned align) {
+    return ((n + align - 1) & (~(align - 1)));
+} 
 

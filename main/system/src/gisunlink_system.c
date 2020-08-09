@@ -129,6 +129,7 @@ gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 	if(gisunlink_system) {
 		memset(gisunlink_system,0x0,sizeof(gisunlink_system_ctrl));
 		gisunlink_system->state = gisunlink_netmanager_get_state();
+		gisunlink_system->authorization = true;
 		//设置系统参数
 		gisunlink_system_setparm(gisunlink_system);
 		//初始化消息传递模块
@@ -143,7 +144,7 @@ gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 		//初始化网络管理模块
 		gisunlink_netmanager_init();
 		//初始化设备授权模块
-		gisunlink_authorization_init();
+		gisunlink_authorization_init(gisunlink_system);
 		//初始化MQTT
 		gisunlink_mqtt_init(gisunlink_system->deviceHWSn,gisunlink_system->deviceFWVersion);
 		//初始化固件下载

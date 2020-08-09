@@ -30,7 +30,7 @@
 #include "gisunlink_updatefirmware.h"
 #include "gisunlink_update_task.h"
 
-#define NOWAITDEVICE 0
+#define NOWAITDEVICE 1
 
 static gisunlink_system_ctrl *gisunlink_system = NULL;
 static gisunlink_firmware_update_hook update_hook = {
@@ -157,7 +157,7 @@ void app_main(void) {
 			runTime = 0;
 		}
 
-		gisunlink_print(GISUNLINK_PRINT_INFO,"heap_size:%d Netstate:0x%02X-(0x%02X) rssi:%d time:%d-(%d) update_retry:%d retry_tick:%d runtime:%d",getHeapSize(),gisunlink_netmanager_get_state(),gisunlink_system->state ,(signed char)getApRssi(),getNowTimeBySec(),getNowTimeByUSec(),update_hook.update_retry,update_hook.update_retry_tick,runTime);
+		gisunlink_print(GISUNLINK_PRINT_INFO,"heap_size:%d chk:%d Netstate:0x%02X-(0x%02X) rssi:%d time:%d-(%d) update_retry:%d retry_tick:%d runtime:%d",getHeapSize(),gisunlink_system->authorization,gisunlink_netmanager_get_state(),gisunlink_system->state ,(signed char)getApRssi(),getNowTimeBySec(),getNowTimeByUSec(),update_hook.update_retry,update_hook.update_retry_tick,runTime);
 		gisunlink_task_delay(1000 / portTICK_PERIOD_MS);
 	}
 }

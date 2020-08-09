@@ -157,56 +157,8 @@ void mqttMessagePublish(gisunlink_system_ctrl *gisunlink_system, char *act,void 
 		} else {
 			transferInfo.shardingNum = ceil((transferInfo.dataLen + (transferInfo.shardingSize - 1))/transferInfo.shardingSize);
 		}
-
 		transferPacketEncode(&transferInfo,gisunlink_system);
-
 	}
-#if 0
-		char *publish_topic = NULL;
-		char *publish_data = NULL;
-		uint8 *base64Str = (uint8 *)" ";
-		uint8 behavior = (uint8)(*uart->data);  //第一个字节为行为
-		uint8 publish_ack = (uint8)(*(uart->data + 1));//第二个字节为是否需要等待服务器确认
-		uint32 requestID = getRequestID();
-		if(uart->data_len > 2) {
-			uint8 *data = uart->data + 2; //数据往后偏移2位
-			uint16 data_len = uart->data_len - 2; //数据长度也减2
-			uint16 enc_len = data_len/3;
-			size_t base64_len = (data_len%3) ? ((enc_len + 1)*4) : (enc_len*4);
-			//这里是不支持浮点运算的，所以加3个字节长度，做补偿.
-			base64_len += 3;
-			base64Str = (uint8 *)gisunlink_malloc(base64_len);
-			if(base64Str) {
-				int ret = 0;
-				if((ret = mbedtls_base64_encode(base64Str, base64_len, &base64_len, data, data_len)) == 0) { 
-					asprintf(&publish_data,PUBLISH_FORMAT,requestID,act,behavior,base64Str,getNowTimeBySec());
-					asprintf(&publish_topic,"%s%s",STATUS_POST,gisunlink_system->deviceHWSn); 
-					gisunlink_print(GISUNLINK_PRINT_ERROR,"%s ->data:%s - %d",publish_topic,publish_data,strlen(publish_data));
-					if(publish_ack == MQTT_PUBLISH_NEEDACK) {
-						gisunlink_mqtt_publish(publish_topic,publish_data,2,requestID,publish_ack);
-					} else {
-						//gisunlink_mqtt_publish(publish_topic,publish_data,0,requestID,publish_ack);
-						gisunlink_mqtt_publish(publish_topic,(const char *)base64Str,0,requestID,publish_ack);
-					}
-				} else {
-					gisunlink_print(GISUNLINK_PRINT_ERROR,"mbedtls_base64_encode failed %d",ret);
-				}
-				gisunlink_free(base64Str);
-				base64Str = NULL;
-			}
-		}
-
-		if(publish_topic) {
-			gisunlink_free(publish_topic);
-			publish_topic = NULL;
-		}
-
-		if(publish_data) {
-			gisunlink_free(publish_data);
-			publish_data = NULL;
-		}
-
-#endif
 } 
 
 void mqttMessageRespond(const char *act,uint8 behavior,uint32 req_id,bool result,const char *msg) {
@@ -263,7 +215,7 @@ static void deviceInfoHandle(gisunlink_system_ctrl *gisunlink_system,gisunlink_m
 
 static void respondUNknownAct(gisunlink_mqtt_message *message) {
 	char *msg = NULL;
-	asprintf(&msg,"unknown act:%s",message->act);
+	asprintf(&msg,"unknown act:%s token:false",message->act);
 	mqttMessageRespond("transfer",message->behavior,message->id,false,msg);
 	if(msg) {
 		gisunlink_free(msg);
@@ -272,6 +224,10 @@ static void respondUNknownAct(gisunlink_mqtt_message *message) {
 }
 
 void mqttRecvMessageHandle(gisunlink_system_ctrl *gisunlink_system, gisunlink_mqtt_message *message) {
+	if(!gisunlink_system->authorization) {
+		respondUNknownAct(message);
+		return;
+	}
 	switch(message->act_type) {
 		case TRANSFER_ACT:
 			transferHandle(message);

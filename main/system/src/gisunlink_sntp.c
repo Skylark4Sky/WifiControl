@@ -78,7 +78,7 @@ static int gisunlink_sntp_obtain_time(gisunlink_sntp_ctrl *gisunlink_sntp) {
 }
 
 static void gisunlink_sntp_task(void *param) {
-		while(1) {
+	while(1) {
 		time_t now;
 		struct tm timeinfo;
 		if(gisunlink_sntp) {
@@ -110,13 +110,13 @@ static void gisunlink_sntp_task(void *param) {
 		} else {
 			break;
 		}
-		}
+	}
 
-		if(gisunlink_sntp) {
-			gisunlink_free(gisunlink_sntp);
-			gisunlink_sntp = NULL;
-		}
-		gisunlink_destroy_task(NULL);
+	if(gisunlink_sntp) {
+		gisunlink_free(gisunlink_sntp);
+		gisunlink_sntp = NULL;
+	}
+	gisunlink_destroy_task(NULL);
 }
 
 void gisunlink_sntp_initialize(GISUNLINK_SNTP_RESPOND *respondCb, void *param) {
