@@ -387,11 +387,11 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
 			gisunlink_mqtt->is_connected = true;
 			mqtt->connectCb(MQTT_CONNECT_SUCCEED);
 			break;
-		case MQTT_EVENT_DISCONNECTED:
-			gisunlink_mqtt->is_connected = false;
-			mqtt->connectCb(MQTT_CONNECT_FAILED);
-			gisunlink_put_sem(mqtt->message_sem);
-			break;
+		case MQTT_EVENT_DISCONNECTED: 
+				gisunlink_mqtt->is_connected = false;
+				mqtt->connectCb(MQTT_CONNECT_FAILED);
+				gisunlink_put_sem(mqtt->message_sem);
+				break;
 		case MQTT_EVENT_SUBSCRIBED:
 		case MQTT_EVENT_UNSUBSCRIBED:
 		case MQTT_EVENT_PUBLISHED:
@@ -415,16 +415,10 @@ static void gisunlink_mqtt_connect_server(gisunlink_mqtt_ctrl *mqtt) {
 		.user_context = (void *)mqtt,
 		.task_stack = 4096,
 		.keepalive = 30,
-		.buffer_size = 512,
+		.buffer_size = 1024,
 	};
 
 	if(mqtt == NULL) {
-		return;
-	}
-
-	if(gisunlink_netmanager_is_enter_pairing()) {
-		gisunlink_print(GISUNLINK_PRINT_ERROR,"netmanager is pairing exit MQTT");
-		mqtt->is_connecting = false;
 		return;
 	}
 
@@ -446,9 +440,70 @@ static void gisunlink_mqtt_connect_server(gisunlink_mqtt_ctrl *mqtt) {
 
 	if(mqtt->client == NULL) {
 		mqtt->client = esp_mqtt_client_init(&mqtt_cfg);
-		esp_mqtt_client_start(mqtt->client);
+	} else {
+		esp_mqtt_client_destroy(mqtt->client);
+		mqtt->client = NULL;
 	} 
+
+	esp_mqtt_client_start(mqtt->client);
 	gisunlink_mqtt_info_reset(mqtt);
+}
+
+static void gisunlink_mqtt_thread_message(gisunlink_mqtt_ctrl *mqtt) {
+	while(mqtt != NULL) {
+		gisunlink_get_sem(mqtt->message_sem);
+		if(mqtt->is_connected == false) {
+			if(mqtt->client) {
+				esp_mqtt_client_destroy(mqtt->client);
+				mqtt->client = NULL;
+			}
+
+			if(gisunlink_netmanager_is_enter_pairing()) {
+				//进入了网络配对模式
+				gisunlink_print(GISUNLINK_PRINT_ERROR,"netmanager is pairing exit MQ thread");
+			} 
+			mqtt->is_connecting = false;
+			break;
+		}
+		while(gisunlink_queue_not_empty(mqtt->queue)) {
+			bool msg_err = true;
+			bool clear_packet = true;
+			if((packet = (gisunlink_mqtt_packet *)gisunlink_queue_pop(mqtt->queue))) {
+				switch(packet->type) {
+					case GISUNLINK_TOPIC_SUB:
+						msg_err = gisunlink_mqtt_thread_subscribe(mqtt,packet);
+						gisunlink_print(GISUNLINK_PRINT_WARN,"subscribe:%s",packet->topic);
+						break;
+					case GISUNLINK_TOPIC_PUB:
+						msg_err = gisunlink_mqtt_thread_publish(mqtt,packet);
+						gisunlink_print(GISUNLINK_PRINT_WARN,"publish:{topic:%s payload:%s}",packet->topic,packet->payload);
+						break;
+				}
+
+				if(msg_err == false) {
+					if(gisunlink_mqtt_isconnected() && packet->ackstatus == MQTT_PUBLISH_NEEDACK) {
+						//如果发送错误，重新压回队列头						
+						gisunlink_print(GISUNLINK_PRINT_ERROR,"MQTT packet handle error repush stack");
+						//gisunlink_queue_push_head(mqtt->queue,packet);
+						if(gisunlink_queue_push(mqtt->wait_ack_queue, packet)) {
+							clear_packet = false;
+							gisunlink_put_sem(mqtt->wait_ack_sem);
+							packet->start_ticks = gisunlink_get_tick_count();
+							packet->timeout_ticks = GISUNLINK_FIRST_WAIT_TIME;
+							packet->retry--;
+						}
+					}
+				} 
+
+				if(clear_packet == true) {
+					gisunlink_free(packet->topic);
+					gisunlink_free(packet->payload);
+					gisunlink_free(packet);
+				}
+			}
+		}
+	}
+	gisunlink_print(GISUNLINK_PRINT_WARN,"MQTT thread reset");
 }
 
 static void gisunlink_mqtt_thread(void *param) {
@@ -456,73 +511,15 @@ static void gisunlink_mqtt_thread(void *param) {
 	gisunlink_mqtt_ctrl *mqtt = (gisunlink_mqtt_ctrl *)param;
 	while(1) {
 		gisunlink_get_sem(mqtt->connect_sem);
-		gisunlink_mqtt_connect_server(mqtt);
-		while(1) {
-			gisunlink_get_sem(mqtt->message_sem);
+		if(gisunlink_netmanager_is_enter_pairing()) {
+			gisunlink_print(GISUNLINK_PRINT_ERROR,"netmanager is pairing exit MQTT");
+			mqtt->is_connecting = false;
+		} else {
 			if(mqtt->is_connected == false) {
-				//进入了网络配对模式
-				if(gisunlink_netmanager_is_enter_pairing()) {
-					gisunlink_print(GISUNLINK_PRINT_ERROR,"netmanager is pairing exit MQ thread");
-					esp_mqtt_client_destroy(mqtt->client);
-					mqtt->client = NULL;
-					mqtt->is_connecting = false;
-					break;
-				} else {
-					if(mqtt->client) {
-						esp_mqtt_client_destroy(mqtt->client);
-						mqtt->client = NULL;
-						mqtt->is_connecting = false;
-						break;
-						//			gisunlink_mqtt_info_reset(mqtt);
-						//			if(gisunlink_mqtt_get_server(MQTT_INFO_SERV,mqtt->clientID,GISUNLINK_GET_TIMEOUT)) {
-						//				//	esp_mqtt_client_reset_username(mqtt->client,mqtt->username);
-						//				//	esp_mqtt_client_reset_password(mqtt->client,mqtt->password);
-						//				//	esp_mqtt_client_reset_host(mqtt->client,mqtt->broker);
-						//				//	esp_mqtt_client_reset_port(mqtt->client,mqtt->port);
-						//				gisunlink_mqtt_info_reset(mqtt);
-						//			}
-					}
-				}
+				gisunlink_mqtt_connect_server(mqtt);
 			}
-			while(gisunlink_queue_not_empty(mqtt->queue)) {
-				bool msg_err = true;
-				bool clear_packet = true;
-				if((packet = (gisunlink_mqtt_packet *)gisunlink_queue_pop(mqtt->queue))) {
-					switch(packet->type) {
-						case GISUNLINK_TOPIC_SUB:
-							msg_err = gisunlink_mqtt_thread_subscribe(mqtt,packet);
-							gisunlink_print(GISUNLINK_PRINT_WARN,"subscribe:%s",packet->topic);
-							break;
-						case GISUNLINK_TOPIC_PUB:
-							msg_err = gisunlink_mqtt_thread_publish(mqtt,packet);
-							gisunlink_print(GISUNLINK_PRINT_WARN,"publish:{topic:%s payload:%s}",packet->topic,packet->payload);
-							break;
-					}
-
-					if(msg_err == false) {
-						if(gisunlink_mqtt_isconnected() && packet->ackstatus == MQTT_PUBLISH_NEEDACK) {
-							//如果发送错误，重新压回队列头						
-							gisunlink_print(GISUNLINK_PRINT_ERROR,"MQTT packet handle error repush stack");
-							//gisunlink_queue_push_head(mqtt->queue,packet);
-							if(gisunlink_queue_push(mqtt->wait_ack_queue, packet)) {
-								clear_packet = false;
-								gisunlink_put_sem(mqtt->wait_ack_sem);
-								packet->start_ticks = gisunlink_get_tick_count();
-								packet->timeout_ticks = GISUNLINK_FIRST_WAIT_TIME;
-								packet->retry--;
-							}
-						}
-					} 
-
-					if(clear_packet == true) {
-						gisunlink_free(packet->topic);
-						gisunlink_free(packet->payload);
-						gisunlink_free(packet);
-					}
-				}
-			}
+			gisunlink_mqtt_thread_message(mqtt);
 		}
-		gisunlink_print(GISUNLINK_PRINT_WARN,"MQTT thread reset");
 	}
 	gisunlink_destroy_task(NULL);
 }
