@@ -30,8 +30,6 @@
 #include "gisunlink_updatefirmware.h"
 #include "gisunlink_update_task.h"
 
-#define NOWAITDEVICE 0
-
 static gisunlink_system_ctrl *gisunlink_system = NULL;
 static gisunlink_firmware_update_hook update_hook = {
 	.update = false,
@@ -66,7 +64,7 @@ static void gisunlink_mqtt_connectCb(MQTT_CONNECT_STATUS status) {
 		char upgrade_topic[32] = {0};
 #if NOWAITDEVICE 
 			snprintf(gisunlink_system->deviceHWSn,DEVICEINFOSIZE,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-					0x17,0xff,0x69,0x06,0x78,0x78,0x49,0x51,0x48,0x24,0x09,0x67);
+					0x57,0xff,0x69,0x06,0x78,0x78,0x49,0x51,0x48,0x30,0x09,0x67);
 
 			snprintf(gisunlink_system->deviceFWVersion,DEVICEFIRMWARENOSIZE,"%02x%02x%02x%02x%02x%02x",
 					0x20,0x20,0x06,0x07,0x21,0x50);
@@ -102,6 +100,8 @@ static void gisunlink_mqtt_messageCb(gisunlink_mqtt_message *message) {
 }
 
 void app_main(void) {
+	gisunlink_print(GISUNLINK_PRINT_ERROR,"version:%s",WIFI_FIRMWARE_VERSION);
+	
 	gisunlink_system = gisunlink_system_init(gisunlink_message_callback);
 
 	if(gisunlink_system) {
@@ -120,7 +120,7 @@ void app_main(void) {
 
 #if NOWAITDEVICE 
 			snprintf(gisunlink_system->deviceHWSn,DEVICEINFOSIZE,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-					0x17,0xff,0x69,0x06,0x78,0x78,0x49,0x51,0x48,0x24,0x09,0x67);
+					0x57,0xff,0x69,0x06,0x78,0x78,0x49,0x51,0x48,0x30,0x09,0x67);
 			gisunlink_system->waitHWSn = true;
 
 			snprintf(gisunlink_system->deviceFWVersion,DEVICEFIRMWARENOSIZE,"%02x%02x%02x%02x%02x%02x",

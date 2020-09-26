@@ -233,7 +233,7 @@ void mqttRecvMessageHandle(gisunlink_system_ctrl *gisunlink_system, gisunlink_mq
 			transferHandle(message);
 			break;
 		case UPDATE_VER_ACT:
-			gisunlink_updatefirmware_download_new_firmware(message->data,message->data_len);
+			gisunlink_new_firmware_task(message->data,message->data_len);
 			break;
 		case DEVICE_INFO_ACT:
 			deviceInfoHandle(gisunlink_system,message);

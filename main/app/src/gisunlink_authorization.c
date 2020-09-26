@@ -121,7 +121,7 @@ static char *createEncryptString(const char *key, const char *iv, uint8 *data, i
 	return toHexStringBuf;
 }
 
-static bool connectToAuthorizationService(const char *host) {
+static bool connectToAuthorizationService(const char *host,gisunlink_system_ctrl *gisunlink_system) {
 	char *post_data = NULL;
 	char *post_url = NULL;
 	char *clientID = gisunlink_get_mac_with_string(NULL);
@@ -135,8 +135,11 @@ static bool connectToAuthorizationService(const char *host) {
 		.user_data = authorization_ctrl,	
 		.timeout_ms = 15000, /*十五秒*/ 
 	};
+	
+	int post_len = 0;
 
-	int post_len = asprintf(&post_data,"{\"deviceSN\":\"%s\"}",AESEncryptData);
+	post_len = asprintf(&post_data,"{ \"deviceSN\":\"%s\",\"token\":\"%s\"}",gisunlink_system->deviceHWSn,AESEncryptData); 
+	
 	esp_http_client_handle_t client = esp_http_client_init(&config);
 	esp_http_client_set_method(client, HTTP_METHOD_POST);
 	esp_http_client_set_header(client,"Content-Type", "application/json");
@@ -180,7 +183,7 @@ static bool connectToAuthorizationService(const char *host) {
 static void gisunlink_authorization_task(void *param) {
 	gisunlink_authorization_ctrl *authorization = (gisunlink_authorization_ctrl *)param;
 	if(authorization) {
-		connectToAuthorizationService(AUTHORIZATION_SERVICE);
+		connectToAuthorizationService(AUTHORIZATION_SERVICE,authorization->userData);
 		authorization_ctrl->taskStartFlags = false;
 	}
 	gisunlink_destroy_task(NULL);

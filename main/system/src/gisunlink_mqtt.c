@@ -468,7 +468,8 @@ static void gisunlink_mqtt_thread_message(gisunlink_mqtt_ctrl *mqtt) {
 		while(gisunlink_queue_not_empty(mqtt->queue)) {
 			bool msg_err = true;
 			bool clear_packet = true;
-			if((packet = (gisunlink_mqtt_packet *)gisunlink_queue_pop(mqtt->queue))) {
+			gisunlink_mqtt_packet *packet = (gisunlink_mqtt_packet *)gisunlink_queue_pop(mqtt->queue);
+			if(packet != NULL) {
 				switch(packet->type) {
 					case GISUNLINK_TOPIC_SUB:
 						msg_err = gisunlink_mqtt_thread_subscribe(mqtt,packet);
@@ -507,7 +508,6 @@ static void gisunlink_mqtt_thread_message(gisunlink_mqtt_ctrl *mqtt) {
 }
 
 static void gisunlink_mqtt_thread(void *param) {
-	gisunlink_mqtt_packet *packet = NULL;
 	gisunlink_mqtt_ctrl *mqtt = (gisunlink_mqtt_ctrl *)param;
 	while(1) {
 		gisunlink_get_sem(mqtt->connect_sem);

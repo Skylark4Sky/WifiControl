@@ -43,7 +43,7 @@ typedef struct _gisunlink_firmware_update_hook {
  * @param json_len
  * @return void
  */
-void gisunlink_updatefirmware_download_new_firmware(const char *jsonData, uint16 json_len);
+void gisunlink_new_firmware_task(const char *jsonData, uint16 json_len);
 
 /*! @brief 固件更新初始化
  * @return void

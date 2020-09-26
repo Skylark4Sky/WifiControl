@@ -140,7 +140,10 @@ gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 		//初始化配置
 		gisunlink_config_init();
 		//初始化外围模块
+#if NOWAITDEVICE
+#else
 		gisunlink_peripheral_init();
+#endif 
 		//初始化网络管理模块
 		gisunlink_netmanager_init();
 		//初始化设备授权模块

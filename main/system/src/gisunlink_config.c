@@ -753,11 +753,18 @@ char *gisunlink_get_mac_with_string(const char *prefix) {
 
 	char *mac_string = NULL;
 	gisunlink_config_get(MAC_CONFIG,&mac_addr);
-
 	if(prefix == NULL) {
+#if NOWAITDEVICE 
+		asprintf(&mac_string, "%02x%02x%02x%02x%02x%02x",0x60,0x01,0x94,0x6f,0x04,0x05);
+#else
 		asprintf(&mac_string, "%02x%02x%02x%02x%02x%02x",mac_addr[0],mac_addr[1],mac_addr[2],mac_addr[3],mac_addr[4],mac_addr[5]);
+#endif
 	} else {
+#if NOWAITDEVICE 
+		asprintf(&mac_string, "%02x%02x%02x%02x%02x%02x",0x60,0x01,0x94,0x6f,0x04,0x05);
+#else
 		asprintf(&mac_string, "%s%02x%02x%02x%02x%02x%02x",prefix,mac_addr[0],mac_addr[1],mac_addr[2],mac_addr[3],mac_addr[4],mac_addr[5]);
+#endif
 	}
 	return mac_string;
 }
