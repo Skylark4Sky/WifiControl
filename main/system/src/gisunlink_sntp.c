@@ -61,7 +61,7 @@ static int gisunlink_sntp_obtain_time(gisunlink_sntp_ctrl *gisunlink_sntp) {
 
 	gisunlink_sntp_init();
 	while(timeinfo.tm_year < (2016 - 1900) && ++retry < retry_count) {
-		gisunlink_print(GISUNLINK_PRINT_WARN,"waiting for system time to be set... (%d/%d)", retry, retry_count);
+		//gisunlink_print(GISUNLINK_PRINT_WARN,"waiting for system time to be set... (%d/%d)", retry, retry_count);
 		if(gisunlink_sntp && gisunlink_sntp->respondCb) {
 			gisunlink_sntp->respondCb(GISUNLINK_SNTP_FAILURE,gisunlink_sntp->param);
 		}
