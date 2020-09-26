@@ -22,6 +22,9 @@ extern "C"
  * @param void 
  * @return void
  */
+void gisunlink_ota_runing(const char *url,unsigned int size);
+
+
 void gisunlink_ota_init(void);
 
 #ifdef __cplusplus

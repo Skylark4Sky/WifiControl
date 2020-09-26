@@ -590,7 +590,6 @@ void gisunlink_mqtt_init(char *DeviceHWSn_addr,char *FirmwareVersion) {
 		gisunlink_mqtt->clientID = gisunlink_get_mac_with_string("gsl_");
 		gisunlink_mqtt->requestConut = 0;	
 		gisunlink_create_task_with_Priority(gisunlink_mqtt_thread, "mqtt_opt", gisunlink_mqtt, 2048,8); //3072 // 2048 // 2650
-		//gisunlink_create_task_with_Priority(gisunlink_mqtt_thread, "mqtt_opt", gisunlink_mqtt, 3072,8); //3072 // 2048 // 2650
 		gisunlink_create_task_with_Priority(gisunlink_mqtt_wait_ack_thread, "mqtt_wait", gisunlink_mqtt,1536,7); //3072 // 2048 // 2650
 	}
 }

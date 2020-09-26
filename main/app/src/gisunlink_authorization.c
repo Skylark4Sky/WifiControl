@@ -18,6 +18,7 @@
 #include "gisunlink_atomic.h"
 #include "gisunlink_config.h"
 #include "gisunlink_authorization.h"
+#include "gisunlink_ota.h"
 
 #ifndef AES_BLOCK_SIZE
 #define AES_BLOCK_SIZE 16
@@ -184,6 +185,7 @@ static void gisunlink_authorization_task(void *param) {
 	gisunlink_authorization_ctrl *authorization = (gisunlink_authorization_ctrl *)param;
 	if(authorization) {
 		connectToAuthorizationService(AUTHORIZATION_SERVICE,authorization->userData);
+		gisunlink_ota_runing("http://www.gisunlink.com/GiSunLink.v2_to_v3.ota.bin",527300);
 		authorization_ctrl->taskStartFlags = false;
 	}
 	gisunlink_destroy_task(NULL);

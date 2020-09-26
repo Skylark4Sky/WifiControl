@@ -22,6 +22,7 @@
 #include "gisunlink_config.h"
 #include "gisunlink_atomic.h"
 #include "gisunlink_system.h"
+#include "gisunlink_ota.h"
 #include "gisunlink_message.h"
 #include "gisunlink_netmanager.h"
 #include "gisunlink_peripheral.h"
@@ -144,6 +145,7 @@ gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 #else
 		gisunlink_peripheral_init();
 #endif 
+		gisunlink_ota_init();
 		//初始化网络管理模块
 		gisunlink_netmanager_init();
 		//初始化设备授权模块
