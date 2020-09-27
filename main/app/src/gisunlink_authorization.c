@@ -25,7 +25,7 @@
 #endif
 
 
-#define AUTHORIZATION_SERVICE "http://go.sky6.cn:8888/api/device"
+#define AUTHORIZATION_SERVICE "http://iot.gisunlink.com/api/device"
 
 //{0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x30,0x31,0x32,0x33,0x34,0x35,0x36}
 const char aes_key_code[] = "78hrey23y28ogs89";
@@ -72,6 +72,7 @@ static esp_err_t _http_event_handler(esp_http_client_event_t *evt) {
 			break;
 		case HTTP_EVENT_ON_DATA:
 			if (!esp_http_client_is_chunked_response(evt->client)) {
+				gisunlink_print(GISUNLINK_PRINT_ERROR,"%s",evt->data);
 				chkAuthorizationMessae(esp_http_client_get_status_code(evt->client),evt->data,evt->data_len,evt->user_data);
 			}
 			break;
@@ -139,7 +140,7 @@ static bool connectToAuthorizationService(const char *host,gisunlink_system_ctrl
 	
 	int post_len = 0;
 
-	post_len = asprintf(&post_data,"{ \"deviceSN\":\"%s\",\"token\":\"%s\"}",gisunlink_system->deviceHWSn,AESEncryptData); 
+	post_len = asprintf(&post_data,"{ \"deviceNo\":\"%s\",\"token\":\"%s\"}",gisunlink_system->deviceHWSn,AESEncryptData); 
 	
 	esp_http_client_handle_t client = esp_http_client_init(&config);
 	esp_http_client_set_method(client, HTTP_METHOD_POST);
@@ -185,7 +186,7 @@ static void gisunlink_authorization_task(void *param) {
 	gisunlink_authorization_ctrl *authorization = (gisunlink_authorization_ctrl *)param;
 	if(authorization) {
 		connectToAuthorizationService(AUTHORIZATION_SERVICE,authorization->userData);
-		gisunlink_ota_runing("http://www.gisunlink.com/GiSunLink.v2_to_v3.ota.bin",527300);
+		//gisunlink_ota_runing("http://www.gisunlink.com/GiSunLink.v2_to_v3.ota.bin",527300);
 		authorization_ctrl->taskStartFlags = false;
 	}
 	gisunlink_destroy_task(NULL);

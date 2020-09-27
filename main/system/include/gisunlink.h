@@ -21,7 +21,7 @@
 #include "gisunlink_type.h"
 #include "gisunlink_print.h"
 
-#define NOWAITDEVICE 0
+#define NOWAITDEVICE 1
 
 #define GETDEVICEINFO			"/device"
 #define TRANSFER_RESPOND		"/point_switch_resp"
