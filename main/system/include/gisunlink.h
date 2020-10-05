@@ -23,12 +23,14 @@
 
 #define NOWAITDEVICE 0
 
+#define FIRMWARE_UPDATE			"/point_common"
+#define	TASK_TRANSFER			"/point_switch"
+
 #define GETDEVICEINFO			"/device"
 #define TRANSFER_RESPOND		"/point_switch_resp"
 #define STATUS_POST				"/power_run/"
-#define FIRMWARE_UPDATE			"/point_common"
-#define	TASK_TRANSFER			"/point_switch"
 #define FIRMWARE_UPDATE_STATE	"/firmware_update"
+
 #define WIFI_FIRMWARE_VERSION	"GSL_V1.0.0"
 
 #define MACMAXLEN					 6
