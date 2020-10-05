@@ -78,7 +78,7 @@ void freeUartRespondMessage(gisunlink_respond_message *respond) {
 	}
 }
 
-bool getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter) {
+bool getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter,bool loop) {
 	bool getHWInfo = false;
 
 	if(buffter == NULL) {
@@ -94,7 +94,8 @@ bool getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter) {
 	};
 
 	gisunlink_respond_message *respond = NULL;
-	while(1) {
+
+	do {
 		gisunlink_print(GISUNLINK_PRINT_WARN,"waiting the device sn");
 		if((respond = gisunlink_peripheral_send_message(&uart_message))) {
 			if(respond->reason == GISUNLINK_SEND_SUCCEED) {
@@ -120,7 +121,8 @@ bool getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter) {
 			}
 			freeUartRespondMessage(respond);
 		}
-	}
+	} while(loop);
+
 	return getHWInfo;
 }
 

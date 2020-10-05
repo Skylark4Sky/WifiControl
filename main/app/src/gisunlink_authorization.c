@@ -39,8 +39,8 @@ typedef struct _gisunlink_authorization {
 static gisunlink_authorization_ctrl *authorization_ctrl = NULL;
 
 static void chkAuthorizationMessae(int status_code, const char *data, int data_len, void *param) {
-	gisunlink_authorization_ctrl *authorization = (gisunlink_authorization_ctrl *)param; 
-	gisunlink_system_ctrl *gisunlink_system = (gisunlink_system_ctrl *)authorization->userData;
+//	gisunlink_authorization_ctrl *authorization = (gisunlink_authorization_ctrl *)param; 
+//	gisunlink_system_ctrl *gisunlink_system = (gisunlink_system_ctrl *)authorization->userData;
 	if(status_code == 200) {
 		struct cJSON_Hooks js_hook = {gisunlink_malloc, &gisunlink_free};
 		cJSON_InitHooks(&js_hook);
@@ -50,12 +50,29 @@ static void chkAuthorizationMessae(int status_code, const char *data, int data_l
 			gisunlink_print(GISUNLINK_PRINT_WARN,"%s",jsonString);
 			gisunlink_free(jsonString);
 
-			cJSON *status =  cJSON_GetObjectItem(root, "status");
-			if(status && (status->type == cJSON_True || status->type == cJSON_False)) {
-				bool chkOk = status->valueint;
-				gisunlink_system->authorization = chkOk;
+			cJSON *codeItem =  cJSON_GetObjectItem(root, "code");
+			if(codeItem && (codeItem->type == cJSON_Number)) {
+				if(codeItem->valueint) {
+					goto exitJson;
+				}
+			} else {
+				goto exitJson;
+			}
+
+			cJSON *dataItem = cJSON_GetObjectItem(root, "data");
+
+			if(dataItem && dataItem->type == cJSON_Object) {
+				cJSON *urlItem = cJSON_GetObjectItem(dataItem, "url");
+				cJSON *sizeItem = cJSON_GetObjectItem(dataItem, "size");
+
+				if(urlItem && sizeItem) {
+					if(urlItem->type == cJSON_String && sizeItem->type == cJSON_Number) {
+						gisunlink_ota_task(urlItem->valuestring,sizeItem->valueint);
+					}
+				}
 			}
 		}
+exitJson:
 		cJSON_Delete(root);
 		root = NULL;
 	}
@@ -72,7 +89,6 @@ static esp_err_t _http_event_handler(esp_http_client_event_t *evt) {
 			break;
 		case HTTP_EVENT_ON_DATA:
 			if (!esp_http_client_is_chunked_response(evt->client)) {
-				gisunlink_print(GISUNLINK_PRINT_ERROR,"%s",evt->data);
 				chkAuthorizationMessae(esp_http_client_get_status_code(evt->client),evt->data,evt->data_len,evt->user_data);
 			}
 			break;
@@ -129,7 +145,7 @@ static bool connectToAuthorizationService(const char *host,gisunlink_system_ctrl
 	char *clientID = gisunlink_get_mac_with_string(NULL);
 	char *AESEncryptData = createEncryptString(aes_key_code,aes_iv_code,(uint8 *)clientID,strlen(clientID));
 
-	asprintf(&post_url,"%s?clientID=%s&version=%s",host,clientID,WIFI_FIRMWARE_VERSION);
+	asprintf(&post_url,"%s?clientID=%s",host,clientID);
 
 	esp_http_client_config_t config = {
 		.url = post_url,
@@ -137,11 +153,17 @@ static bool connectToAuthorizationService(const char *host,gisunlink_system_ctrl
 		.user_data = authorization_ctrl,	
 		.timeout_ms = 15000, /*十五秒*/ 
 	};
-	
+
 	int post_len = 0;
 
-	post_len = asprintf(&post_data,"{ \"deviceNo\":\"%s\",\"token\":\"%s\"}",gisunlink_system->deviceHWSn,AESEncryptData); 
-	
+	//type 类型值
+	//0 无效
+	//1 GSM
+	//2 WIFI
+	//3 BLUETOOTH
+
+	post_len = asprintf(&post_data,"{\"type\":2, \"deviceNo\":\"%s\",\"token\":\"%s\",\"version\":\"%s\"}",gisunlink_system->deviceHWSn,AESEncryptData,WIFI_FIRMWARE_VERSION); 
+
 	esp_http_client_handle_t client = esp_http_client_init(&config);
 	esp_http_client_set_method(client, HTTP_METHOD_POST);
 	esp_http_client_set_header(client,"Content-Type", "application/json");

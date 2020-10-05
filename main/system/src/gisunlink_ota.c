@@ -24,6 +24,12 @@
 
 #define BUFFSIZE 1500
 
+typedef struct _gisunlink_ota {
+	uint8 *path;
+	uint32_t size;
+	uint32 download_process;
+} gisunlink_ota;
+
 typedef struct _gisunlink_module_ctrl {
 	void *thread_lock;
 	bool start;
@@ -108,7 +114,7 @@ void gisunlink_ota_task(const char *url,unsigned int size) {
 			otaTask->start = true;
 
 			gisunlink_ota *ota = (gisunlink_ota *)gisunlink_malloc(sizeof(gisunlink_ota));
-			uint8_t path_len = strlen(url);
+			uint16_t path_len = strlen(url) + 1;
 
 			if(ota && path_len) {
 				ota->path = (uint8_t *)gisunlink_malloc(path_len);

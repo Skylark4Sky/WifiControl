@@ -276,21 +276,17 @@ void gisunlink_netmanager_init(void) {
 			} else {
 				//不直接进入配网模式
 				//netmanager->enter_pairing = true;
-#if NOWAITDEVICE
 				wifi_config_t wifi_config = {
+#if NOWAITDEVICE
 					.sta = {
 						.ssid = "ToWAYetech-2.4G",
-						.password = "mopsky045" 
-					},
-				};
+						.password = "mopsky045" },
 #else
-				wifi_config_t wifi_config = {
 					.sta = {
 						.ssid = "ylpower",
-						.password = "yununion2020!" 
-					},
-				};
+						.password = "yununion2020!" },
 #endif
+				};
 				ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
 				gisunlink_print(GISUNLINK_PRINT_INFO,"statr connect Wifi SSID:%s PSWD:%s",wifi_config.sta.ssid, wifi_config.sta.password);
 			}

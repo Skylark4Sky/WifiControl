@@ -18,13 +18,6 @@ extern "C"
 {
 #endif
 
-typedef struct _gisunlink_ota {
-	uint8 *path;
-	uint32_t size;
-	uint32 download_process;
-} gisunlink_ota;
-
-
 /*! @brief 初始化OTA升级模块
  * @param void 
  * @return void

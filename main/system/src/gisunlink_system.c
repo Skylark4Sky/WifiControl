@@ -16,7 +16,7 @@
 #include "freertos/semphr.h"
 #include "esp_system.h"
 
-
+#include "gisunlink_utils.h"
 #include "gisunlink_mqtt.h"
 #include "gisunlink_sntp.h"
 #include "gisunlink_config.h"
@@ -125,6 +125,17 @@ static void gisunlink_system_setparm(gisunlink_system_ctrl *gisunlink_system) {
 	gisunlink_system->routeHandle = gisunlink_system_netmanager_event;
 }
 
+#if !NOWAITDEVICE
+static void tryGetHWInfo(bool *status, uint8 cmd,char *buffer) {
+	int tryCount = 0;
+	do {
+		*status = getDeviceHWSnOrFirmwareVersion(cmd,buffer,false);
+		tryCount++;
+		gisunlink_task_delay(300 / portTICK_PERIOD_MS);
+	} while(*status == false  && tryCount <= 3);
+} 
+#endif
+
 gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 	gisunlink_system_ctrl *gisunlink_system = (gisunlink_system_ctrl *)gisunlink_malloc(sizeof(gisunlink_system_ctrl)); 
 	if(gisunlink_system) {
@@ -142,8 +153,19 @@ gisunlink_system_ctrl *gisunlink_system_init(GISUNLINK_MESSAGE_CB *messageCb) {
 		gisunlink_config_init();
 		//初始化外围模块
 #if NOWAITDEVICE
+			snprintf(gisunlink_system->deviceHWSn,DEVICEINFOSIZE,"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+					0x57,0xff,0x69,0x06,0x78,0x78,0x49,0x51,0x48,0x30,0x09,0x67);
+			gisunlink_system->waitHWSn = true;
+
+			snprintf(gisunlink_system->deviceFWVersion,DEVICEFIRMWARENOSIZE,"%02x%02x%02x%02x%02x%02x",
+					0x20,0x20,0x06,0x07,0x21,0x50);
+			gisunlink_system->waitFirmwareVersion = true;
 #else
+
+
 		gisunlink_peripheral_init();
+		tryGetHWInfo(&(gisunlink_system->waitHWSn),GISUNLINK_HW_SN,gisunlink_system->deviceHWSn);
+		tryGetHWInfo(&(gisunlink_system->waitFirmwareVersion),GISUNLINK_FIRMWARE_VERSION,gisunlink_system->deviceFWVersion);
 #endif 
 		gisunlink_ota_init();
 		//初始化网络管理模块

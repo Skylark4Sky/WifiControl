@@ -34,7 +34,7 @@ uint32 getHeapSize(void);
 
 void freeUartRespondMessage(gisunlink_respond_message *respond);
 
-bool getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter);
+bool getDeviceHWSnOrFirmwareVersion(uint8 cmd,char *buffter,bool loop);
 
 void firmwareDownloadTaskFree(gisunlink_firmware_download *download);
 
