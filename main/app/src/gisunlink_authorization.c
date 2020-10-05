@@ -145,7 +145,7 @@ static bool connectToAuthorizationService(const char *host,gisunlink_system_ctrl
 	char *clientID = gisunlink_get_mac_with_string(NULL);
 	char *AESEncryptData = createEncryptString(aes_key_code,aes_iv_code,(uint8 *)clientID,strlen(clientID));
 
-	asprintf(&post_url,"%s?clientID=%s&module_verion=%s",host,clientID,WIFI_FIRMWARE_VERSION);
+	asprintf(&post_url,"%s",host);
 
 	esp_http_client_config_t config = {
 		.url = post_url,
@@ -162,7 +162,7 @@ static bool connectToAuthorizationService(const char *host,gisunlink_system_ctrl
 	//2 WIFI
 	//3 BLUETOOTH
 
-	post_len = asprintf(&post_data,"{\"type\":2, \"deviceNo\":\"%s\",\"token\":\"%s\",\"version\":\"%s\"}",gisunlink_system->deviceHWSn,AESEncryptData,gisunlink_system->deviceFWVersion); 
+	post_len = asprintf(&post_data,"{\"type\":2,\"module_sn\":\"%s\",\"module_version\":\"%s\",\"device_sn\":\"%s\",\"device_version\":\"%s\",\"token\":\"%s\"}",clientID,WIFI_FIRMWARE_VERSION,gisunlink_system->deviceHWSn,gisunlink_system->deviceFWVersion,AESEncryptData); 
 
 	esp_http_client_handle_t client = esp_http_client_init(&config);
 	esp_http_client_set_method(client, HTTP_METHOD_POST);
