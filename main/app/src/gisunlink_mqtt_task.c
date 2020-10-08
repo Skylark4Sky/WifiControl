@@ -74,7 +74,7 @@ void packetEncode(gisunlink_system_ctrl *gisunlink_system, const char *act, uint
 			asprintf(&publish_topic,"%s%s",STATUS_POST,gisunlink_system->deviceHWSn); 
 			gisunlink_print(GISUNLINK_PRINT_ERROR,"%s ->data:%s - %d",publish_topic,publish_data,strlen(publish_data));
 			if(publish_ack == MQTT_PUBLISH_NEEDACK) {
-				gisunlink_mqtt_publish(publish_topic,publish_data,2,requestID,publish_ack);
+				gisunlink_mqtt_publish(publish_topic,publish_data,0,requestID,publish_ack);
 			} else {
 				gisunlink_mqtt_publish(publish_topic,publish_data,0,requestID,publish_ack);
 			}
